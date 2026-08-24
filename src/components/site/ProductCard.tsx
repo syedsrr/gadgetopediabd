@@ -84,6 +84,16 @@ export function ProductCard({
           <ShoppingBag className="mr-1.5 h-4 w-4" />
           Add to cart
         </Button>
+        {onQuickView && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="mt-1 w-full text-xs text-muted-foreground hover:text-moss"
+            onClick={() => onQuickView(product)}
+          >
+            View full specs
+          </Button>
+        )}
       </div>
     </article>
   );
