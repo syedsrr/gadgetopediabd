@@ -13,12 +13,11 @@ import {
 } from "@/components/ui/select";
 import { productsQuery } from "@/lib/catalog";
 
-type ShopSearch = { q: string };
+type ShopSearch = { q?: string | undefined };
 
 export const Route = createFileRoute("/shop")({
-  validateSearch: (search: Record<string, unknown>): ShopSearch => ({
-    q: typeof search['q'] === "string" ? search['q'] : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): ShopSearch =>
+    typeof search['q'] === "string" && search['q'] ? { q: search['q'] } : {},
   head: () => ({
     meta: [
       { title: "Shop all gadgets — gadgetOpedia n' Lifestyle" },
