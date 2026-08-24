@@ -6,7 +6,13 @@ import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
 import { discountPercent, formatBDT } from "@/lib/format";
 
-export function ProductCard({ product }: { product: ProductWithCategory }) {
+export function ProductCard({
+  product,
+  onQuickView,
+}: {
+  product: ProductWithCategory;
+  onQuickView?: (product: ProductWithCategory) => void;
+}) {
   const { add } = useCart();
   const off = discountPercent(product.price, product.old_price);
   const soldOut = product.stock <= 0;
