@@ -37,6 +37,7 @@ function ProductPage() {
   const { slug } = Route.useParams();
   const { data: product, isPending } = useQuery(productQuery(slug));
   const { data: products = [] } = useQuery(productsQuery);
+  const { data: categories = [] } = useQuery(categoriesQuery);
   const { add } = useCart();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
