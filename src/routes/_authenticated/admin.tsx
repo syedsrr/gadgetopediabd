@@ -45,7 +45,6 @@ type OrderStatus = Database["public"]["Enums"]["order_status"];
 const STATUSES: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Admin dashboard — gadgetOpedia n' Lifestyle" },
@@ -61,9 +60,6 @@ function AdminPage() {
   const { session, loading } = useSession();
   const { data: isAdmin, isPending: checking } = useIsAdmin(session?.user.id);
 
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
 
   if (loading || !session || checking) {
     return (
