@@ -91,10 +91,7 @@ function AdminPage() {
             <Link to="/">Back to store</Link>
           </Button>
           <Button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate({ to: "/auth" });
-            }}
+            onClick={handleSignOut}
           >
             Sign out
           </Button>
@@ -121,10 +118,7 @@ function AdminPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate({ to: "/auth" });
-              }}
+              onClick={handleSignOut}
             >
               <LogOut className="mr-1.5 h-4 w-4" /> Sign out
             </Button>
