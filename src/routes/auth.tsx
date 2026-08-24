@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useSession } from "@/lib/useAdmin";
 
 export const Route = createFileRoute("/auth")({
@@ -65,15 +64,6 @@ function AuthPage() {
     else toast.success("Account created. Check your email if confirmation is required.");
   }
 
-  async function google() {
-    try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    } catch (err) {
-      console.error(err);
-      toast.error("Google sign-in failed");
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-canopy px-5 py-12">
       <div className="w-full max-w-md rounded-3xl bg-card p-8 shadow-lift">
@@ -85,14 +75,6 @@ function AuthPage() {
           Sign in to manage products, categories and orders.
         </p>
 
-        <Button variant="outline" className="mt-6 w-full" onClick={google}>
-          Continue with Google
-        </Button>
-        <div className="my-5 flex items-center gap-3">
-          <Separator className="flex-1" />
-          <span className="text-xs text-muted-foreground">or</span>
-          <Separator className="flex-1" />
-        </div>
 
         <Tabs defaultValue="signin">
           <TabsList className="grid w-full grid-cols-2">
