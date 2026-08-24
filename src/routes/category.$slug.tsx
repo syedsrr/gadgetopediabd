@@ -48,9 +48,9 @@ function CategoryPage() {
             <span className="text-foreground">{category?.name ?? slug}</span>
           </nav>
           <h1 className="mt-3 font-display text-3xl font-bold">{category?.name ?? slug}</h1>
-          {category?.tagline && (
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">{category.tagline}</p>
-          )}
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            {list.length} product{list.length === 1 ? "" : "s"} available
+          </p>
         </div>
       </div>
 
