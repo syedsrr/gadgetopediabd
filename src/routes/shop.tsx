@@ -43,8 +43,9 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { q } = Route.useSearch();
-  const { data: products = [], isPending } = useQuery(productsQuery);
-  const { data: categories = [] } = useQuery(categoriesQuery);
+  const products = staticProducts;
+  const categories = staticCategories;
+  const isPending = false;
   const [sort, setSort] = useState("new");
   const [search, setSearch] = useState(q ?? "");
   const [activeCategory, setActiveCategory] = useState<string>("all");
