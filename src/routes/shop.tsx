@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { Search } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductGridSkeleton } from "@/components/site/ProductGridSkeleton";
+import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -11,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { productsQuery } from "@/lib/catalog";
+import { cn } from "@/lib/utils";
+import { categoriesQuery, productsQuery, type ProductWithCategory } from "@/lib/catalog";
 
 type ShopSearch = { q?: string | undefined };
 
