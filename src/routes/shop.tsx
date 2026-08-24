@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/select";
 import { productsQuery } from "@/lib/catalog";
 
-type ShopSearch = { q?: string };
+type ShopSearch = { q: string };
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): ShopSearch => ({
-    q: typeof search.q === "string" && search.q ? search.q : undefined,
+    q: typeof search['q'] === "string" ? search['q'] : "",
   }),
   head: () => ({
     meta: [
