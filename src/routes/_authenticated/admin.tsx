@@ -57,8 +57,17 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminPage() {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { session, loading } = useSession();
   const { data: isAdmin, isPending: checking } = useIsAdmin(session?.user.id);
+
+  async function handleSignOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
 
 
   if (loading || !session || checking) {
