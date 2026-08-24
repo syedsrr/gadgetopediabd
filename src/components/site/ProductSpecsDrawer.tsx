@@ -1,4 +1,5 @@
-import { ShoppingBag } from "lucide-react";
+import { ImageOff, Minus, Plus, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +13,7 @@ import {
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
 import { discountPercent, formatBDT } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 type Props = {
   product: ProductWithCategory | null;
@@ -23,6 +25,18 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const { add } = useCart();
   const off = product ? discountPercent(product.price, product.old_price) : null;
   const soldOut = (product?.stock ?? 0) <= 0;
+  const maxQty = Math.max(1, product?.stock ?? 1);
+
+  const variations = product
+    ? [product.brand ? `${product.brand} — Standard` : "Standard"]
+    : [];
+  const [variation, setVariation] = useState(0);
+  const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    setQty(1);
+    setVariation(0);
+  }, [product?.id]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -36,16 +50,17 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               </SheetDescription>
             </SheetHeader>
 
-            <div className="mt-5 overflow-hidden rounded-2xl border border-border bg-secondary">
+            <div className="mt-5 aspect-square overflow-hidden rounded-2xl border border-border bg-secondary">
               {product.image_url ? (
                 <img
                   src={product.image_url}
                   alt={product.name}
                   loading="lazy"
-                  className="aspect-square w-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex aspect-square items-center justify-center text-sm text-muted-foreground">
+                <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <ImageOff className="h-6 w-6" aria-hidden="true" />
                   No image
                 </div>
               )}
@@ -84,6 +99,54 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                 ))}
             </dl>
 
+            <Separator className="my-5" />
+
+            <div>
+              <p className="eyebrow text-muted-foreground">Variation</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {variations.map((v, i) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setVariation(i)}
+                    className={cn(
+                      "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                      variation === i
+                        ? "border-transparent bg-canopy text-canopy-foreground"
+                        : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
+                    )}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <p className="eyebrow text-muted-foreground">Quantity</p>
+              <div className="mt-2 flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Decrease quantity"
+                  disabled={qty <= 1}
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="min-w-8 text-center font-display text-base font-semibold">{qty}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Increase quantity"
+                  disabled={qty >= maxQty || soldOut}
+                  onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
             {product.description && (
               <>
                 <Separator className="my-5" />
@@ -97,18 +160,21 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               className="mt-6 w-full"
               disabled={soldOut}
               onClick={() => {
-                add({
-                  id: product.id,
-                  name: product.name,
-                  slug: product.slug,
-                  price: Number(product.price),
-                  image_url: product.image_url,
-                });
+                add(
+                  {
+                    id: product.id,
+                    name: product.name,
+                    slug: product.slug,
+                    price: Number(product.price),
+                    image_url: product.image_url,
+                  },
+                  qty,
+                );
                 onOpenChange(false);
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />
-              {soldOut ? "Sold out" : "Add to cart"}
+              {soldOut ? "Sold out" : `Add ${qty} to cart · ${formatBDT(Number(product.price) * qty)}`}
             </Button>
           </>
         )}

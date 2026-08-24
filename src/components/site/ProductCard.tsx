@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag } from "lucide-react";
+import { ImageOff, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
@@ -34,8 +34,12 @@ export function ProductCard({
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">No image</div>
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
+            <ImageOff className="h-6 w-6" aria-hidden="true" />
+            No image
+          </div>
         )}
+
         {off !== null && (
           <span className="absolute left-3 top-3 rounded-full bg-sale px-2.5 py-1 text-[0.7rem] font-bold text-sale-foreground">
             -{off}%
