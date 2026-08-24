@@ -59,8 +59,7 @@ function Shop() {
 
 
   const list = useMemo(() => {
-    const withCats = withCategories(products, categories);
-    const filtered = withCats.filter((p) => {
+    const filtered = products.filter((p) => {
       const matchesCategory =
         activeCategory === "all" || p.categories?.slug === activeCategory;
       const matchesTerm = term
