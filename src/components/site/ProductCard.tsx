@@ -6,7 +6,13 @@ import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
 import { discountPercent, formatBDT } from "@/lib/format";
 
-export function ProductCard({ product }: { product: ProductWithCategory }) {
+export function ProductCard({
+  product,
+  onQuickView,
+}: {
+  product: ProductWithCategory;
+  onQuickView?: (product: ProductWithCategory) => void;
+}) {
   const { add } = useCart();
   const off = discountPercent(product.price, product.old_price);
   const soldOut = product.stock <= 0;
@@ -78,6 +84,16 @@ export function ProductCard({ product }: { product: ProductWithCategory }) {
           <ShoppingBag className="mr-1.5 h-4 w-4" />
           Add to cart
         </Button>
+        {onQuickView && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="mt-1 w-full text-xs text-muted-foreground hover:text-moss"
+            onClick={() => onQuickView(product)}
+          >
+            View full specs
+          </Button>
+        )}
       </div>
     </article>
   );
