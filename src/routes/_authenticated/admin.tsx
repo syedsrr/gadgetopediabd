@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Logo } from "@/components/site/Logo";
@@ -44,8 +44,7 @@ type OrderStatus = Database["public"]["Enums"]["order_status"];
 
 const STATUSES: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
 
-export const Route = createFileRoute("/admin")({
-  ssr: false,
+export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin dashboard — gadgetOpedia n' Lifestyle" },
@@ -58,12 +57,18 @@ export const Route = createFileRoute("/admin")({
 
 function AdminPage() {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { session, loading } = useSession();
   const { data: isAdmin, isPending: checking } = useIsAdmin(session?.user.id);
 
-  useEffect(() => {
-    if (!loading && !session) navigate({ to: "/auth" });
-  }, [loading, session, navigate]);
+  async function handleSignOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
+
 
   if (loading || !session || checking) {
     return (
@@ -86,10 +91,7 @@ function AdminPage() {
             <Link to="/">Back to store</Link>
           </Button>
           <Button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate({ to: "/auth" });
-            }}
+            onClick={handleSignOut}
           >
             Sign out
           </Button>
@@ -116,10 +118,7 @@ function AdminPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate({ to: "/auth" });
-              }}
+              onClick={handleSignOut}
             >
               <LogOut className="mr-1.5 h-4 w-4" /> Sign out
             </Button>
