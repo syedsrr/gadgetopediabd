@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductGridSkeleton } from "@/components/site/ProductGridSkeleton";
@@ -50,7 +50,12 @@ function Shop() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
 
+  useEffect(() => {
+    setSearch(q ?? "");
+  }, [q]);
+
   const term = search.trim().toLowerCase();
+
 
   const list = useMemo(() => {
     const withCats = withCategories(products, categories);
