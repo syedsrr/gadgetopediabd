@@ -1,12 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BadgeCheck, Truck, ShieldCheck, ArrowRight } from "lucide-react";
 
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
-import { useMemo } from "react";
+import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import type { ProductWithCategory } from "@/lib/catalog";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,12 +29,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { data: products = [] } = useQuery(productsQuery);
-  const { data: categories = [] } = useQuery(categoriesQuery);
-  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
-
-  const featured = productsWithCategory.filter((p) => p.is_featured).slice(0, 8);
-  const latest = productsWithCategory.slice(-8).reverse();
+  const categories = staticCategories;
+  const [selected, setSelected] = useState<ProductWithCategory | null>(null);
+  const featured = staticProducts.filter((p) => p.is_featured);
+  const latest = staticProducts;
 
   return (
     <SiteLayout>
@@ -105,7 +104,9 @@ function Home() {
               className="card-hover rounded-2xl border border-border bg-card p-5 shadow-soft"
             >
               <p className="font-display text-base font-semibold text-foreground">{c.name}</p>
-              {c.tagline && <p className="mt-1 text-xs text-muted-foreground">{c.tagline}</p>}
+              <p className="mt-1 text-xs text-muted-foreground">
+                {staticProducts.filter((p) => p.categories?.slug === c.slug).length} products
+              </p>
               <span className="mt-3 inline-flex items-center text-xs font-medium text-moss">
                 Explore <ArrowRight className="ml-1 h-3 w-3" />
               </span>
@@ -126,9 +127,9 @@ function Home() {
               <Link to="/shop">View all</Link>
             </Button>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
           </div>
         </section>
@@ -137,13 +138,18 @@ function Home() {
       {/* Latest */}
       <section className="mx-auto max-w-6xl px-5 py-14">
         <span className="eyebrow text-moss">Fresh in</span>
-        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
-        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">All products</h2>
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} onQuickView={setSelected} />
           ))}
         </div>
       </section>
+      <ProductSpecsDrawer
+        product={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </SiteLayout>
   );
 }

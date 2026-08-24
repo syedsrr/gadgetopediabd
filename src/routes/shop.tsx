@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { categoriesQuery, productsQuery, withCategories, type ProductWithCategory } from "@/lib/catalog";
+import type { ProductWithCategory } from "@/lib/catalog";
+import { staticCategories, staticProducts } from "@/lib/staticCatalog";
 
 type ShopSearch = { q?: string | undefined };
 
@@ -43,8 +43,9 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { q } = Route.useSearch();
-  const { data: products = [], isPending } = useQuery(productsQuery);
-  const { data: categories = [] } = useQuery(categoriesQuery);
+  const products = staticProducts;
+  const categories = staticCategories;
+  const isPending = false;
   const [sort, setSort] = useState("new");
   const [search, setSearch] = useState(q ?? "");
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -58,8 +59,7 @@ function Shop() {
 
 
   const list = useMemo(() => {
-    const withCats = withCategories(products, categories);
-    const filtered = withCats.filter((p) => {
+    const filtered = products.filter((p) => {
       const matchesCategory =
         activeCategory === "all" || p.categories?.slug === activeCategory;
       const matchesTerm = term
@@ -144,7 +144,7 @@ function Shop() {
             Nothing matched your filters. Try a different keyword or category.
           </p>
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {list.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}

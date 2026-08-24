@@ -1,10 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
+import { staticCategories, staticProducts } from "@/lib/staticCatalog";
 
 export const Route = createFileRoute("/category/$slug")({
   head: ({ params }) => {
@@ -32,12 +30,11 @@ export const Route = createFileRoute("/category/$slug")({
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const { data: categories = [] } = useQuery(categoriesQuery);
-  const { data: products = [], isPending } = useQuery(productsQuery);
-  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
+  const categories = staticCategories;
+  const isPending = false;
 
   const category = categories.find((c) => c.slug === slug);
-  const list = productsWithCategory.filter((p) => p.categories?.slug === slug);
+  const list = staticProducts.filter((p) => p.categories?.slug === slug);
 
   return (
     <SiteLayout>
@@ -51,9 +48,9 @@ function CategoryPage() {
             <span className="text-foreground">{category?.name ?? slug}</span>
           </nav>
           <h1 className="mt-3 font-display text-3xl font-bold">{category?.name ?? slug}</h1>
-          {category?.tagline && (
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">{category.tagline}</p>
-          )}
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            {list.length} product{list.length === 1 ? "" : "s"} available
+          </p>
         </div>
       </div>
 
