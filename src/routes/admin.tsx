@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Logo } from "@/components/site/Logo";
@@ -36,7 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { categoriesQuery, productsQuery, type Category } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, withCategories, type Category } from "@/lib/catalog";
 import { formatBDT } from "@/lib/format";
 import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
@@ -288,6 +288,7 @@ function ProductsPanel() {
   const qc = useQueryClient();
   const { data: products = [], isPending } = useQuery(productsQuery);
   const { data: categories = [] } = useQuery(categoriesQuery);
+  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<ProductForm>(emptyProduct);
 
@@ -367,7 +368,7 @@ function ProductsPanel() {
                 <TableCell colSpan={6}>Loading…</TableCell>
               </TableRow>
             ) : (
-              products.map((p) => (
+              productsWithCategory.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">

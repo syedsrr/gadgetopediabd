@@ -5,7 +5,8 @@ import { BadgeCheck, Truck, ShieldCheck, ArrowRight } from "lucide-react";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,9 +30,10 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { data: products = [] } = useQuery(productsQuery);
   const { data: categories = [] } = useQuery(categoriesQuery);
+  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
 
-  const featured = products.filter((p) => p.is_featured).slice(0, 8);
-  const latest = products.slice(-8).reverse();
+  const featured = productsWithCategory.filter((p) => p.is_featured).slice(0, 8);
+  const latest = productsWithCategory.slice(-8).reverse();
 
   return (
     <SiteLayout>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BadgeCheck, Minus, Plus, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { ProductCard } from "@/components/site/ProductCard";
@@ -9,7 +9,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
-import { productQuery, productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/lib/catalog";
 import { discountPercent, formatBDT } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
@@ -37,6 +37,7 @@ function ProductPage() {
   const { slug } = Route.useParams();
   const { data: product, isPending } = useQuery(productQuery(slug));
   const { data: products = [] } = useQuery(productsQuery);
+  const { data: categories = [] } = useQuery(categoriesQuery);
   const { add } = useCart();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
@@ -67,7 +68,8 @@ function ProductPage() {
 
   const off = discountPercent(product.price, product.old_price);
   const soldOut = product.stock <= 0;
-  const related = products
+  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
+  const related = productsWithCategory
     .filter((p) => p.id !== product.id && p.categories?.slug === product.categories?.slug)
     .slice(0, 4);
 

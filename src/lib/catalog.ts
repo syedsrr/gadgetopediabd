@@ -23,15 +23,26 @@ export const categoriesQuery = queryOptions({
 
 export const productsQuery = queryOptions({
   queryKey: ["products"],
-  queryFn: async (): Promise<ProductWithCategory[]> => {
+  queryFn: async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(id, name, slug)")
+      .select("*")
       .order("created_at", { ascending: true });
     if (error) throw error;
-    return (data ?? []) as ProductWithCategory[];
+    return data ?? [];
   },
 });
+
+export function withCategories(
+  products: Product[],
+  categories: Category[],
+): ProductWithCategory[] {
+  const map = new Map(categories.map((c) => [c.id, c]));
+  return products.map((p) => ({
+    ...p,
+    categories: p.category_id ? (map.get(p.category_id) ?? null) : null,
+  }));
+}
 
 export function productQuery(slug: string) {
   return queryOptions({
