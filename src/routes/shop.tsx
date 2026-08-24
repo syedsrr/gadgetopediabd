@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { categoriesQuery, productsQuery, type ProductWithCategory } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, withCategories, type ProductWithCategory } from "@/lib/catalog";
 
 type ShopSearch = { q?: string | undefined };
 
@@ -53,7 +53,8 @@ function Shop() {
   const term = search.trim().toLowerCase();
 
   const list = useMemo(() => {
-    const filtered = products.filter((p) => {
+    const withCats = withCategories(products, categories);
+    const filtered = withCats.filter((p) => {
       const matchesCategory =
         activeCategory === "all" || p.categories?.slug === activeCategory;
       const matchesTerm = term
@@ -70,7 +71,7 @@ function Shop() {
       if (sort === "name") return a.name.localeCompare(b.name);
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [products, activeCategory, term, sort]);
+  }, [products, categories, activeCategory, term, sort]);
 
   const pills = [{ slug: "all", name: "All products" }, ...categories];
 

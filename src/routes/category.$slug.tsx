@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
 
 export const Route = createFileRoute("/category/$slug")({
   head: ({ params }) => {
@@ -33,9 +34,10 @@ function CategoryPage() {
   const { slug } = Route.useParams();
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { data: products = [], isPending } = useQuery(productsQuery);
+  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
 
   const category = categories.find((c) => c.slug === slug);
-  const list = products.filter((p) => p.categories?.slug === slug);
+  const list = productsWithCategory.filter((p) => p.categories?.slug === slug);
 
   return (
     <SiteLayout>
