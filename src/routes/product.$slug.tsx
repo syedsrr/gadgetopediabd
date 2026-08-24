@@ -9,7 +9,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
-import { productQuery, productsQuery, withCategories } from "@/lib/catalog";
+import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/lib/catalog";
 import { discountPercent, formatBDT } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
