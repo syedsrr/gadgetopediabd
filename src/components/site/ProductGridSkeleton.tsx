@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
-    <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}

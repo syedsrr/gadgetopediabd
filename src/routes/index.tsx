@@ -2,9 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BadgeCheck, Truck, ShieldCheck, ArrowRight } from "lucide-react";
 
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import type { ProductWithCategory } from "@/lib/catalog";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,6 +30,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const categories = staticCategories;
+  const [selected, setSelected] = useState<ProductWithCategory | null>(null);
   const featured = staticProducts.filter((p) => p.is_featured);
   const latest = staticProducts;
 
@@ -123,9 +127,9 @@ function Home() {
               <Link to="/shop">View all</Link>
             </Button>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
           </div>
         </section>
@@ -135,12 +139,17 @@ function Home() {
       <section className="mx-auto max-w-6xl px-5 py-14">
         <span className="eyebrow text-moss">Fresh in</span>
         <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">All products</h2>
-        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p) => (
-            <ProductCard key={p.id} product={p} />
+            <ProductCard key={p.id} product={p} onQuickView={setSelected} />
           ))}
         </div>
       </section>
+      <ProductSpecsDrawer
+        product={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </SiteLayout>
   );
 }

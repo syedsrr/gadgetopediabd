@@ -144,7 +144,7 @@ function Shop() {
             Nothing matched your filters. Try a different keyword or category.
           </p>
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {list.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
