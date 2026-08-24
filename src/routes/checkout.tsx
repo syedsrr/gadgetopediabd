@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -9,10 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import { DELIVERY_FEE } from "@/lib/catalog";
 import { formatBDT } from "@/lib/format";
+import { placeOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -41,6 +42,7 @@ function Checkout() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [placed, setPlaced] = useState<{ code: string; total: number } | null>(null);
+  const submitOrder = useServerFn(placeOrder);
 
   const total = subtotal + DELIVERY_FEE;
 
@@ -57,34 +59,17 @@ function Checkout() {
     }
     setSubmitting(true);
     try {
-      const { data: order, error } = await supabase
-        .from("orders")
-        .insert({
+      const result = await submitOrder({
+        data: {
           customer_name: form.customer_name.trim(),
           phone: form.phone.trim(),
-          area: form.area.trim() || null,
+          ...(form.area.trim() ? { area: form.area.trim() } : {}),
           address: form.address.trim(),
-          note: form.note.trim() || null,
-          subtotal,
-          delivery_fee: DELIVERY_FEE,
-          total,
-        })
-        .select("id, order_code, total")
-        .single();
-      if (error) throw error;
-
-      const { error: itemsError } = await supabase.from("order_items").insert(
-        lines.map((l) => ({
-          order_id: order.id,
-          product_id: l.id,
-          product_name: l.name,
-          quantity: l.quantity,
-          unit_price: l.price,
-        })),
-      );
-      if (itemsError) throw itemsError;
-
-      setPlaced({ code: order.order_code, total: Number(order.total) });
+          ...(form.note.trim() ? { note: form.note.trim() } : {}),
+          items: lines.map((l) => ({ product_id: l.id, quantity: l.quantity })),
+        },
+      });
+      setPlaced({ code: result.order_code, total: result.total });
       clear();
     } catch (err) {
       console.error(err);
