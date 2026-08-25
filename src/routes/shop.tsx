@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +17,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
+
 
 type ShopSearch = { q?: string | undefined };
 
@@ -43,9 +45,15 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { q } = Route.useSearch();
-  const products = staticProducts;
-  const categories = staticCategories;
-  const isPending = false;
+  const productsRes = useQuery(productsQuery);
+  const categoriesRes = useQuery(categoriesQuery);
+  const products = useMemo(
+    () => withCategories(productsRes.data ?? [], categoriesRes.data ?? []),
+    [productsRes.data, categoriesRes.data],
+  );
+  const categories = categoriesRes.data ?? [];
+  const isPending = productsRes.isPending || categoriesRes.isPending;
+
   const [sort, setSort] = useState("new");
   const [search, setSearch] = useState(q ?? "");
   const [activeCategory, setActiveCategory] = useState<string>("all");
