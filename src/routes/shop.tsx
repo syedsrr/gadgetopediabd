@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { RefreshCw, Search, Weight, X } from "lucide-react";
+import { RefreshCw, Search, ShoppingBag, Weight, X } from "lucide-react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { useCart } from "@/lib/cart";
+import { formatBDT } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -57,6 +59,8 @@ type ProductRecord = {
   weight_kg: number | null;
   manufacturer: string | null;
   specs_description: string | null;
+  price: number | string;
+  stock: number;
   created_at: string;
 };
 
@@ -128,6 +132,7 @@ function SpecsSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const { addToCart } = useCart();
   if (!product) return null;
 
   return (
@@ -139,7 +144,25 @@ function SpecsSheet({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
-          <Button className="w-full" asChild>
+          <Button
+            className="w-full"
+            disabled={Number(product.stock) <= 0}
+            onClick={() => {
+              addToCart({
+                id: product.id,
+                name: product.title ?? product.name ?? "Product",
+                slug: product.slug,
+                price: Number(product.price),
+                image_url: product.image_url,
+                max_stock: Number(product.stock ?? 0),
+              });
+              onOpenChange(false);
+            }}
+          >
+            <ShoppingBag className="mr-1.5 h-4 w-4" />
+            {Number(product.stock) <= 0 ? "Out of stock" : "Add to cart"}
+          </Button>
+          <Button variant="outline" className="w-full" asChild>
             <Link to="/product/$slug" params={{ slug: product.slug }}>
               Open full product page
             </Link>
@@ -151,6 +174,15 @@ function SpecsSheet({
             <div className="divide-y divide-border/60">
               <SpecRow label="Manufacturer" value={product.manufacturer} />
               <SpecRow label="Category" value={product.category} />
+              <SpecRow label="Price" value={formatBDT(product.price)} />
+              <SpecRow
+                label="Availability"
+                value={
+                  Number(product.stock) <= 0
+                    ? "Out of stock"
+                    : `${product.stock} in stock`
+                }
+              />
               <SpecRow
                 label="Gross weight"
                 value={
@@ -186,6 +218,7 @@ function SpecsSheet({
 }
 
 function Shop() {
+  const { addToCart } = useCart();
   const { data: products, isPending, error, refetch } = useProducts();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -339,7 +372,7 @@ function Shop() {
                 <Link
                   to="/product/$slug"
                   params={{ slug: p.slug }}
-                  className="block aspect-[4/3] w-full overflow-hidden bg-muted"
+                  className="relative block aspect-[4/3] w-full overflow-hidden bg-muted"
                   aria-label={`View ${p.title ?? p.name ?? "product"} details`}
                 >
                   {p.image_url ? (
@@ -352,6 +385,13 @@ function Shop() {
                   ) : (
                     <span className="flex h-full w-full items-center justify-center px-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
                       {p.title ?? p.name ?? "Product"}
+                    </span>
+                  )}
+                  {Number(p.stock) <= 0 && (
+                    <span className="absolute inset-0 flex items-center justify-center bg-canopy/60">
+                      <span className="rounded-full bg-canopy px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
+                        Out of stock
+                      </span>
                     </span>
                   )}
                 </Link>
@@ -379,7 +419,17 @@ function Shop() {
                     {p.manufacturer ? `By ${p.manufacturer}` : "Manufacturer unavailable"}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-0">
+                <CardContent className="space-y-2 pt-0">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-xl font-bold text-primary">
+                      {formatBDT(p.price)}
+                    </span>
+                    {Number(p.stock) > 0 && Number(p.stock) < 5 && (
+                      <span className="text-xs font-semibold text-sale">
+                        Only {p.stock} left
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Weight className="h-4 w-4 text-moss" />
                     <span>
@@ -388,18 +438,33 @@ function Shop() {
                   </div>
                 </CardContent>
                 <CardFooter className="mt-auto flex flex-col gap-2 pt-0">
-                  <Button className="w-full" asChild>
-                    <Link to="/product/$slug" params={{ slug: p.slug }}>
-                      View product page
-                    </Link>
-                  </Button>
                   <Button
-                    variant="outline"
                     className="w-full"
-                    onClick={() => setSelected(p)}
+                    disabled={Number(p.stock) <= 0}
+                    onClick={() =>
+                      addToCart({
+                        id: p.id,
+                        name: p.title ?? p.name ?? "Product",
+                        slug: p.slug,
+                        price: Number(p.price),
+                        image_url: p.image_url,
+                        max_stock: Number(p.stock ?? 0),
+                      })
+                    }
                   >
-                    Quick specifications
+                    <ShoppingBag className="mr-1.5 h-4 w-4" />
+                    {Number(p.stock) <= 0 ? "Out of stock" : "Add to cart"}
                   </Button>
+                  <div className="flex w-full gap-2">
+                    <Button variant="outline" className="flex-1" asChild>
+                      <Link to="/product/$slug" params={{ slug: p.slug }}>
+                        Details
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" className="flex-1" onClick={() => setSelected(p)}>
+                      Specs
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             ))}
