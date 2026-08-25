@@ -208,11 +208,20 @@ function Shop() {
       const matchesTerm = term
         ? (p.title ?? "").toLowerCase().includes(term) ||
           (p.manufacturer ?? "").toLowerCase().includes(term) ||
+          (p.specs_description ?? "").toLowerCase().includes(term) ||
           (p.category ?? "").toLowerCase().includes(term)
         : true;
       return matchesCategory && matchesTerm;
     });
   }, [products, activeCategory, term]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: products?.length ?? 0 };
+    categories.forEach((c) => {
+      counts[c] = (products ?? []).filter((p) => p.category === c).length;
+    });
+    return counts;
+  }, [products, categories]);
 
   const pills = ["all", ...categories];
 
