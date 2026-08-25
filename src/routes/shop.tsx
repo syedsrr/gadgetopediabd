@@ -1,30 +1,32 @@
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { RefreshCw, Search, Weight } from "lucide-react";
 
-import { ProductCard } from "@/components/site/ProductCard";
-import { ProductGridSkeleton } from "@/components/site/ProductGridSkeleton";
-import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { ProductWithCategory } from "@/lib/catalog";
-import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
-
-
-type ShopSearch = { q?: string | undefined };
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/shop")({
-  validateSearch: (search: Record<string, unknown>): ShopSearch =>
-    typeof search['q'] === "string" && search['q'] ? { q: search['q'] } : {},
   head: () => ({
     meta: [
       { title: "Shop all gadgets — gadgetOpedia n' Lifestyle" },
@@ -38,55 +40,175 @@ export const Route = createFileRoute("/shop")({
         property: "og:description",
         content: "Browse every gadget and lifestyle product in stock at gadgetOpedia n' Lifestyle.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Shop,
 });
 
-function Shop() {
-  const { q } = Route.useSearch();
-  const productsRes = useQuery(productsQuery);
-  const categoriesRes = useQuery(categoriesQuery);
-  const products = useMemo(
-    () => withCategories(productsRes.data ?? [], categoriesRes.data ?? []),
-    [productsRes.data, categoriesRes.data],
+type ProductRecord = {
+  id: string;
+  title: string | null;
+  category: string | null;
+  weight_kg: number | null;
+  manufacturer: string | null;
+  specs_description: string | null;
+  created_at: string;
+};
+
+const categoryStyles: Record<string, string> = {
+  "Smart Watches": "bg-emerald-100 text-emerald-800 border-emerald-200",
+  "Earbuds & Audio": "bg-lime-100 text-lime-800 border-lime-200",
+  "Power & Charging": "bg-teal-100 text-teal-800 border-teal-200",
+  "Phone Accessories": "bg-green-100 text-green-800 border-green-200",
+  "Home & Kitchen": "bg-amber-100 text-amber-800 border-amber-200",
+  "Lifestyle & Fitness": "bg-cyan-100 text-cyan-800 border-cyan-200",
+};
+
+function useProducts() {
+  return useQuery({
+    queryKey: ["products", "spec-records"],
+    queryFn: async (): Promise<ProductRecord[]> => {
+      const { data, error } = await supabase.from("products").select("*");
+      if (error) throw error;
+      return (data ?? []) as unknown as ProductRecord[];
+    },
+  });
+}
+
+function ProductSkeletonCard() {
+  return (
+    <Card className="overflow-hidden">
+      <Skeleton className="aspect-[4/3] w-full rounded-none" />
+      <CardHeader className="space-y-2">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-2/3" />
+      </CardContent>
+      <CardFooter>
+        <Skeleton className="h-9 w-full" />
+      </CardFooter>
+    </Card>
   );
-  const categories = categoriesRes.data ?? [];
-  const isPending = productsRes.isPending || categoriesRes.isPending;
+}
 
-  const [sort, setSort] = useState("new");
-  const [search, setSearch] = useState(q ?? "");
+function ProductSkeletonGrid() {
+  return (
+    <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <ProductSkeletonCard key={i} />
+      ))}
+    </div>
+  );
+}
+
+function SpecRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5 border-b border-border/60 py-3 last:border-b-0 sm:flex-row sm:justify-between sm:gap-4">
+      <span className="text-sm font-medium text-muted-foreground">{label}</span>
+      <span className="text-sm font-medium text-foreground">{value ?? "—"}</span>
+    </div>
+  );
+}
+
+function SpecsSheet({
+  product,
+  open,
+  onOpenChange,
+}: {
+  product: ProductRecord | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  if (!product) return null;
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+        <SheetHeader className="pb-2">
+          <SheetTitle className="font-display text-xl">{product.title ?? "Product"}</SheetTitle>
+          <SheetDescription>Full technical specifications and details.</SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-6 space-y-6">
+          <div className="rounded-xl border bg-card p-4">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Quick info
+            </h4>
+            <div className="divide-y divide-border/60">
+              <SpecRow label="Manufacturer" value={product.manufacturer} />
+              <SpecRow label="Category" value={product.category} />
+              <SpecRow
+                label="Gross weight"
+                value={
+                  product.weight_kg != null ? (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Weight className="h-3.5 w-3.5 text-moss" />
+                      {product.weight_kg.toFixed(2)} kg
+                    </span>
+                  ) : (
+                    "Not specified"
+                  )
+                }
+              />
+            </div>
+          </div>
+
+          <div className="rounded-xl border bg-card p-4">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Specifications & details
+            </h4>
+            {product.specs_description ? (
+              <p className="text-sm leading-relaxed text-foreground">
+                {product.specs_description}
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">No detailed specifications available.</p>
+            )}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function Shop() {
+  const { data: products, isPending, error, refetch } = useProducts();
+  const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [selected, setSelected] = useState<ProductWithCategory | null>(null);
-
-  useEffect(() => {
-    setSearch(q ?? "");
-  }, [q]);
+  const [selected, setSelected] = useState<ProductRecord | null>(null);
 
   const term = search.trim().toLowerCase();
 
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    (products ?? []).forEach((p) => {
+      if (p.category) set.add(p.category);
+    });
+    return Array.from(set).sort();
+  }, [products]);
 
-  const list = useMemo(() => {
-    const filtered = products.filter((p) => {
-      const matchesCategory =
-        activeCategory === "all" || p.categories?.slug === activeCategory;
+  const filtered = useMemo(() => {
+    if (!products) return [];
+    return products.filter((p) => {
+      const matchesCategory = activeCategory === "all" || p.category === activeCategory;
       const matchesTerm = term
-        ? p.name.toLowerCase().includes(term) ||
-          (p.brand ?? "").toLowerCase().includes(term) ||
-          (p.short_description ?? "").toLowerCase().includes(term)
+        ? (p.title ?? "").toLowerCase().includes(term) ||
+          (p.manufacturer ?? "").toLowerCase().includes(term) ||
+          (p.category ?? "").toLowerCase().includes(term)
         : true;
       return matchesCategory && matchesTerm;
     });
+  }, [products, activeCategory, term]);
 
-    return filtered.sort((a, b) => {
-      if (sort === "low") return Number(a.price) - Number(b.price);
-      if (sort === "high") return Number(b.price) - Number(a.price);
-      if (sort === "name") return a.name.localeCompare(b.name);
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-  }, [products, categories, activeCategory, term, sort]);
+  const pills = ["all", ...categories];
 
-  const pills = [{ slug: "all", name: "All products" }, ...categories];
+  const isEmpty = !isPending && filtered.length === 0;
 
   return (
     <SiteLayout>
@@ -98,31 +220,18 @@ function Shop() {
               {term ? `Results for “${search.trim()}”` : "All products"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {isPending ? "Loading…" : `${list.length} product${list.length === 1 ? "" : "s"}`}
+              {isPending ? "Loading…" : `${filtered.length} product${filtered.length === 1 ? "" : "s"}`}
             </p>
           </div>
-          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
-            <div className="relative min-w-52 flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search products…"
-                aria-label="Search products"
-                className="bg-card pl-9"
-              />
-            </div>
-            <Select value={sort} onValueChange={setSort}>
-              <SelectTrigger className="w-44">
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new">Newest first</SelectItem>
-                <SelectItem value="low">Price: low to high</SelectItem>
-                <SelectItem value="high">Price: high to low</SelectItem>
-                <SelectItem value="name">Name A–Z</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="relative w-full sm:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products…"
+              aria-label="Search products"
+              className="bg-card pl-9"
+            />
           </div>
         </div>
 
@@ -130,37 +239,106 @@ function Shop() {
         <div className="mt-6 flex flex-wrap gap-2">
           {pills.map((c) => (
             <button
-              key={c.slug}
+              key={c}
               type="button"
-              onClick={() => setActiveCategory(c.slug)}
+              onClick={() => setActiveCategory(c)}
               className={cn(
                 "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
-                activeCategory === c.slug
+                activeCategory === c
                   ? "border-transparent bg-canopy text-canopy-foreground"
                   : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
               )}
             >
-              {c.name}
+              {c === "all" ? "All products" : c}
             </button>
           ))}
         </div>
 
         {isPending ? (
-          <ProductGridSkeleton />
-        ) : list.length === 0 ? (
-          <p className="mt-14 text-center text-sm text-muted-foreground">
-            Nothing matched your filters. Try a different keyword or category.
-          </p>
+          <ProductSkeletonGrid />
+        ) : error ? (
+          <div className="mt-14 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+            <p className="text-sm text-muted-foreground">
+              We couldn&apos;t load the catalogue right now.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() => refetch()}
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Try again
+            </Button>
+          </div>
+        ) : isEmpty ? (
+          <div className="mt-14 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+            <p className="text-sm text-muted-foreground">
+              Nothing matched your filters. Try a different keyword or category.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() => {
+                setSearch("");
+                setActiveCategory("all");
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {list.map((p) => (
-              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+          <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((p) => (
+              <Card key={p.id} className="flex flex-col overflow-hidden card-hover">
+                <div className="aspect-[4/3] w-full bg-muted flex items-center justify-center">
+                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    {p.title ?? "Product"}
+                  </span>
+                </div>
+                <CardHeader className="flex-1">
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "w-fit",
+                      categoryStyles[p.category ?? ""] ??
+                        "bg-secondary text-secondary-foreground",
+                    )}
+                  >
+                    {p.category ?? "Uncategorized"}
+                  </Badge>
+                  <CardTitle className="mt-2 line-clamp-2 text-lg">
+                    {p.title ?? "Untitled product"}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-2">
+                    {p.manufacturer ? `By ${p.manufacturer}` : "Manufacturer unavailable"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Weight className="h-4 w-4 text-moss" />
+                    <span>
+                      {p.weight_kg != null ? `${p.weight_kg.toFixed(2)} kg` : "Weight N/A"}
+                    </span>
+                  </div>
+                </CardContent>
+                <CardFooter className="mt-auto pt-0">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setSelected(p)}
+                  >
+                    View Specifications
+                  </Button>
+                </CardFooter>
+              </Card>
             ))}
           </div>
         )}
       </div>
 
-      <ProductSpecsDrawer
+      <SpecsSheet
         product={selected}
         open={selected !== null}
         onOpenChange={(open) => !open && setSelected(null)}
