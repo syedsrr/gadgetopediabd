@@ -73,6 +73,9 @@ export function ProductCard({
             </span>
           )}
         </div>
+        {!soldOut && product.stock < 5 && (
+          <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
+        )}
         <Button
           size="sm"
           className="mt-2 w-full"
@@ -84,11 +87,12 @@ export function ProductCard({
               slug: product.slug,
               price: Number(product.price),
               image_url: product.image_url,
+              max_stock: Number(product.stock ?? 0),
             })
           }
         >
           <ShoppingBag className="mr-1.5 h-4 w-4" />
-          Add to cart
+          {soldOut ? "Out of stock" : "Add to cart"}
         </Button>
         {onQuickView && (
           <Button
