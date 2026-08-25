@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -16,7 +17,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
+
 
 type ShopSearch = { q?: string | undefined };
 
