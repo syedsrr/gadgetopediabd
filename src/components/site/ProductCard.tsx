@@ -46,8 +46,10 @@ export function ProductCard({
           </span>
         )}
         {soldOut && (
-          <span className="absolute right-3 top-3 rounded-full bg-canopy px-2.5 py-1 text-[0.7rem] font-semibold text-canopy-foreground">
-            Sold out
+          <span className="absolute inset-0 flex items-center justify-center bg-canopy/60">
+            <span className="rounded-full bg-canopy px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
+              Out of stock
+            </span>
           </span>
         )}
       </Link>
