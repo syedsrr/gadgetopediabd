@@ -240,35 +240,61 @@ function Shop() {
               {isPending ? "Loading…" : `${filtered.length} product${filtered.length === 1 ? "" : "s"}`}
             </p>
           </div>
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products…"
               aria-label="Search products"
-              className="bg-card pl-9"
+              className="bg-card pr-9 pl-9"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Category filter pills */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          {pills.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setActiveCategory(c)}
-              className={cn(
-                "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
-                activeCategory === c
-                  ? "border-transparent bg-canopy text-canopy-foreground"
-                  : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
-              )}
-            >
-              {c === "all" ? "All products" : c}
-            </button>
-          ))}
+        {/* Category filter tabs */}
+        <div className="mt-6 -mx-5 overflow-x-auto px-5">
+          <div className="flex min-w-max gap-2 pb-1">
+            {pills.map((c) => {
+              const label = c === "all" ? "All" : c;
+              const count = categoryCounts[c] ?? 0;
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setActiveCategory(c)}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                    activeCategory === c
+                      ? "border-transparent bg-canopy text-canopy-foreground shadow-sm"
+                      : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
+                  )}
+                >
+                  <span>{label.toUpperCase()}</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[0.7rem] font-semibold",
+                      activeCategory === c
+                        ? "bg-canopy-foreground/20 text-canopy-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {isPending ? (
