@@ -46,8 +46,10 @@ export function ProductCard({
           </span>
         )}
         {soldOut && (
-          <span className="absolute right-3 top-3 rounded-full bg-canopy px-2.5 py-1 text-[0.7rem] font-semibold text-canopy-foreground">
-            Sold out
+          <span className="absolute inset-0 flex items-center justify-center bg-canopy/60">
+            <span className="rounded-full bg-canopy px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
+              Out of stock
+            </span>
           </span>
         )}
       </Link>
@@ -71,6 +73,9 @@ export function ProductCard({
             </span>
           )}
         </div>
+        {!soldOut && product.stock < 5 && (
+          <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
+        )}
         <Button
           size="sm"
           className="mt-2 w-full"
@@ -82,11 +87,12 @@ export function ProductCard({
               slug: product.slug,
               price: Number(product.price),
               image_url: product.image_url,
+              max_stock: Number(product.stock ?? 0),
             })
           }
         >
           <ShoppingBag className="mr-1.5 h-4 w-4" />
-          Add to cart
+          {soldOut ? "Out of stock" : "Add to cart"}
         </Button>
         {onQuickView && (
           <Button

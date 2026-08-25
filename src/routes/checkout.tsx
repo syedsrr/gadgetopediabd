@@ -1,6 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -8,12 +7,12 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/lib/cart";
-import { DELIVERY_FEE } from "@/lib/catalog";
 import { formatBDT } from "@/lib/format";
-import { placeOrder } from "@/lib/orders.functions";
+import { placeOrder, SHIPPING_FEES, type ShippingLocation } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -22,29 +21,32 @@ export const Route = createFileRoute("/checkout")({
       {
         name: "description",
         content:
-          "Place your order with cash on delivery. Enter your name, phone and address to confirm.",
+          "One-page cash-on-delivery checkout: enter your name, phone, address and delivery zone to confirm your order.",
       },
       { property: "og:title", content: "Checkout — gadgetOpedia n' Lifestyle" },
-      { property: "og:description", content: "Place your order with cash on delivery." },
+      { property: "og:description", content: "One-page cash-on-delivery checkout." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Checkout,
 });
 
 function Checkout() {
-  const { lines, subtotal, clear } = useCart();
+  const { lines, subtotal, clearCart } = useCart();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     customer_name: "",
     phone: "",
-    area: "",
     address: "",
     note: "",
   });
+  const [location, setLocation] = useState<ShippingLocation>("inside_dhaka");
   const [submitting, setSubmitting] = useState(false);
-  const [placed, setPlaced] = useState<{ code: string; total: number } | null>(null);
   const submitOrder = useServerFn(placeOrder);
 
-  const total = subtotal + DELIVERY_FEE;
+  const shipping = SHIPPING_FEES[location];
+  const total = subtotal + shipping;
 
   function set(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -63,14 +65,14 @@ function Checkout() {
         data: {
           customer_name: form.customer_name.trim(),
           phone: form.phone.trim(),
-          ...(form.area.trim() ? { area: form.area.trim() } : {}),
+          location,
           address: form.address.trim(),
           ...(form.note.trim() ? { note: form.note.trim() } : {}),
           items: lines.map((l) => ({ product_id: l.id, quantity: l.quantity })),
         },
       });
-      setPlaced({ code: result.order_code, total: result.total });
-      clear();
+      clearCart();
+      navigate({ to: "/order-success/$id", params: { id: result.id } });
     } catch (err) {
       console.error(err);
       toast.error("Could not place the order. Please try again.");
@@ -79,37 +81,11 @@ function Checkout() {
     }
   }
 
-  if (placed) {
-    return (
-      <SiteLayout>
-        <div className="mx-auto max-w-xl px-5 py-20 text-center">
-          <CheckCircle2 className="mx-auto h-14 w-14 text-moss" />
-          <h1 className="mt-5 font-display text-3xl font-bold">Order confirmed</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Thank you! We'll call you shortly to confirm delivery details.
-          </p>
-          <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-soft">
-            <p className="eyebrow text-muted-foreground">Order code</p>
-            <p className="mt-1 font-display text-2xl font-bold text-primary">{placed.code}</p>
-            <Separator className="my-4" />
-            <p className="text-sm">
-              Amount payable on delivery:{" "}
-              <span className="font-bold">{formatBDT(placed.total)}</span>
-            </p>
-          </div>
-          <Button className="mt-8" asChild>
-            <Link to="/shop">Continue shopping</Link>
-          </Button>
-        </div>
-      </SiteLayout>
-    );
-  }
-
   return (
     <SiteLayout>
       <div className="mx-auto max-w-5xl px-5 py-10">
-        <span className="eyebrow text-moss">Checkout step 2</span>
-        <h1 className="mt-1 font-display text-3xl font-bold">Delivery details</h1>
+        <span className="eyebrow text-moss">Secure checkout</span>
+        <h1 className="mt-1 font-display text-3xl font-bold">Complete your order</h1>
 
         {lines.length === 0 ? (
           <div className="mt-12 rounded-2xl border border-border bg-card p-10 text-center shadow-soft">
@@ -120,10 +96,10 @@ function Checkout() {
           </div>
         ) : (
           <form onSubmit={submit} className="mt-8 grid gap-8 lg:grid-cols-[1fr_20rem]">
-            <div className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-soft">
+            <div className="space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="name">Full name</Label>
+                  <Label htmlFor="name">Customer name</Label>
                   <Input
                     id="name"
                     required
@@ -134,7 +110,7 @@ function Checkout() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="phone">Mobile number</Label>
+                  <Label htmlFor="phone">Phone number</Label>
                   <Input
                     id="phone"
                     required
@@ -146,18 +122,9 @@ function Checkout() {
                   />
                 </div>
               </div>
+
               <div className="space-y-1.5">
-                <Label htmlFor="area">Area / city</Label>
-                <Input
-                  id="area"
-                  maxLength={80}
-                  value={form.area}
-                  onChange={(e) => set("area", e.target.value)}
-                  placeholder="e.g. Dhanmondi, Dhaka"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="address">Full delivery address</Label>
+                <Label htmlFor="address">Delivery address</Label>
                 <Textarea
                   id="address"
                   required
@@ -165,9 +132,45 @@ function Checkout() {
                   rows={3}
                   value={form.address}
                   onChange={(e) => set("address", e.target.value)}
-                  placeholder="House, road, landmark…"
+                  placeholder="House, road, area, landmark…"
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label>Delivery location</Label>
+                <RadioGroup
+                  value={location}
+                  onValueChange={(v) => setLocation(v as ShippingLocation)}
+                  className="grid gap-3 sm:grid-cols-2"
+                >
+                  {(
+                    [
+                      { value: "inside_dhaka", label: "Inside Dhaka", eta: "24–48 hours" },
+                      { value: "outside_dhaka", label: "Outside Dhaka", eta: "2–4 days" },
+                    ] as const
+                  ).map((opt) => (
+                    <label
+                      key={opt.value}
+                      htmlFor={opt.value}
+                      className={
+                        "flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors " +
+                        (location === opt.value
+                          ? "border-moss bg-secondary"
+                          : "border-border bg-card hover:border-moss")
+                      }
+                    >
+                      <RadioGroupItem id={opt.value} value={opt.value} className="mt-0.5" />
+                      <span>
+                        <span className="block text-sm font-semibold">{opt.label}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {formatBDT(SHIPPING_FEES[opt.value])} · {opt.eta}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </RadioGroup>
+              </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="note">Order note (optional)</Label>
                 <Textarea
@@ -179,14 +182,16 @@ function Checkout() {
                   placeholder="Preferred delivery time, colour, etc."
                 />
               </div>
+
               <p className="text-xs text-muted-foreground">
-                Payment method: <span className="font-semibold text-foreground">Cash on delivery</span>{" "}
-                — pay the courier when your parcel arrives.
+                Payment method:{" "}
+                <span className="font-semibold text-foreground">Cash on delivery</span> — pay the
+                courier when your parcel arrives.
               </p>
             </div>
 
             <aside className="h-fit rounded-2xl border border-border bg-card p-5 shadow-soft">
-              <h2 className="font-display text-lg font-bold">Your order</h2>
+              <h2 className="font-display text-lg font-bold">Order summary</h2>
               <ul className="mt-4 space-y-3 text-sm">
                 {lines.map((l) => (
                   <li key={l.id} className="flex justify-between gap-3">
@@ -204,17 +209,20 @@ function Checkout() {
                   <dd>{formatBDT(subtotal)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Delivery</dt>
-                  <dd>{formatBDT(DELIVERY_FEE)}</dd>
+                  <dt className="text-muted-foreground">Shipping fee</dt>
+                  <dd>{formatBDT(shipping)}</dd>
                 </div>
               </dl>
               <Separator className="my-4" />
               <div className="flex justify-between font-display text-lg font-bold">
-                <span>Total</span>
+                <span>Grand total</span>
                 <span className="text-primary">{formatBDT(total)}</span>
               </div>
               <Button type="submit" size="lg" className="mt-5 w-full" disabled={submitting}>
                 {submitting ? "Placing order…" : "Confirm order"}
+              </Button>
+              <Button variant="ghost" className="mt-2 w-full" asChild>
+                <Link to="/cart">Back to cart</Link>
               </Button>
             </aside>
           </form>

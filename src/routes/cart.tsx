@@ -5,7 +5,6 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
-import { DELIVERY_FEE } from "@/lib/catalog";
 import { formatBDT } from "@/lib/format";
 
 export const Route = createFileRoute("/cart")({
@@ -24,7 +23,7 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { lines, subtotal, setQuantity, remove, count } = useCart();
+  const { lines, subtotal, updateQuantity: setQuantity, removeFromCart: remove, count } = useCart();
 
   return (
     <SiteLayout>
@@ -114,16 +113,15 @@ function CartPage() {
                   <dt className="text-muted-foreground">Subtotal</dt>
                   <dd>{formatBDT(subtotal)}</dd>
                 </div>
-                <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Delivery</dt>
-                  <dd>{formatBDT(DELIVERY_FEE)}</dd>
-                </div>
               </dl>
               <Separator className="my-4" />
               <div className="flex justify-between font-display text-lg font-bold">
                 <span>Total</span>
-                <span className="text-primary">{formatBDT(subtotal + DELIVERY_FEE)}</span>
+                <span className="text-primary">{formatBDT(subtotal)}</span>
               </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Shipping is added at checkout: ৳60 inside Dhaka, ৳120 outside Dhaka.
+              </p>
               <Button className="mt-5 w-full" size="lg" asChild>
                 <Link to="/checkout">Proceed to checkout</Link>
               </Button>

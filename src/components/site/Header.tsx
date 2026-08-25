@@ -1,20 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MoreVertical, Search, ShoppingBag, X } from "lucide-react";
+import { MoreVertical, Search, User, X } from "lucide-react";
 import { useState } from "react";
 
+import { AuthModal } from "@/components/site/AuthModal";
+import { CartDrawer } from "@/components/site/CartDrawer";
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useCart } from "@/lib/cart";
 import { categoriesQuery } from "@/lib/catalog";
 
 export function Header() {
   const { data: categories = [] } = useQuery(categoriesQuery);
-  const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const [term, setTerm] = useState("");
   const navigate = useNavigate();
 
@@ -46,6 +47,13 @@ export function Header() {
             About
           </Link>
           <Link
+            to="/track-order"
+            className="text-foreground/75 transition-colors hover:text-moss"
+            activeProps={{ className: "text-moss" }}
+          >
+            Track order
+          </Link>
+          <Link
             to="/contact"
             className="text-foreground/75 transition-colors hover:text-moss"
             activeProps={{ className: "text-moss" }}
@@ -64,15 +72,15 @@ export function Header() {
             {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
           </Button>
 
-          <Button variant="ghost" size="icon" asChild aria-label="Open cart">
-            <Link to="/cart" className="relative">
-              <ShoppingBag className="h-5 w-5" />
-              {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-sale px-1 text-[0.65rem] font-bold text-sale-foreground">
-                  {count}
-                </span>
-              )}
-            </Link>
+          <CartDrawer />
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Sign in"
+            onClick={() => setAuthOpen(true)}
+          >
+            <User className="h-5 w-5" />
           </Button>
 
           {/* Categories live behind this three-dot menu */}
@@ -114,6 +122,7 @@ export function Header() {
                       { to: "/about" as const, label: "About us" },
                       { to: "/contact" as const, label: "Contact" },
                       { to: "/cart" as const, label: "Your cart" },
+                      { to: "/track-order" as const, label: "Track your order" },
                       { to: "/auth" as const, label: "Staff login" },
                     ].map((item) => (
                       <li key={item.to}>
@@ -148,6 +157,7 @@ export function Header() {
           </div>
         </form>
       )}
+      <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
     </header>
   );
 }
