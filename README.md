@@ -1,12 +1,4 @@
-# Gadgetopedia Lifestyle Hub
 
-https://diamu.com.bd/
-
-
-
-
-
-Make a new website which features is like that reference website, but with a different look with Greenish color palette. 
 
 Named “gadgetOpedia (main title) n’ Lifestyle (sub title)” 
 
