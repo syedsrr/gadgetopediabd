@@ -316,7 +316,8 @@ function Shop() {
           </div>
         ) : isEmpty ? (
           <div className="mt-14 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base font-medium text-foreground">No products found</p>
+            <p className="mt-1 text-sm text-muted-foreground">
               Nothing matched your filters. Try a different keyword or category.
             </p>
             <Button
@@ -328,7 +329,7 @@ function Shop() {
                 setActiveCategory("all");
               }}
             >
-              Clear filters
+              Reset Filters
             </Button>
           </div>
         ) : (
