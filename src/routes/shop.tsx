@@ -246,7 +246,7 @@ function Shop() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products…"
-              aria-label="Search products"
+              aria-label="Search catalogue"
               className="bg-card pr-9 pl-9"
             />
             {search && (
@@ -254,7 +254,7 @@ function Shop() {
                 type="button"
                 onClick={() => setSearch("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Clear search"
+                aria-label="Clear catalogue search"
               >
                 <X className="h-4 w-4" />
               </button>
