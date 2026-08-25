@@ -146,6 +146,7 @@ export type Database = {
       products: {
         Row: {
           brand: string | null
+          category: string | null
           category_id: string | null
           created_at: string
           description: string | null
@@ -153,16 +154,21 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           is_featured: boolean
+          manufacturer: string | null
           name: string
           old_price: number | null
           price: number
           short_description: string | null
           slug: string
+          specs_description: string | null
           stock: number
+          title: string | null
           updated_at: string
+          weight_kg: number | null
         }
         Insert: {
           brand?: string | null
+          category?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
@@ -170,16 +176,21 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           is_featured?: boolean
+          manufacturer?: string | null
           name: string
           old_price?: number | null
           price: number
           short_description?: string | null
           slug: string
+          specs_description?: string | null
           stock?: number
+          title?: string | null
           updated_at?: string
+          weight_kg?: number | null
         }
         Update: {
           brand?: string | null
+          category?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
@@ -187,13 +198,17 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           is_featured?: boolean
+          manufacturer?: string | null
           name?: string
           old_price?: number | null
           price?: number
           short_description?: string | null
           slug?: string
+          specs_description?: string | null
           stock?: number
+          title?: string | null
           updated_at?: string
+          weight_kg?: number | null
         }
         Relationships: [
           {
