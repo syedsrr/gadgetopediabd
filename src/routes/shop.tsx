@@ -45,9 +45,15 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { q } = Route.useSearch();
-  const products = staticProducts;
-  const categories = staticCategories;
-  const isPending = false;
+  const productsRes = useQuery(productsQuery);
+  const categoriesRes = useQuery(categoriesQuery);
+  const products = useMemo(
+    () => withCategories(productsRes.data ?? [], categoriesRes.data ?? []),
+    [productsRes.data, categoriesRes.data],
+  );
+  const categories = categoriesRes.data ?? [];
+  const isPending = productsRes.isPending || categoriesRes.isPending;
+
   const [sort, setSort] = useState("new");
   const [search, setSearch] = useState(q ?? "");
   const [activeCategory, setActiveCategory] = useState<string>("all");
