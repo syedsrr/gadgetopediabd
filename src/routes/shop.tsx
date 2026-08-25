@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { RefreshCw, Search, Weight } from "lucide-react";
+import { RefreshCw, Search, Weight, X } from "lucide-react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Badge } from "@/components/ui/badge";
@@ -208,11 +208,20 @@ function Shop() {
       const matchesTerm = term
         ? (p.title ?? "").toLowerCase().includes(term) ||
           (p.manufacturer ?? "").toLowerCase().includes(term) ||
+          (p.specs_description ?? "").toLowerCase().includes(term) ||
           (p.category ?? "").toLowerCase().includes(term)
         : true;
       return matchesCategory && matchesTerm;
     });
   }, [products, activeCategory, term]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: products?.length ?? 0 };
+    categories.forEach((c) => {
+      counts[c] = (products ?? []).filter((p) => p.category === c).length;
+    });
+    return counts;
+  }, [products, categories]);
 
   const pills = ["all", ...categories];
 
@@ -231,35 +240,61 @@ function Shop() {
               {isPending ? "Loading…" : `${filtered.length} product${filtered.length === 1 ? "" : "s"}`}
             </p>
           </div>
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products…"
-              aria-label="Search products"
-              className="bg-card pl-9"
+              aria-label="Search catalogue"
+              className="bg-card pr-9 pl-9"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Clear catalogue search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Category filter pills */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          {pills.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setActiveCategory(c)}
-              className={cn(
-                "rounded-full border px-4 py-1.5 text-sm font-medium transition-colors",
-                activeCategory === c
-                  ? "border-transparent bg-canopy text-canopy-foreground"
-                  : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
-              )}
-            >
-              {c === "all" ? "All products" : c}
-            </button>
-          ))}
+        {/* Category filter tabs */}
+        <div className="mt-6 -mx-5 overflow-x-auto px-5">
+          <div className="flex min-w-max gap-2 pb-1">
+            {pills.map((c) => {
+              const label = c === "all" ? "All" : c;
+              const count = categoryCounts[c] ?? 0;
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setActiveCategory(c)}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                    activeCategory === c
+                      ? "border-transparent bg-canopy text-canopy-foreground shadow-sm"
+                      : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
+                  )}
+                >
+                  <span>{label.toUpperCase()}</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[0.7rem] font-semibold",
+                      activeCategory === c
+                        ? "bg-canopy-foreground/20 text-canopy-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {isPending ? (
@@ -281,7 +316,8 @@ function Shop() {
           </div>
         ) : isEmpty ? (
           <div className="mt-14 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card p-10 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base font-medium text-foreground">No products found</p>
+            <p className="mt-1 text-sm text-muted-foreground">
               Nothing matched your filters. Try a different keyword or category.
             </p>
             <Button
@@ -293,7 +329,7 @@ function Shop() {
                 setActiveCategory("all");
               }}
             >
-              Clear filters
+              Reset Filters
             </Button>
           </div>
         ) : (
