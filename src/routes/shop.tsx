@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { RefreshCw, Search, Weight } from "lucide-react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -49,6 +49,9 @@ export const Route = createFileRoute("/shop")({
 
 type ProductRecord = {
   id: string;
+  slug: string;
+  name: string | null;
+  image_url: string | null;
   title: string | null;
   category: string | null;
   weight_kg: number | null;
@@ -136,6 +139,11 @@ function SpecsSheet({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
+          <Button className="w-full" asChild>
+            <Link to="/product/$slug" params={{ slug: product.slug }}>
+              Open full product page
+            </Link>
+          </Button>
           <div className="rounded-xl border bg-card p-4">
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Quick info
@@ -292,11 +300,25 @@ function Shop() {
           <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
               <Card key={p.id} className="flex flex-col overflow-hidden card-hover">
-                <div className="aspect-[4/3] w-full bg-muted flex items-center justify-center">
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    {p.title ?? "Product"}
-                  </span>
-                </div>
+                <Link
+                  to="/product/$slug"
+                  params={{ slug: p.slug }}
+                  className="block aspect-[4/3] w-full overflow-hidden bg-muted"
+                  aria-label={`View ${p.title ?? p.name ?? "product"} details`}
+                >
+                  {p.image_url ? (
+                    <img
+                      src={p.image_url}
+                      alt={p.title ?? p.name ?? "Product"}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center px-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      {p.title ?? p.name ?? "Product"}
+                    </span>
+                  )}
+                </Link>
                 <CardHeader className="flex-1">
                   <Badge
                     variant="outline"
@@ -309,7 +331,13 @@ function Shop() {
                     {p.category ?? "Uncategorized"}
                   </Badge>
                   <CardTitle className="mt-2 line-clamp-2 text-lg">
-                    {p.title ?? "Untitled product"}
+                    <Link
+                      to="/product/$slug"
+                      params={{ slug: p.slug }}
+                      className="transition-colors hover:text-moss"
+                    >
+                      {p.title ?? p.name ?? "Untitled product"}
+                    </Link>
                   </CardTitle>
                   <CardDescription className="line-clamp-2">
                     {p.manufacturer ? `By ${p.manufacturer}` : "Manufacturer unavailable"}
@@ -323,13 +351,18 @@ function Shop() {
                     </span>
                   </div>
                 </CardContent>
-                <CardFooter className="mt-auto pt-0">
+                <CardFooter className="mt-auto flex flex-col gap-2 pt-0">
+                  <Button className="w-full" asChild>
+                    <Link to="/product/$slug" params={{ slug: p.slug }}>
+                      View product page
+                    </Link>
+                  </Button>
                   <Button
                     variant="outline"
                     className="w-full"
                     onClick={() => setSelected(p)}
                   >
-                    View Specifications
+                    Quick specifications
                   </Button>
                 </CardFooter>
               </Card>

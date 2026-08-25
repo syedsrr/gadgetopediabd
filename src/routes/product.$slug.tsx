@@ -13,20 +13,73 @@ import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/
 import { discountPercent, formatBDT } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
-  head: ({ params }) => {
-    const pretty = params.slug
-      .split("-")
-      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-      .join(" ");
+  loader: async ({ params, context }) => {
+    const product = await context.queryClient.ensureQueryData(productQuery(params.slug));
+    return { product };
+  },
+  head: ({ params, loaderData }) => {
+    const product = loaderData?.product ?? null;
+    const pretty =
+      product?.name ??
+      params.slug
+        .split("-")
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(" ");
+
+    if (!product) {
+      return {
+        meta: [
+          { title: "Product unavailable — gadgetOpedia n' Lifestyle" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+
+    const title = `${pretty} — Price in Bangladesh | gadgetOpedia n' Lifestyle`.slice(0, 68);
+    const description = (
+      product.short_description ??
+      product.description ??
+      `Buy ${pretty} at gadgetOpedia n' Lifestyle with genuine warranty and cash on delivery across Bangladesh.`
+    ).slice(0, 155);
+    const image =
+      product.image_url && product.image_url.startsWith("https://") ? product.image_url : null;
+
     return {
       meta: [
-        { title: `${pretty} — gadgetOpedia n' Lifestyle` },
+        { title },
+        { name: "description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      scripts: [
         {
-          name: "description",
-          content: `Buy ${pretty} at gadgetOpedia n' Lifestyle with genuine warranty and cash on delivery across Bangladesh.`,
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: pretty,
+            description,
+            ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+            ...(image ? { image: [image] } : {}),
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "BDT",
+              price: Number(product.price),
+              availability:
+                product.stock > 0
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+            },
+          }),
         },
-        { property: "og:title", content: `${pretty} — gadgetOpedia n' Lifestyle` },
-        { property: "og:description", content: `Buy ${pretty} with warranty and cash on delivery.` },
       ],
     };
   },
@@ -41,6 +94,10 @@ function ProductPage() {
   const { add } = useCart();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
+  const productsWithCategory = useMemo(
+    () => withCategories(products, categories),
+    [products, categories],
+  );
 
   if (isPending) {
     return (
@@ -68,7 +125,6 @@ function ProductPage() {
 
   const off = discountPercent(product.price, product.old_price);
   const soldOut = product.stock <= 0;
-  const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
   const related = productsWithCategory
     .filter((p) => p.id !== product.id && p.categories?.slug === product.categories?.slug)
     .slice(0, 4);
