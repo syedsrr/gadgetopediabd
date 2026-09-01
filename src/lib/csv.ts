@@ -43,8 +43,9 @@ export function parseCsv(text: string): string[][] {
 /** Parse a CSV with a header row into keyed objects (headers lowercased/trimmed). */
 export function parseCsvObjects(text: string): Record<string, string>[] {
   const rows = parseCsv(text);
-  if (rows.length === 0) return [];
-  const headers = rows[0]!.map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
+  const headerRow = rows[0];
+  if (!headerRow) return [];
+  const headers = headerRow.map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
   return rows.slice(1).map((r) => {
     const obj: Record<string, string> = {};
     headers.forEach((h, i) => {
@@ -56,5 +57,5 @@ export function parseCsvObjects(text: string): Record<string, string>[] {
 
 export const PRODUCT_CSV_TEMPLATE = [
   "name,slug,category,brand,price,old_price,stock,image_url,short_description,description,weight_kg,is_active,is_featured",
-  'Turbo Table Fan 12",turbo-table-fan-12,Fans & Cooling,Vision,2450,2790,25,/images/p-kettle.jpg,Quiet 3-speed table fan,"Copper motor, 3 speeds, 12 inch blade",2.4,true,false',
+  '"Turbo Table Fan 12""",turbo-table-fan-12,Fans & Cooling,Vision,2450,2790,25,/images/p-kettle.jpg,Quiet 3-speed table fan,"Copper motor, 3 speeds, 12 inch blade",2.4,true,false',
 ].join("\n");

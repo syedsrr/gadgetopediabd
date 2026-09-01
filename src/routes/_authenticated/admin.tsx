@@ -293,6 +293,7 @@ function ProductsPanel() {
   const [open, setOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [csvText, setCsvText] = useState("");
   const [form, setForm] = useState<ProductForm>(emptyProduct);
 
 
