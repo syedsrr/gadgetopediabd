@@ -687,6 +687,67 @@ function ProductsPanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Import products from CSV</DialogTitle>
+            <DialogDescription>
+              Upload a CSV or paste its contents. Existing products are updated when the slug matches.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="product-csv-file">CSV file</Label>
+              <Input
+                id="product-csv-file"
+                type="file"
+                accept=".csv,text/csv"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  void file.text().then(setCsvText);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="product-csv-text">CSV contents</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCsvText(PRODUCT_CSV_TEMPLATE)}
+                >
+                  <Download className="mr-1.5 h-4 w-4" /> Use template
+                </Button>
+              </div>
+              <Textarea
+                id="product-csv-text"
+                rows={10}
+                value={csvText}
+                onChange={(e) => setCsvText(e.target.value)}
+                placeholder="name,price,stock,category\nExample product,1200,10,Fans & Cooling"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Required columns: <span className="font-medium">name</span>, <span className="font-medium">price</span>, and <span className="font-medium">stock</span>. Category can be a category name or ID.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setImportOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={!csvText.trim() || importProducts.isPending}
+              onClick={() => importProducts.mutate(csvText)}
+            >
+              {importProducts.isPending ? "Importing…" : "Import products"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
