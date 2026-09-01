@@ -299,17 +299,22 @@ function ProductsPanel() {
 
   const save = useMutation({
     mutationFn: async (f: ProductForm) => {
+      const category = categories.find((c) => c.id === f.category_id);
       const payload = {
         name: f.name.trim(),
+        title: f.name.trim(),
         slug: f.slug.trim() || slugify(f.name),
         brand: f.brand.trim() || null,
+        manufacturer: f.brand.trim() || null,
         category_id: f.category_id || null,
+        category: category?.name ?? null,
         price: Number(f.price),
         old_price: f.old_price ? Number(f.old_price) : null,
-        stock: Number(f.stock),
+        stock: Math.max(0, Math.floor(Number(f.stock))),
         image_url: f.image_url.trim() || null,
         short_description: f.short_description.trim() || null,
         description: f.description.trim() || null,
+        specs_description: f.description.trim() || null,
         is_active: f.is_active,
         is_featured: f.is_featured,
       };
@@ -348,6 +353,57 @@ function ProductsPanel() {
     },
     onSuccess: () => {
       toast.success("Stock updated");
+      qc.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const importProducts = useMutation({
+    mutationFn: async (csv: string) => {
+      const rows = parseCsvObjects(csv);
+      if (rows.length === 0) throw new Error("Add a CSV with a header row and at least one product.");
+      const imported = rows.map((row, index) => {
+        const name = row.name || row.title;
+        const price = Number(row.price);
+        const stockValue = row.stock || row.stock_quantity || "0";
+        const stock = Number(stockValue);
+        if (!name || !Number.isFinite(price) || !Number.isFinite(stock) || stock < 0) {
+          throw new Error(`Row ${index + 2} needs a name, valid price, and non-negative stock.`);
+        }
+        const categoryName = row.category || row.category_name;
+        const category = categories.find(
+          (c) => c.id === row.category_id || c.name.toLowerCase() === categoryName?.toLowerCase(),
+        );
+        const description = row.description || row.details || row.specs_description || null;
+        const brand = row.brand || row.manufacturer || null;
+        return {
+          name,
+          title: row.title || name,
+          slug: row.slug || slugify(name),
+          brand,
+          manufacturer: row.manufacturer || brand,
+          category_id: category?.id ?? null,
+          category: category?.name ?? categoryName ?? null,
+          price,
+          old_price: row.old_price ? Number(row.old_price) : null,
+          stock: Math.floor(stock),
+          image_url: row.image_url || null,
+          short_description: row.short_description || null,
+          description,
+          specs_description: row.specs_description || description,
+          weight_kg: row.weight_kg ? Number(row.weight_kg) : null,
+          is_active: row.is_active !== "false",
+          is_featured: row.is_featured === "true",
+        };
+      });
+      const { error } = await supabase.from("products").upsert(imported, { onConflict: "slug" });
+      if (error) throw error;
+      return imported.length;
+    },
+    onSuccess: (count) => {
+      toast.success(`${count} product${count === 1 ? "" : "s"} imported`);
+      setCsvText("");
+      setImportOpen(false);
       qc.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -410,14 +466,28 @@ function ProductsPanel() {
                 <TableCell colSpan={6}>Loading…</TableCell>
               </TableRow>
             ) : (
-              productsWithCategory.map((p) => (
+              visible.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {p.categories?.name ?? "—"}
+                    {p.categories?.name ?? p.category ?? "—"}
                   </TableCell>
                   <TableCell>{formatBDT(p.price)}</TableCell>
-                  <TableCell>{p.stock}</TableCell>
+                  <TableCell>
+                    <Input
+                      aria-label={`Stock quantity for ${p.name}`}
+                      type="number"
+                      min="0"
+                      defaultValue={p.stock}
+                      className="h-8 w-24"
+                      onBlur={(e) => {
+                        const stock = Math.max(0, Math.floor(Number(e.target.value)));
+                        if (Number.isFinite(stock) && stock !== p.stock) {
+                          setStock.mutate({ id: p.id, stock });
+                        }
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Badge variant={p.is_active ? "default" : "secondary"}>
                       {p.is_active ? "Active" : "Hidden"}
