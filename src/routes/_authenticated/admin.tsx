@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, LogOut, Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -37,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { categoriesQuery, productsQuery, withCategories, type Category } from "@/lib/catalog";
+import { PRODUCT_CSV_TEMPLATE, parseCsvObjects } from "@/lib/csv";
 import { formatBDT } from "@/lib/format";
 import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
@@ -289,21 +291,30 @@ function ProductsPanel() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
   const [open, setOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [csvText, setCsvText] = useState("");
   const [form, setForm] = useState<ProductForm>(emptyProduct);
+
 
   const save = useMutation({
     mutationFn: async (f: ProductForm) => {
+      const category = categories.find((c) => c.id === f.category_id);
       const payload = {
         name: f.name.trim(),
+        title: f.name.trim(),
         slug: f.slug.trim() || slugify(f.name),
         brand: f.brand.trim() || null,
+        manufacturer: f.brand.trim() || null,
         category_id: f.category_id || null,
+        category: category?.name ?? null,
         price: Number(f.price),
         old_price: f.old_price ? Number(f.old_price) : null,
-        stock: Number(f.stock),
+        stock: Math.max(0, Math.floor(Number(f.stock))),
         image_url: f.image_url.trim() || null,
         short_description: f.short_description.trim() || null,
         description: f.description.trim() || null,
+        specs_description: f.description.trim() || null,
         is_active: f.is_active,
         is_featured: f.is_featured,
       };
@@ -335,19 +346,107 @@ function ProductsPanel() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setStock = useMutation({
+    mutationFn: async ({ id, stock }: { id: string; stock: number }) => {
+      const { error } = await supabase.from("products").update({ stock }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Stock updated");
+      qc.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const importProducts = useMutation({
+    mutationFn: async (csv: string) => {
+      const rows = parseCsvObjects(csv);
+      if (rows.length === 0) throw new Error("Add a CSV with a header row and at least one product.");
+      const imported = rows.map((row, index) => {
+        const name = row["name"] || row["title"];
+        const price = Number(row["price"]);
+        const stockValue = row["stock"] || row["stock_quantity"] || "0";
+        const stock = Number(stockValue);
+        if (!name || !Number.isFinite(price) || !Number.isFinite(stock) || stock < 0) {
+          throw new Error(`Row ${index + 2} needs a name, valid price, and non-negative stock.`);
+        }
+        const categoryName = row["category"] || row["category_name"];
+        const category = categories.find(
+          (c) => c.id === row["category_id"] || c.name.toLowerCase() === categoryName?.toLowerCase(),
+        );
+        const description = row["description"] || row["details"] || row["specs_description"] || null;
+        const brand = row["brand"] || row["manufacturer"] || null;
+        return {
+          name,
+          title: row["title"] || name,
+          slug: row["slug"] || slugify(name),
+          brand,
+          manufacturer: row["manufacturer"] || brand,
+          category_id: category?.id ?? null,
+          category: category?.name ?? categoryName ?? null,
+          price,
+          old_price: row["old_price"] ? Number(row["old_price"]) : null,
+          stock: Math.floor(stock),
+          image_url: row["image_url"] || null,
+          short_description: row["short_description"] || null,
+          description,
+          specs_description: row["specs_description"] || description,
+          weight_kg: row["weight_kg"] ? Number(row["weight_kg"]) : null,
+          is_active: row["is_active"] !== "false",
+          is_featured: row["is_featured"] === "true",
+        };
+      });
+      const { error } = await supabase.from("products").upsert(imported, { onConflict: "slug" });
+      if (error) throw error;
+      return imported.length;
+    },
+    onSuccess: (count) => {
+      toast.success(`${count} product${count === 1 ? "" : "s"} imported`);
+      setCsvText("");
+      setImportOpen(false);
+      qc.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return productsWithCategory;
+    return productsWithCategory.filter((p) =>
+      [p.name, p.slug, p.brand, p.categories?.name].some((v) =>
+        (v ?? "").toLowerCase().includes(q),
+      ),
+    );
+  }, [productsWithCategory, search]);
+
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{products.length} products</p>
-        <Button
-          onClick={() => {
-            setForm(emptyProduct);
-            setOpen(true);
-          }}
-        >
-          <Plus className="mr-1.5 h-4 w-4" /> New product
-        </Button>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products…"
+          aria-label="Search products"
+          className="w-full sm:max-w-xs"
+        />
+        <p className="text-sm text-muted-foreground">
+          {visible.length} of {products.length}
+        </p>
+        <div className="ml-auto flex gap-2">
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="mr-1.5 h-4 w-4" /> Import CSV
+          </Button>
+          <Button
+            onClick={() => {
+              setForm(emptyProduct);
+              setOpen(true);
+            }}
+          >
+            <Plus className="mr-1.5 h-4 w-4" /> New product
+          </Button>
+        </div>
       </div>
+
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
         <Table>
@@ -356,7 +455,7 @@ function ProductsPanel() {
               <TableHead>Product</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
+              <TableHead>Stock quantity</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -367,14 +466,28 @@ function ProductsPanel() {
                 <TableCell colSpan={6}>Loading…</TableCell>
               </TableRow>
             ) : (
-              productsWithCategory.map((p) => (
+              visible.map((p) => (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">{p.name}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {p.categories?.name ?? "—"}
+                    {p.categories?.name ?? p.category ?? "—"}
                   </TableCell>
                   <TableCell>{formatBDT(p.price)}</TableCell>
-                  <TableCell>{p.stock}</TableCell>
+                  <TableCell>
+                    <Input
+                      aria-label={`Stock quantity for ${p.name}`}
+                      type="number"
+                      min="0"
+                      defaultValue={p.stock}
+                      className="h-8 w-24"
+                      onBlur={(e) => {
+                        const stock = Math.max(0, Math.floor(Number(e.target.value)));
+                        if (Number.isFinite(stock) && stock !== p.stock) {
+                          setStock.mutate({ id: p.id, stock });
+                        }
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Badge variant={p.is_active ? "default" : "secondary"}>
                       {p.is_active ? "Active" : "Hidden"}
@@ -513,11 +626,12 @@ function ProductsPanel() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="p-stock">Stock</Label>
+                <Label htmlFor="p-stock">Stock quantity</Label>
                 <Input
                   id="p-stock"
                   type="number"
                   min="0"
+                  step="1"
                   required
                   value={form.stock}
                   onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
@@ -570,6 +684,67 @@ function ProductsPanel() {
           <DialogFooter>
             <Button type="submit" form="product-form" disabled={save.isPending}>
               {save.isPending ? "Saving…" : "Save product"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Import products from CSV</DialogTitle>
+            <DialogDescription>
+              Upload a CSV or paste its contents. Existing products are updated when the slug matches.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="product-csv-file">CSV file</Label>
+              <Input
+                id="product-csv-file"
+                type="file"
+                accept=".csv,text/csv"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  void file.text().then(setCsvText);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <Label htmlFor="product-csv-text">CSV contents</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCsvText(PRODUCT_CSV_TEMPLATE)}
+                >
+                  <Download className="mr-1.5 h-4 w-4" /> Use template
+                </Button>
+              </div>
+              <Textarea
+                id="product-csv-text"
+                rows={10}
+                value={csvText}
+                onChange={(e) => setCsvText(e.target.value)}
+                placeholder="name,price,stock_quantity,category\nExample product,1200,10,Fans & Cooling"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Required columns: <span className="font-medium">name</span>, <span className="font-medium">price</span>, and <span className="font-medium">stock</span> or <span className="font-medium">stock_quantity</span>. Category can be a category name or ID.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setImportOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={!csvText.trim() || importProducts.isPending}
+              onClick={() => importProducts.mutate(csvText)}
+            >
+              {importProducts.isPending ? "Importing…" : "Import products"}
             </Button>
           </DialogFooter>
         </DialogContent>
