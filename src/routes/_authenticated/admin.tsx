@@ -289,7 +289,10 @@ function ProductsPanel() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const productsWithCategory = useMemo(() => withCategories(products, categories), [products, categories]);
   const [open, setOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const [form, setForm] = useState<ProductForm>(emptyProduct);
+
 
   const save = useMutation({
     mutationFn: async (f: ProductForm) => {
