@@ -455,7 +455,7 @@ function ProductsPanel() {
               <TableHead>Product</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
+              <TableHead>Stock quantity</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -626,11 +626,12 @@ function ProductsPanel() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="p-stock">Stock</Label>
+                <Label htmlFor="p-stock">Stock quantity</Label>
                 <Input
                   id="p-stock"
                   type="number"
                   min="0"
+                  step="1"
                   required
                   value={form.stock}
                   onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
@@ -727,11 +728,11 @@ function ProductsPanel() {
                 rows={10}
                 value={csvText}
                 onChange={(e) => setCsvText(e.target.value)}
-                placeholder="name,price,stock,category\nExample product,1200,10,Fans & Cooling"
+                placeholder="name,price,stock_quantity,category\nExample product,1200,10,Fans & Cooling"
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              Required columns: <span className="font-medium">name</span>, <span className="font-medium">price</span>, and <span className="font-medium">stock</span>. Category can be a category name or ID.
+              Required columns: <span className="font-medium">name</span>, <span className="font-medium">price</span>, and <span className="font-medium">stock</span> or <span className="font-medium">stock_quantity</span>. Category can be a category name or ID.
             </p>
           </div>
           <DialogFooter>
