@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -37,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { categoriesQuery, productsQuery, withCategories, type Category } from "@/lib/catalog";
+import { PRODUCT_CSV_TEMPLATE, parseCsvObjects } from "@/lib/csv";
 import { formatBDT } from "@/lib/format";
 import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
