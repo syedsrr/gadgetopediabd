@@ -363,37 +363,37 @@ function ProductsPanel() {
       const rows = parseCsvObjects(csv);
       if (rows.length === 0) throw new Error("Add a CSV with a header row and at least one product.");
       const imported = rows.map((row, index) => {
-        const name = row.name || row.title;
-        const price = Number(row.price);
-        const stockValue = row.stock || row.stock_quantity || "0";
+        const name = row["name"] || row["title"];
+        const price = Number(row["price"]);
+        const stockValue = row["stock"] || row["stock_quantity"] || "0";
         const stock = Number(stockValue);
         if (!name || !Number.isFinite(price) || !Number.isFinite(stock) || stock < 0) {
           throw new Error(`Row ${index + 2} needs a name, valid price, and non-negative stock.`);
         }
-        const categoryName = row.category || row.category_name;
+        const categoryName = row["category"] || row["category_name"];
         const category = categories.find(
-          (c) => c.id === row.category_id || c.name.toLowerCase() === categoryName?.toLowerCase(),
+          (c) => c.id === row["category_id"] || c.name.toLowerCase() === categoryName?.toLowerCase(),
         );
-        const description = row.description || row.details || row.specs_description || null;
-        const brand = row.brand || row.manufacturer || null;
+        const description = row["description"] || row["details"] || row["specs_description"] || null;
+        const brand = row["brand"] || row["manufacturer"] || null;
         return {
           name,
-          title: row.title || name,
-          slug: row.slug || slugify(name),
+          title: row["title"] || name,
+          slug: row["slug"] || slugify(name),
           brand,
-          manufacturer: row.manufacturer || brand,
+          manufacturer: row["manufacturer"] || brand,
           category_id: category?.id ?? null,
           category: category?.name ?? categoryName ?? null,
           price,
-          old_price: row.old_price ? Number(row.old_price) : null,
+          old_price: row["old_price"] ? Number(row["old_price"]) : null,
           stock: Math.floor(stock),
-          image_url: row.image_url || null,
-          short_description: row.short_description || null,
+          image_url: row["image_url"] || null,
+          short_description: row["short_description"] || null,
           description,
-          specs_description: row.specs_description || description,
-          weight_kg: row.weight_kg ? Number(row.weight_kg) : null,
-          is_active: row.is_active !== "false",
-          is_featured: row.is_featured === "true",
+          specs_description: row["specs_description"] || description,
+          weight_kg: row["weight_kg"] ? Number(row["weight_kg"]) : null,
+          is_active: row["is_active"] !== "false",
+          is_featured: row["is_featured"] === "true",
         };
       });
       const { error } = await supabase.from("products").upsert(imported, { onConflict: "slug" });
