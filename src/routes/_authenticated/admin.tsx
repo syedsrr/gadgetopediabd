@@ -335,19 +335,56 @@ function ProductsPanel() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setStock = useMutation({
+    mutationFn: async ({ id, stock }: { id: string; stock: number }) => {
+      const { error } = await supabase.from("products").update({ stock }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Stock updated");
+      qc.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return productsWithCategory;
+    return productsWithCategory.filter((p) =>
+      [p.name, p.slug, p.brand, p.categories?.name].some((v) =>
+        (v ?? "").toLowerCase().includes(q),
+      ),
+    );
+  }, [productsWithCategory, search]);
+
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{products.length} products</p>
-        <Button
-          onClick={() => {
-            setForm(emptyProduct);
-            setOpen(true);
-          }}
-        >
-          <Plus className="mr-1.5 h-4 w-4" /> New product
-        </Button>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products…"
+          aria-label="Search products"
+          className="w-full sm:max-w-xs"
+        />
+        <p className="text-sm text-muted-foreground">
+          {visible.length} of {products.length}
+        </p>
+        <div className="ml-auto flex gap-2">
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="mr-1.5 h-4 w-4" /> Import CSV
+          </Button>
+          <Button
+            onClick={() => {
+              setForm(emptyProduct);
+              setOpen(true);
+            }}
+          >
+            <Plus className="mr-1.5 h-4 w-4" /> New product
+          </Button>
+        </div>
       </div>
+
 
       <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
         <Table>
