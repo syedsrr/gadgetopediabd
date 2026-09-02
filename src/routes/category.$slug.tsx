@@ -1,8 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
 
 export const Route = createFileRoute("/category/$slug")({
   head: ({ params }) => {
@@ -30,11 +31,13 @@ export const Route = createFileRoute("/category/$slug")({
 
 function CategoryPage() {
   const { slug } = Route.useParams();
-  const categories = staticCategories;
-  const isPending = false;
+  const { data: products = [], isPending: productsPending } = useQuery(productsQuery);
+  const { data: categories = [], isPending: categoriesPending } = useQuery(categoriesQuery);
+  const liveProducts = withCategories(products, categories);
+  const isPending = productsPending || categoriesPending;
 
   const category = categories.find((c) => c.slug === slug);
-  const list = staticProducts.filter((p) => p.categories?.slug === slug);
+  const list = liveProducts.filter((p) => p.categories?.slug === slug);
 
   return (
     <SiteLayout>

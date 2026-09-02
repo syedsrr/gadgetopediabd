@@ -1,13 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BadgeCheck, Truck, ShieldCheck, ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { staticCategories, staticProducts } from "@/lib/staticCatalog";
+import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,10 +30,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const categories = staticCategories;
+  const { data: products = [], isPending: productsPending } = useQuery(productsQuery);
+  const { data: categories = [], isPending: categoriesPending } = useQuery(categoriesQuery);
+  const liveProducts = withCategories(products, categories);
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
-  const featured = staticProducts.filter((p) => p.is_featured);
-  const latest = staticProducts;
+  const featured = liveProducts.filter((p) => p.is_featured);
+  const latest = liveProducts;
+  const isPending = productsPending || categoriesPending;
 
   return (
     <SiteLayout>
@@ -105,7 +109,7 @@ function Home() {
             >
               <p className="font-display text-base font-semibold text-foreground">{c.name}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {staticProducts.filter((p) => p.categories?.slug === c.slug).length} products
+                {liveProducts.filter((p) => p.categories?.slug === c.slug).length} products
               </p>
               <span className="mt-3 inline-flex items-center text-xs font-medium text-moss">
                 Explore <ArrowRight className="ml-1 h-3 w-3" />
