@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/lib/catalog";
-import { discountPercent, formatBDT } from "@/lib/format";
+import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ params, context }) => {
@@ -35,8 +35,11 @@ export const Route = createFileRoute("/product/$slug")({
       };
     }
 
-    const title = `${pretty} — Price in Bangladesh | gadgetOpedia n' Lifestyle`.slice(0, 68);
+    const title = (
+      product.seo_title ?? `${pretty} — Price in Bangladesh | gadgetOpedia n' Lifestyle`
+    ).slice(0, 68);
     const description = (
+      product.seo_description ??
       product.short_description ??
       product.description ??
       `Buy ${pretty} at gadgetOpedia n' Lifestyle with genuine warranty and cash on delivery across Bangladesh.`
@@ -72,7 +75,8 @@ export const Route = createFileRoute("/product/$slug")({
             offers: {
               "@type": "Offer",
               priceCurrency: "BDT",
-              price: Number(product.price),
+              price: priceInfo(product).selling,
+              ...(product.sku ? { sku: product.sku } : {}),
               availability:
                 product.stock > 0
                   ? "https://schema.org/InStock"
@@ -94,6 +98,7 @@ function ProductPage() {
   const { add } = useCart();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
+  const [imageIndex, setImageIndex] = useState(0);
   const productsWithCategory = useMemo(
     () => withCategories(products, categories),
     [products, categories],
@@ -123,8 +128,15 @@ function ProductPage() {
     );
   }
 
-  const off = discountPercent(product.price, product.old_price);
-  const soldOut = product.stock <= 0;
+  const { selling, compareAt, off } = priceInfo(product);
+  const soldOut = !isPurchasable(product);
+  const gallery = product.product_images?.length
+    ? product.product_images
+    : product.image_url
+      ? [{ id: "primary", url: product.image_url, alt: product.image_alt ?? product.name }]
+      : [];
+  const activeImage = gallery[Math.min(imageIndex, gallery.length - 1)] ?? null;
+  const specs = product.product_specifications ?? [];
   const related = productsWithCategory
     .filter((p) => p.id !== product.id && p.categories?.slug === product.categories?.slug)
     .slice(0, 4);
@@ -133,7 +145,7 @@ function ProductPage() {
     id: product.id,
     name: product.name,
     slug: product.slug,
-    price: Number(product.price),
+    price: selling,
     image_url: product.image_url,
     max_stock: Number(product.stock ?? 0),
   };
@@ -162,18 +174,43 @@ function ProductPage() {
         </nav>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
-          <div className="overflow-hidden rounded-3xl border border-border bg-secondary shadow-soft">
-            {product.image_url ? (
-              <img
-                src={product.image_url}
-                alt={product.name}
-                width={1024}
-                height={1024}
-                className="aspect-square w-full object-cover"
-              />
-            ) : (
-              <div className="flex aspect-square items-center justify-center text-muted-foreground">
-                No image
+          <div>
+            <div className="overflow-hidden rounded-3xl border border-border bg-secondary shadow-soft">
+              {activeImage ? (
+                <img
+                  src={activeImage.url}
+                  alt={activeImage.alt ?? product.name}
+                  width={1024}
+                  height={1024}
+                  className="aspect-square w-full object-cover"
+                />
+              ) : (
+                <div className="flex aspect-square items-center justify-center text-muted-foreground">
+                  No image
+                </div>
+              )}
+            </div>
+            {gallery.length > 1 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto">
+                {gallery.map((img, i) => (
+                  <button
+                    key={img.id}
+                    type="button"
+                    aria-label={`Show image ${i + 1}`}
+                    onClick={() => setImageIndex(i)}
+                    className={
+                      i === imageIndex
+                        ? "h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 border-primary"
+                        : "h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border opacity-80"
+                    }
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt ?? product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -187,11 +224,11 @@ function ProductPage() {
 
             <div className="mt-5 flex flex-wrap items-baseline gap-3">
               <span className="font-display text-3xl font-bold text-primary">
-                {formatBDT(product.price)}
+                {formatBDT(selling)}
               </span>
-              {product.old_price && Number(product.old_price) > Number(product.price) && (
+              {compareAt !== null && (
                 <span className="text-lg text-muted-foreground line-through">
-                  {formatBDT(product.old_price)}
+                  {formatBDT(compareAt)}
                 </span>
               )}
               {off !== null && (
@@ -269,6 +306,20 @@ function ProductPage() {
             </ul>
           </div>
         </div>
+
+        {specs.length > 0 && (
+          <section className="mt-14 max-w-3xl">
+            <h2 className="font-display text-xl font-bold">Specifications</h2>
+            <dl className="mt-4 divide-y divide-border rounded-2xl border border-border">
+              {specs.map((sp) => (
+                <div key={sp.id} className="flex justify-between gap-6 px-4 py-3 text-sm">
+                  <dt className="text-muted-foreground">{sp.name}</dt>
+                  <dd className="text-right font-medium">{sp.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
 
         {product.description && (
           <section className="mt-14 max-w-3xl">

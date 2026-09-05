@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { ImageOff, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -10,9 +11,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { discountPercent, formatBDT } from "@/lib/format";
+import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -23,9 +25,25 @@ type Props = {
 
 export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const { add } = useCart();
-  const off = product ? discountPercent(product.price, product.old_price) : null;
-  const soldOut = (product?.stock ?? 0) <= 0;
+  const info = product ? priceInfo(product) : null;
+  const off = info?.off ?? null;
+  const selling = info?.selling ?? 0;
+  const soldOut = product ? !isPurchasable(product) : true;
   const maxQty = Math.max(1, product?.stock ?? 1);
+
+  const { data: specs = [] } = useQuery({
+    queryKey: ["product-specs", product?.id],
+    enabled: Boolean(product?.id) && open,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_specifications")
+        .select("id, name, value, sort_order")
+        .eq("product_id", product!.id)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
   const variations = product
     ? [product.brand ? `${product.brand} — Standard` : "Standard"]
@@ -54,7 +72,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               {product.image_url ? (
                 <img
                   src={product.image_url}
-                  alt={product.name}
+                  alt={product.image_alt ?? product.name}
                   loading="lazy"
                   className="h-full w-full object-cover"
                 />
@@ -68,12 +86,12 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
 
             <div className="mt-5 flex items-baseline gap-2">
               <span className="font-display text-2xl font-bold text-primary">
-                {formatBDT(product.price)}
+                {formatBDT(selling)}
               </span>
-              {off !== null && (
+              {off !== null && info?.compareAt != null && (
                 <>
                   <span className="text-sm text-muted-foreground line-through">
-                    {formatBDT(product.old_price)}
+                    {formatBDT(info.compareAt)}
                   </span>
                   <span className="rounded-full bg-sale px-2 py-0.5 text-[0.7rem] font-bold text-sale-foreground">
                     -{off}%
@@ -88,6 +106,8 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               {[
                 { label: "Category", value: product.categories?.name },
                 { label: "Brand", value: product.brand },
+                { label: "SKU", value: product.sku },
+                ...specs.map((sp) => ({ label: sp.name, value: sp.value })),
                 { label: "Availability", value: soldOut ? "Sold out" : `${product.stock} in stock` },
               ]
                 .filter((r) => r.value)
@@ -165,7 +185,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                     id: product.id,
                     name: product.name,
                     slug: product.slug,
-                    price: Number(product.price),
+                    price: selling,
                     image_url: product.image_url,
                     max_stock: Number(product.stock ?? 0),
                   },
@@ -175,7 +195,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />
-              {soldOut ? "Sold out" : `Add ${qty} to cart · ${formatBDT(Number(product.price) * qty)}`}
+              {soldOut ? "Sold out" : `Add ${qty} to cart · ${formatBDT(selling * qty)}`}
             </Button>
           </>
         )}

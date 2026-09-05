@@ -4,7 +4,7 @@ import { ImageOff, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { discountPercent, formatBDT } from "@/lib/format";
+import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
 
 export function ProductCard({
   product,
@@ -14,8 +14,9 @@ export function ProductCard({
   onQuickView?: (product: ProductWithCategory) => void;
 }) {
   const { add } = useCart();
-  const off = discountPercent(product.price, product.old_price);
-  const soldOut = product.stock <= 0;
+  const { selling, compareAt, off } = priceInfo(product);
+  const soldOut = !isPurchasable(product);
+  const lowThreshold = Number(product.low_stock_threshold ?? 5);
 
   return (
     <article className="card-hover group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
@@ -27,7 +28,7 @@ export function ProductCard({
         {product.image_url ? (
           <img
             src={product.image_url}
-            alt={product.name}
+            alt={product.image_alt ?? product.name}
             loading="lazy"
             width={1024}
             height={1024}
@@ -66,14 +67,16 @@ export function ProductCard({
           {product.name}
         </Link>
         <div className="mt-auto flex items-baseline gap-2 pt-1">
-          <span className="font-display text-lg font-bold text-primary">{formatBDT(product.price)}</span>
-          {product.old_price && Number(product.old_price) > Number(product.price) && (
+          <span className="font-display text-lg font-bold text-primary">
+            {formatBDT(selling)}
+          </span>
+          {compareAt !== null && (
             <span className="text-sm text-muted-foreground line-through">
-              {formatBDT(product.old_price)}
+              {formatBDT(compareAt)}
             </span>
           )}
         </div>
-        {!soldOut && product.stock < 5 && (
+        {!soldOut && product.stock > 0 && product.stock <= lowThreshold && (
           <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
         )}
         <Button
@@ -85,7 +88,7 @@ export function ProductCard({
               id: product.id,
               name: product.name,
               slug: product.slug,
-              price: Number(product.price),
+              price: selling,
               image_url: product.image_url,
               max_stock: Number(product.stock ?? 0),
             })
