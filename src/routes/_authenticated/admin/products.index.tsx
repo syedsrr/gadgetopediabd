@@ -57,14 +57,15 @@ import { formatBDT, priceInfo } from "@/lib/format";
 type Search = { stock?: "all" | "in" | "low" | "out" };
 
 export const Route = createFileRoute("/_authenticated/admin/products/")({
-  validateSearch: (search: Record<string, unknown>): Search => ({
-    stock:
-      search.stock === "in" || search.stock === "low" || search.stock === "out"
-        ? search.stock
-        : "all",
-  }),
+  validateSearch: (search: Record<string, unknown>): Search => {
+    const value = search["stock"];
+    return {
+      stock: value === "in" || value === "low" || value === "out" ? value : "all",
+    };
+  },
   component: ProductsAdmin,
 });
+
 
 function ProductsAdmin() {
   const { stock } = Route.useSearch();
