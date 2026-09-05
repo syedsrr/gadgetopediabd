@@ -17,8 +17,15 @@ import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Store admin — gadgetOpedia n' Lifestyle" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AdminLayout,
 });
+
 
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
