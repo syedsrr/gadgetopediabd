@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { priceInfo } from "@/lib/format";
+
 const phoneRegex = /^[0-9+\-\s]{11,15}$/;
 
 const placeOrderSchema = z.object({
@@ -40,19 +42,26 @@ export const placeOrder = createServerFn({ method: "POST" })
     const ids = [...new Set(data.items.map((i) => i.product_id))];
     const { data: products, error: productError } = await supabaseAdmin
       .from("products")
-      .select("id, name, price, stock, is_active")
+      .select(
+        "id, name, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, is_active, status",
+      )
       .in("id", ids);
     if (productError) throw new Error("Could not verify products");
 
     const lines = data.items.map((item) => {
       const product = products?.find((p) => p.id === item.product_id);
-      if (!product || !product.is_active) throw new Error("A product is no longer available");
-      if (product.stock < item.quantity) throw new Error(`Not enough stock for ${product.name}`);
+      if (!product || !product.is_active || product.status !== "published") {
+        throw new Error("A product is no longer available");
+      }
+      if (product.stock < item.quantity && !product.allow_backorder) {
+        throw new Error(`Not enough stock for ${product.name}`);
+      }
       return {
         product_id: product.id,
         product_name: product.name,
         quantity: item.quantity,
-        unit_price: Number(product.price),
+        // Price is resolved server-side so a tampered cart cannot change it.
+        unit_price: priceInfo(product).selling,
         remaining: product.stock - item.quantity,
       };
     });

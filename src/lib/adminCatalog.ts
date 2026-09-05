@@ -33,7 +33,7 @@ export const DEFAULT_FILTERS: ProductFilters = {
 };
 
 const LIST_COLUMNS =
-  "id, name, slug, sku, brand, price, sale_price, stock, low_stock_threshold, status, is_featured, is_active, image_url, category_id, updated_at, categories(id, name, slug)";
+  "id, name, slug, sku, brand, price, sale_price, stock, low_stock_threshold, status, is_featured, is_active, image_url, category_id, updated_at, categories!products_category_id_fkey(id, name, slug)";
 
 /** Server-side filtered + paginated product list for the admin table. */
 export function adminProductsQuery(filters: ProductFilters) {

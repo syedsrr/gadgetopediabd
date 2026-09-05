@@ -69,7 +69,7 @@ export function productQuery(slug: string) {
       const { data, error } = await supabase
         .from("products")
         .select(
-          "*, categories(id, name, slug), product_images(id, url, alt, sort_order, is_primary), product_specifications(id, name, value, sort_order)",
+          "*, categories!products_category_id_fkey(id, name, slug), product_images(id, url, alt, sort_order, is_primary), product_specifications(id, name, value, sort_order)",
         )
         .eq("slug", slug)
         .eq("is_active", true)
