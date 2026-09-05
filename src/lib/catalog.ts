@@ -20,7 +20,7 @@ export type ProductFull = ProductWithCategory & {
 
 /** Columns the storefront grid needs — keeps payloads small. */
 const CARD_COLUMNS =
-  "id, name, slug, sku, brand, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, low_stock_threshold, image_url, image_alt, short_description, category_id, category, is_featured, is_new_arrival, is_best_seller, sort_priority, status, is_active, created_at";
+  "id, name, slug, sku, brand, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, low_stock_threshold, image_url, image_alt, short_description, description, category_id, category, is_featured, is_new_arrival, is_best_seller, sort_priority, status, is_active, created_at";
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],
