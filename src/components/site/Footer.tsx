@@ -66,10 +66,12 @@ export function Footer() {
           <h3 className="eyebrow mb-4 text-accent">Get in touch</h3>
           <ul className="space-y-3 text-sm text-canopy-foreground/75">
             <li className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-accent" /> +880 1700 000000
+              <Phone className="h-4 w-4 text-accent" />
+              <span>+880 1700 000000</span>
             </li>
             <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-accent" /> hello@gadgetopedia.shop
+              <Mail className="h-4 w-4 text-accent" />
+              <span>hello@gadgetopedia.shop</span>
             </li>
             <li className="flex items-center gap-3 pt-1">
               <Facebook className="h-4 w-4 text-accent" />
