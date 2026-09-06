@@ -47,6 +47,8 @@ export const Route = createFileRoute("/product/$slug")({
     const image =
       product.image_url && product.image_url.startsWith("https://") ? product.image_url : null;
 
+    const url = `https://www.gadgetopedia.shop/product/${encodeURIComponent(params.slug)}`;
+
     return {
       meta: [
         { title },
@@ -54,6 +56,7 @@ export const Route = createFileRoute("/product/$slug")({
         { property: "og:type", content: "product" },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:url", content: url },
         { name: "twitter:card", content: "summary_large_image" },
         ...(image
           ? [
@@ -62,6 +65,7 @@ export const Route = createFileRoute("/product/$slug")({
             ]
           : []),
       ],
+      links: [{ rel: "canonical", href: url }],
       scripts: [
         {
           type: "application/ld+json",
@@ -70,18 +74,42 @@ export const Route = createFileRoute("/product/$slug")({
             "@type": "Product",
             name: pretty,
             description,
+            url,
             ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
             ...(image ? { image: [image] } : {}),
             offers: {
               "@type": "Offer",
               priceCurrency: "BDT",
               price: priceInfo(product).selling,
+              url,
               ...(product.sku ? { sku: product.sku } : {}),
               availability:
                 product.stock > 0
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
             },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://www.gadgetopedia.shop/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Shop",
+                item: "https://www.gadgetopedia.shop/shop",
+              },
+              { "@type": "ListItem", position: 3, name: pretty, item: url },
+            ],
           }),
         },
       ],

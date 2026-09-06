@@ -19,12 +19,19 @@ export const Route = createFileRoute("/")({
         content:
           "Shop smart watches, earbuds, power banks and lifestyle gear at gadgetOpedia n' Lifestyle. Genuine products, cash on delivery across Bangladesh.",
       },
-      { property: "og:title", content: "gadgetOpedia n' Lifestyle" },
+      {
+        property: "og:title",
+        content: "gadgetOpedia n' Lifestyle — Gadgets & Lifestyle Store in BD",
+      },
       {
         property: "og:description",
         content: "Curated gadgets and lifestyle upgrades, delivered across Bangladesh.",
       },
+      { property: "og:url", content: "https://www.gadgetopedia.shop/" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://www.gadgetopedia.shop/" }],
   }),
   component: Home,
 });
