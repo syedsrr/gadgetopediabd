@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { SocialAuthButtons } from "@/components/site/SocialAuthButtons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
