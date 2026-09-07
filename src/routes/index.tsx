@@ -51,7 +51,7 @@ function Home() {
   const liveProducts = withCategories(products, categories);
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
   const featured = liveProducts.filter((p) => p.is_featured);
-  const latest = liveProducts;
+  const latest = liveProducts.slice(0, 12);
   const isPending = productsPending || categoriesPending;
 
   return (
