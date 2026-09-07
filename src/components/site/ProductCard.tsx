@@ -1,10 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ImageOff, ShoppingBag } from "lucide-react";
+import { Heart, ImageOff, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
 import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { useWishlist } from "@/lib/wishlist";
 
 export function ProductCard({
   product,
