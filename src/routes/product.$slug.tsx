@@ -120,7 +120,9 @@ export const Route = createFileRoute("/product/$slug")({
 
 function ProductPage() {
   const { slug } = Route.useParams();
-  const { data: product, isPending } = useQuery(productQuery(slug));
+  const { product: loadedProduct } = Route.useLoaderData();
+  const { data: fetched, isPending } = useQuery(productQuery(slug));
+  const product = fetched ?? loadedProduct;
   const { data: products = [] } = useQuery(productsQuery);
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { add } = useCart();
@@ -132,13 +134,14 @@ function ProductPage() {
     [products, categories],
   );
 
-  if (isPending) {
+  if (isPending && !product) {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-6xl px-5 py-20 text-sm text-muted-foreground">Loading…</div>
       </SiteLayout>
     );
   }
+
 
   if (!product) {
     return (

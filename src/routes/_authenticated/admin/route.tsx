@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import {
   FolderTree,
   LayoutDashboard,
@@ -9,14 +9,32 @@ import {
   Store,
   Upload,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   ssr: false,
+  beforeLoad: async () => {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) throw redirect({ to: "/auth" });
+
+    const { data: roleRow } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (!roleRow) {
+      toast.error("You don't have access to the admin area.");
+      throw redirect({ to: "/account" });
+    }
+
+    return { adminUser: userData.user };
+  },
   head: () => ({
     meta: [
       { title: "Store admin — gadgetOpedia n' Lifestyle" },
@@ -36,8 +54,6 @@ const NAV = [
 ] as const;
 
 function AdminLayout() {
-  const { session, loading } = useSession();
-  const { data: isAdmin, isPending: checking } = useIsAdmin(session?.user?.id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -48,33 +64,7 @@ function AdminLayout() {
     navigate({ to: "/auth", replace: true });
   }
 
-  if (loading || checking) {
-    return (
-      <div className="grid min-h-screen place-items-center text-sm text-muted-foreground">
-        Checking your access…
-      </div>
-    );
-  }
 
-  if (!isAdmin) {
-    return (
-      <div className="grid min-h-screen place-items-center px-6 text-center">
-        <div>
-          <h1 className="font-display text-2xl font-bold">Admin access only</h1>
-          <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-            This account ({session?.user?.email}) is not an administrator. Ask an existing admin to
-            grant you access.
-          </p>
-          <div className="mt-6 flex justify-center gap-3">
-            <Button asChild variant="secondary">
-              <Link to="/">Back to store</Link>
-            </Button>
-            <Button onClick={signOut}>Sign out</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-secondary/40">
