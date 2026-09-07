@@ -31,7 +31,16 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://www.gadgetopedia.shop/" }],
+    links: [
+      { rel: "canonical", href: "https://www.gadgetopedia.shop/" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/images/hero.webp",
+        type: "image/webp",
+        fetchpriority: "high",
+      },
+    ],
   }),
   component: Home,
 });
