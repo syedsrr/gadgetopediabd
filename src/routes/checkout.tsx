@@ -49,8 +49,34 @@ function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const submitOrder = useServerFn(placeOrder);
 
+  // Signed-in buyers get their saved default address filled in automatically.
+  const { session } = useSession();
+  const loadAddresses = useServerFn(getMyAddresses);
+  const saved = useQuery({
+    queryKey: ["my-addresses"],
+    enabled: Boolean(session),
+    queryFn: () => loadAddresses({}),
+  });
+  const prefilled = useRef(false);
+
+  useEffect(() => {
+    if (prefilled.current) return;
+    const list = saved.data ?? [];
+    const pick = list.find((a) => a.is_default) ?? list[0];
+    if (!pick) return;
+    prefilled.current = true;
+    setForm((f) => ({
+      ...f,
+      customer_name: f.customer_name || pick.recipient_name,
+      phone: f.phone || pick.phone,
+      address: f.address || pick.address,
+    }));
+    if (pick.area?.toLowerCase().includes("outside")) setLocation("outside_dhaka");
+  }, [saved.data]);
+
   const shipping = SHIPPING_FEES[location];
   const total = subtotal + shipping;
+
 
   function set(key: keyof typeof form, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
