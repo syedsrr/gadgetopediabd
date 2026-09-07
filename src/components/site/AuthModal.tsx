@@ -26,6 +26,7 @@ export function AuthModal({ open, onOpenChange }: Props) {
   const [otpSent, setOtpSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
 
   function normalizedPhone() {
@@ -77,25 +78,29 @@ export function AuthModal({ open, onOpenChange }: Props) {
     }
   }
 
-  async function emailSignUp() {
+  async function emailSignUp(e: React.FormEvent) {
+    e.preventDefault();
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/account`,
+        data: { full_name: fullName, phone: phone.trim() || null },
+      },
     });
     setBusy(false);
     if (error) toast.error(error.message);
-    else toast.success("Account created. Check your inbox if confirmation is required.");
+    else toast.success("Account created. Check your inbox to confirm your email.");
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Sign in</DialogTitle>
+          <DialogTitle className="font-display text-xl">Sign in or create an account</DialogTitle>
           <DialogDescription>
-            Use your mobile number for a one-time SMS code, or sign in with email.
+            Use your mobile number for a one-time SMS code, or continue with email.
           </DialogDescription>
         </DialogHeader>
 
@@ -109,9 +114,10 @@ export function AuthModal({ open, onOpenChange }: Props) {
         </div>
 
         <Tabs defaultValue="phone" className="mt-2">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="phone">Phone / OTP</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="phone">Phone</TabsTrigger>
             <TabsTrigger value="email">Email</TabsTrigger>
+            <TabsTrigger value="signup">Create account</TabsTrigger>
           </TabsList>
 
           <TabsContent value="phone" className="mt-4">
@@ -194,15 +200,62 @@ export function AuthModal({ open, onOpenChange }: Props) {
               <Button type="submit" className="w-full" disabled={busy}>
                 {busy ? "Signing in…" : "Sign in"}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                disabled={busy || !email || password.length < 6}
-                onClick={emailSignUp}
-              >
-                Create an account
+            </form>
+          </TabsContent>
+
+          <TabsContent value="signup" className="mt-4">
+            <form onSubmit={emailSignUp} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-fullname">Full name</Label>
+                <Input
+                  id="auth-fullname"
+                  required
+                  maxLength={80}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Your name"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-email">Email</Label>
+                <Input
+                  id="auth-signup-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-phone">Mobile number (optional)</Label>
+                <Input
+                  id="auth-signup-phone"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="01XXXXXXXXX"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-password">Password</Label>
+                <Input
+                  id="auth-signup-password"
+                  type="password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {busy ? "Creating…" : "Create my account"}
               </Button>
+              <p className="text-xs text-muted-foreground">
+                You&apos;ll get order history, a wish list and saved addresses. We never store card
+                details — payment is on delivery.
+              </p>
             </form>
           </TabsContent>
         </Tabs>

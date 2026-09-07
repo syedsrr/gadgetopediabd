@@ -1,10 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { ImageOff, ShoppingBag } from "lucide-react";
+import { Heart, ImageOff, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
 import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { cn } from "@/lib/utils";
+import { useWishlist } from "@/lib/wishlist";
 
 export function ProductCard({
   product,
@@ -14,6 +17,8 @@ export function ProductCard({
   onQuickView?: (product: ProductWithCategory) => void;
 }) {
   const { add } = useCart();
+  const { ids, toggle, isSignedIn } = useWishlist();
+  const saved = ids.has(product.id);
   const { selling, compareAt, off } = priceInfo(product);
   const soldOut = !isPurchasable(product);
   const lowThreshold = Number(product.low_stock_threshold ?? 5);
@@ -56,6 +61,22 @@ export function ProductCard({
           </span>
         )}
       </Link>
+
+      <button
+        type="button"
+        aria-label={saved ? "Remove from wish list" : "Save to wish list"}
+        aria-pressed={saved}
+        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 text-muted-foreground shadow-soft transition hover:text-sale"
+        onClick={() => {
+          if (!isSignedIn) {
+            toast.info("Sign in to save products to your wish list");
+            return;
+          }
+          toggle.mutate(product.id);
+        }}
+      >
+        <Heart className={cn("h-4 w-4", saved && "fill-sale text-sale")} />
+      </button>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         {product.categories?.name && (
