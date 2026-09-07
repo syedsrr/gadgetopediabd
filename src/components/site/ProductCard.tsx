@@ -62,6 +62,22 @@ export function ProductCard({
         )}
       </Link>
 
+      <button
+        type="button"
+        aria-label={saved ? "Remove from wish list" : "Save to wish list"}
+        aria-pressed={saved}
+        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 text-muted-foreground shadow-soft transition hover:text-sale"
+        onClick={() => {
+          if (!isSignedIn) {
+            toast.info("Sign in to save products to your wish list");
+            return;
+          }
+          toggle.mutate(product.id);
+        }}
+      >
+        <Heart className={cn("h-4 w-4", saved && "fill-sale text-sale")} />
+      </button>
+
       <div className="flex flex-1 flex-col gap-2 p-4">
         {product.categories?.name && (
           <span className="eyebrow text-muted-foreground">{product.categories.name}</span>
