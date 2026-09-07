@@ -64,6 +64,45 @@ export type Database = {
           },
         ]
       }
+      customer_addresses: {
+        Row: {
+          address: string
+          area: string | null
+          created_at: string
+          id: string
+          is_default: boolean
+          label: string | null
+          phone: string
+          recipient_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          area?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          phone: string
+          recipient_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          area?: string | null
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          phone?: string
+          recipient_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -124,6 +163,7 @@ export type Database = {
           subtotal: number
           total: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address: string
@@ -139,6 +179,7 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address?: string
@@ -154,6 +195,7 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
