@@ -114,9 +114,10 @@ export function AuthModal({ open, onOpenChange }: Props) {
         </div>
 
         <Tabs defaultValue="phone" className="mt-2">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="phone">Phone / OTP</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="phone">Phone</TabsTrigger>
             <TabsTrigger value="email">Email</TabsTrigger>
+            <TabsTrigger value="signup">Create account</TabsTrigger>
           </TabsList>
 
           <TabsContent value="phone" className="mt-4">
