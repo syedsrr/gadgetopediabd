@@ -39,6 +39,21 @@ export const placeOrder = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    // Optional buyer identity: derived from the request bearer token only, never from input.
+    let buyerId: string | null = null;
+    try {
+      const { getRequest } = await import("@tanstack/react-start/server");
+      const header = getRequest()?.headers.get("authorization") ?? "";
+      const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+      if (token.split(".").length === 3) {
+        const { data: userData } = await supabaseAdmin.auth.getUser(token);
+        buyerId = userData?.user?.id ?? null;
+      }
+    } catch {
+      buyerId = null;
+    }
+
+
     const ids = [...new Set(data.items.map((i) => i.product_id))];
     const { data: products, error: productError } = await supabaseAdmin
       .from("products")
@@ -75,6 +90,8 @@ export const placeOrder = createServerFn({ method: "POST" })
       .insert({
         customer_name: data.customer_name,
         phone: data.phone,
+        user_id: buyerId,
+
         area: LOCATION_LABEL[data.location],
         address: data.address,
         note: data.note ?? null,
