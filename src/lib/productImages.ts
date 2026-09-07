@@ -18,24 +18,45 @@ export function validateImageFile(file: File): string | null {
   return null;
 }
 
-/** Downscales large uploads in the browser so stored files stay light. */
-async function optimize(file: File, maxSide = 1600): Promise<Blob> {
+/** Longest side kept for product photos — plenty for the zoomed detail view. */
+const MAX_SIDE = 1400;
+/** Target weight per photo; quality is only lowered until this is met. */
+const TARGET_BYTES = 170_000;
+
+function encode(canvas: HTMLCanvasElement, type: string, quality: number) {
+  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality));
+}
+
+/**
+ * Resizes and re-encodes uploads to WebP in the browser so storefront photos
+ * stay light. Quality steps down gradually and stops as soon as the image is
+ * small enough, so visible quality is preserved.
+ */
+async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
   if (typeof document === "undefined") return file;
   try {
     const bitmap = await createImageBitmap(file);
     const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
-    if (scale === 1 && file.size < 500_000) return file;
 
     const canvas = document.createElement("canvas");
-    canvas.width = Math.round(bitmap.width * scale);
-    canvas.height = Math.round(bitmap.height * scale);
-    const ctx = canvas.getContext("2d");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const ctx = canvas.getContext("2d", { alpha: file.type === "image/png" });
     if (!ctx) return file;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/webp", 0.85),
-    );
-    return blob && blob.size < file.size ? blob : file;
+    bitmap.close?.();
+
+    let best: Blob | null = null;
+    for (const quality of [0.88, 0.82, 0.76, 0.7]) {
+      const blob = await encode(canvas, "image/webp", quality);
+      if (!blob) break;
+      best = blob;
+      if (blob.size <= TARGET_BYTES) break;
+    }
+
+    return best && best.size < file.size ? best : file;
   } catch {
     return file;
   }
