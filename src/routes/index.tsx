@@ -58,11 +58,18 @@ function Home() {
     <SiteLayout>
       {/* Hero */}
       <section className="relative overflow-hidden bg-canopy text-canopy-foreground">
-        <img
-          src="/images/hero.jpg"
-          alt="Gadgets and lifestyle accessories arranged on a green backdrop"
-          className="absolute inset-0 h-full w-full object-cover opacity-35"
-        />
+        <picture>
+          <source srcSet="/images/hero.webp" type="image/webp" />
+          <img
+            src="/images/hero.jpg"
+            alt="Gadgets and lifestyle accessories arranged on a green backdrop"
+            width={1600}
+            height={907}
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover opacity-35"
+          />
+        </picture>
         <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-20 lg:py-28">
           <div className="max-w-2xl">
             <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
