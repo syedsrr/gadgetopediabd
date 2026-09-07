@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -10,9 +11,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { getMyAddresses } from "@/lib/account.functions";
 import { useCart } from "@/lib/cart";
 import { formatBDT } from "@/lib/format";
 import { placeOrder, SHIPPING_FEES, type ShippingLocation } from "@/lib/orders.functions";
+import { useSession } from "@/lib/useAdmin";
+
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
