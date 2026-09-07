@@ -26,6 +26,7 @@ export function AuthModal({ open, onOpenChange }: Props) {
   const [otpSent, setOtpSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
 
   function normalizedPhone() {
