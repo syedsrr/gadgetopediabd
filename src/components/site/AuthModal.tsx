@@ -77,16 +77,20 @@ export function AuthModal({ open, onOpenChange }: Props) {
     }
   }
 
-  async function emailSignUp() {
+  async function emailSignUp(e: React.FormEvent) {
+    e.preventDefault();
     setBusy(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/account`,
+        data: { full_name: fullName, phone: phone.trim() || null },
+      },
     });
     setBusy(false);
     if (error) toast.error(error.message);
-    else toast.success("Account created. Check your inbox if confirmation is required.");
+    else toast.success("Account created. Check your inbox to confirm your email.");
   }
 
   return (
