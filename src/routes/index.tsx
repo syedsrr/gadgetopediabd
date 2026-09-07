@@ -165,11 +165,18 @@ function Home() {
       {/* Latest */}
       <section className="mx-auto max-w-6xl px-5 py-14">
         <span className="eyebrow text-moss">Fresh in</span>
-        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">All products</h2>
+        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p) => (
             <ProductCard key={p.id} product={p} onQuickView={setSelected} />
           ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Button size="lg" asChild>
+            <Link to="/shop">
+              Browse all products <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </section>
       <ProductSpecsDrawer
