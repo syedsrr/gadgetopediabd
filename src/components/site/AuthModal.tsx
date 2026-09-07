@@ -98,6 +98,15 @@ export function AuthModal({ open, onOpenChange }: Props) {
           </DialogDescription>
         </DialogHeader>
 
+        <div className="mt-2 space-y-2">
+          <SocialAuthButtons onSuccess={() => onOpenChange(false)} />
+          <div className="flex items-center gap-3 py-1">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
+
         <Tabs defaultValue="phone" className="mt-2">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="phone">Phone / OTP</TabsTrigger>
