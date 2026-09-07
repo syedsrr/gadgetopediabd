@@ -200,15 +200,62 @@ export function AuthModal({ open, onOpenChange }: Props) {
               <Button type="submit" className="w-full" disabled={busy}>
                 {busy ? "Signing in…" : "Sign in"}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                disabled={busy || !email || password.length < 6}
-                onClick={emailSignUp}
-              >
-                Create an account
+            </form>
+          </TabsContent>
+
+          <TabsContent value="signup" className="mt-4">
+            <form onSubmit={emailSignUp} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-fullname">Full name</Label>
+                <Input
+                  id="auth-fullname"
+                  required
+                  maxLength={80}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Your name"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-email">Email</Label>
+                <Input
+                  id="auth-signup-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-phone">Mobile number (optional)</Label>
+                <Input
+                  id="auth-signup-phone"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="01XXXXXXXXX"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="auth-signup-password">Password</Label>
+                <Input
+                  id="auth-signup-password"
+                  type="password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {busy ? "Creating…" : "Create my account"}
               </Button>
+              <p className="text-xs text-muted-foreground">
+                You&apos;ll get order history, a wish list and saved addresses. We never store card
+                details — payment is on delivery.
+              </p>
             </form>
           </TabsContent>
         </Tabs>
