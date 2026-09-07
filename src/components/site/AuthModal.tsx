@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { SocialAuthButtons } from "@/components/site/SocialAuthButtons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -97,6 +98,15 @@ export function AuthModal({ open, onOpenChange }: Props) {
             Use your mobile number for a one-time SMS code, or sign in with email.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="mt-2 space-y-2">
+          <SocialAuthButtons onSuccess={() => onOpenChange(false)} />
+          <div className="flex items-center gap-3 py-1">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
 
         <Tabs defaultValue="phone" className="mt-2">
           <TabsList className="grid w-full grid-cols-2">
