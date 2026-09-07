@@ -9,6 +9,7 @@ import {
   Store,
   Upload,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
       .eq("role", "admin")
       .maybeSingle();
 
-    if (!roleRow) throw redirect({ to: "/account", search: { denied: "admin" } });
+    if (!roleRow) {
+      toast.error("You don't have access to the admin area.");
+      throw redirect({ to: "/account" });
+    }
 
     return { adminUser: userData.user };
   },
