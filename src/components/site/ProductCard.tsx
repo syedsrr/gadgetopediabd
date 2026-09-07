@@ -17,6 +17,8 @@ export function ProductCard({
   onQuickView?: (product: ProductWithCategory) => void;
 }) {
   const { add } = useCart();
+  const { ids, toggle, isSignedIn } = useWishlist();
+  const saved = ids.has(product.id);
   const { selling, compareAt, off } = priceInfo(product);
   const soldOut = !isPurchasable(product);
   const lowThreshold = Number(product.low_stock_threshold ?? 5);
