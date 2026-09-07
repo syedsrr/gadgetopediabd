@@ -10,14 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { categoriesQuery } from "@/lib/catalog";
+import { useSession } from "@/lib/useAdmin";
 
 export function Header() {
   const { data: categories = [] } = useQuery(categoriesQuery);
+  const { session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [term, setTerm] = useState("");
   const navigate = useNavigate();
+
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -74,14 +77,23 @@ export function Header() {
 
           <CartDrawer />
 
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Sign in"
-            onClick={() => setAuthOpen(true)}
-          >
-            <User className="h-5 w-5" />
-          </Button>
+          {session ? (
+            <Button variant="ghost" size="icon" aria-label="My account" asChild>
+              <Link to="/account">
+                <User className="h-5 w-5" />
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Sign in"
+              onClick={() => setAuthOpen(true)}
+            >
+              <User className="h-5 w-5" />
+            </Button>
+          )}
+
 
           {/* Categories live behind this three-dot menu */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
