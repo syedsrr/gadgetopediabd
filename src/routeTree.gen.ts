@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TrackOrderRouteImport } from './routes/track-order'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as OrderSuccessIdRouteImport } from './routes/order-success.$id'
@@ -79,6 +80,11 @@ const TrackOrderRoute = TrackOrderRouteImport.update({
   id: '/track-order',
   path: '/track-order',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/track-order': typeof TrackOrderRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/track-order': typeof TrackOrderRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/track-order': typeof TrackOrderRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/track-order'
     | '/admin'
+    | '/account'
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap.xml'
     | '/track-order'
+    | '/account'
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/track-order'
     | '/_authenticated/admin'
+    | '/_authenticated/account'
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
@@ -365,6 +377,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/track-order'
       preLoaderRoute: typeof TrackOrderRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -474,10 +493,12 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

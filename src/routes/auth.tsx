@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/lib/useAdmin";
+import { useIsAdmin, useSession } from "@/lib/useAdmin";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -30,14 +30,16 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { session, loading } = useSession();
+  const { data: isAdmin, isLoading: roleLoading } = useIsAdmin(session?.user.id);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/admin" });
-  }, [session, loading, navigate]);
+    if (loading || !session || roleLoading) return;
+    navigate({ to: isAdmin ? "/admin" : "/account" });
+  }, [session, loading, isAdmin, roleLoading, navigate]);
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -45,8 +47,8 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
     if (error) toast.error(error.message);
-    else navigate({ to: "/admin" });
   }
+
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
