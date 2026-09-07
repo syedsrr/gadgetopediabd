@@ -98,9 +98,9 @@ export function AuthModal({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Sign in</DialogTitle>
+          <DialogTitle className="font-display text-xl">Sign in or create an account</DialogTitle>
           <DialogDescription>
-            Use your mobile number for a one-time SMS code, or sign in with email.
+            Use your mobile number for a one-time SMS code, or continue with email.
           </DialogDescription>
         </DialogHeader>
 
