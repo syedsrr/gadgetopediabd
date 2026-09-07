@@ -31,7 +31,16 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://www.gadgetopedia.shop/" }],
+    links: [
+      { rel: "canonical", href: "https://www.gadgetopedia.shop/" },
+      {
+        rel: "preload",
+        as: "image",
+        href: "/images/hero.webp",
+        type: "image/webp",
+        fetchpriority: "high",
+      },
+    ],
   }),
   component: Home,
 });
@@ -42,18 +51,25 @@ function Home() {
   const liveProducts = withCategories(products, categories);
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
   const featured = liveProducts.filter((p) => p.is_featured);
-  const latest = liveProducts;
+  const latest = liveProducts.slice(0, 12);
   const isPending = productsPending || categoriesPending;
 
   return (
     <SiteLayout>
       {/* Hero */}
       <section className="relative overflow-hidden bg-canopy text-canopy-foreground">
-        <img
-          src="/images/hero.jpg"
-          alt="Gadgets and lifestyle accessories arranged on a green backdrop"
-          className="absolute inset-0 h-full w-full object-cover opacity-35"
-        />
+        <picture>
+          <source srcSet="/images/hero.webp" type="image/webp" />
+          <img
+            src="/images/hero.jpg"
+            alt="Gadgets and lifestyle accessories arranged on a green backdrop"
+            width={1600}
+            height={907}
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover opacity-35"
+          />
+        </picture>
         <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-20 lg:py-28">
           <div className="max-w-2xl">
             <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
@@ -149,11 +165,18 @@ function Home() {
       {/* Latest */}
       <section className="mx-auto max-w-6xl px-5 py-14">
         <span className="eyebrow text-moss">Fresh in</span>
-        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">All products</h2>
+        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p) => (
             <ProductCard key={p.id} product={p} onQuickView={setSelected} />
           ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Button size="lg" asChild>
+            <Link to="/shop">
+              Browse all products <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </section>
       <ProductSpecsDrawer

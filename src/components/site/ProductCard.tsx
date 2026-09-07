@@ -30,6 +30,8 @@ export function ProductCard({
             src={product.image_url}
             alt={product.image_alt ?? product.name}
             loading="lazy"
+            decoding="async"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
             width={1024}
             height={1024}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
