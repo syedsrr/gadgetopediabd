@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Facebook, Instagram, Mail, Phone } from "lucide-react";
+import { Instagram, Mail, Phone } from "lucide-react";
 
 import { Logo } from "@/components/site/Logo";
 import { categoriesQuery } from "@/lib/catalog";
@@ -67,15 +67,29 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-canopy-foreground/75">
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-accent" />
-              <span>+880 1700 000000</span>
+              <a href="tel:+8801771923776" className="transition-colors hover:text-accent">
+                +880 1771 923776
+              </a>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-accent" />
-              <span>hello@gadgetopedia.shop</span>
+              <a
+                href="mailto:gadgetopedia.bd@gmail.com"
+                className="break-all transition-colors hover:text-accent"
+              >
+                gadgetopedia.bd@gmail.com
+              </a>
             </li>
             <li className="flex items-center gap-3 pt-1">
-              <Facebook className="h-4 w-4 text-accent" />
-              <Instagram className="h-4 w-4 text-accent" />
+              <a
+                href="https://instagram.com/gadgetopedia_lifestyle"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="transition-colors hover:text-accent"
+              >
+                <Instagram className="h-4 w-4 text-accent" />
+              </a>
             </li>
           </ul>
         </div>
