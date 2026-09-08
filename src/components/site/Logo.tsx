@@ -1,15 +1,22 @@
 import { Link } from "@tanstack/react-router";
 
-export function Logo({ tone = "light" }: { tone?: "light" | "dark" }) {
-  const main = tone === "dark" ? "text-canopy-foreground" : "text-primary";
-  const sub = tone === "dark" ? "text-accent" : "text-moss";
+import logoAsset from "@/assets/gadgetopedia-logo.webp.asset.json";
 
+export function Logo({ tone = "light" }: { tone?: "light" | "dark" }) {
   return (
-    <Link to="/" className="group flex flex-col leading-none" aria-label="gadgetOpedia n' Lifestyle home">
-      <span className={`font-display text-[1.35rem] font-extrabold tracking-tight ${main}`}>
-        gadget<span className={sub}>Opedia</span>
-      </span>
-      <span className={`eyebrow mt-1 ${sub}`}>n&rsquo; Lifestyle</span>
+    <Link
+      to="/"
+      className="block shrink-0"
+      aria-label="gadgetOpedia n' Lifestyle home"
+    >
+      <img
+        src={logoAsset.url}
+        alt="gadgetOpedia n' Lifestyle"
+        width={1025}
+        height={400}
+        className={tone === "dark" ? "h-14 w-auto sm:h-16" : "h-10 w-auto sm:h-12"}
+        decoding="async"
+      />
     </Link>
   );
 }
