@@ -44,14 +44,14 @@ function Contact() {
               <Phone className="mt-0.5 h-5 w-5 shrink-0 text-moss" />
               <div>
                 <p className="font-semibold">Phone / WhatsApp</p>
-                <p className="text-muted-foreground">+880 1700 000000</p>
+                <p className="text-muted-foreground">+880 1771 923776</p>
               </div>
             </li>
             <li className="flex gap-3">
               <Mail className="mt-0.5 h-5 w-5 shrink-0 text-moss" />
               <div>
                 <p className="font-semibold">Email</p>
-                <p className="text-muted-foreground">hello@gadgetopedia.shop</p>
+                <p className="break-all text-muted-foreground">gadgetopedia.bd@gmail.com</p>
               </div>
             </li>
             <li className="flex gap-3">
