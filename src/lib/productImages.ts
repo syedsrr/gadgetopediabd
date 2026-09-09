@@ -20,47 +20,67 @@ export function validateImageFile(file: File): string | null {
 
 /** Longest side kept for product photos — plenty for the zoomed detail view. */
 const MAX_SIDE = 1400;
-/** Target weight per photo; quality is only lowered until this is met. */
-const TARGET_BYTES = 170_000;
+/** Target weight per photo: aim for ~100 KB, never push quality below MIN_QUALITY. */
+const TARGET_BYTES = 100_000;
+/** Anything at or under this is already ideal — stop immediately. */
+const IDEAL_BYTES = 80_000;
+/** Quality floor: below this, visible artefacts start showing on product photos. */
+const MIN_QUALITY = 0.6;
 
 function encode(canvas: HTMLCanvasElement, type: string, quality: number) {
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
+function draw(bitmap: ImageBitmap, maxSide: number, alpha: boolean) {
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const ctx = canvas.getContext("2d", { alpha });
+  if (!ctx) return null;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+
 /**
  * Resizes and re-encodes uploads to WebP in the browser so storefront photos
- * stay light. Quality steps down gradually and stops as soon as the image is
- * small enough, so visible quality is preserved.
+ * land in the 80-100 KB range. Quality steps down gradually first, then the
+ * pixel size is reduced, and it stops as soon as the target is met — so the
+ * smallest acceptable change is applied and visible quality is preserved.
  */
 async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
   if (typeof document === "undefined") return file;
   try {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
-
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    const ctx = canvas.getContext("2d", { alpha: file.type === "image/png" });
-    if (!ctx) return file;
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    bitmap.close?.();
-
+    const alpha = file.type === "image/png";
     let best: Blob | null = null;
-    for (const quality of [0.88, 0.82, 0.76, 0.7]) {
-      const blob = await encode(canvas, "image/webp", quality);
-      if (!blob) break;
-      best = blob;
-      if (blob.size <= TARGET_BYTES) break;
+
+    // Pass 1: full size, easing quality down. Pass 2+: gently smaller pixels
+    // for busy photos that are still heavy at the quality floor.
+    for (const side of [maxSide, 1200, 1000]) {
+      const canvas = draw(bitmap, side, alpha);
+      if (!canvas) break;
+
+      for (const quality of [0.86, 0.8, 0.74, 0.68, MIN_QUALITY]) {
+        const blob = await encode(canvas, "image/webp", quality);
+        if (!blob) break;
+        if (!best || blob.size < best.size) best = blob;
+        if (blob.size <= TARGET_BYTES) break;
+      }
+
+      if (best && best.size <= TARGET_BYTES) break;
     }
 
+    bitmap.close?.();
+    void IDEAL_BYTES;
     return best && best.size < file.size ? best : file;
   } catch {
     return file;
   }
 }
+
 
 export async function uploadProductImage(file: File): Promise<UploadedImage> {
   const invalid = validateImageFile(file);
