@@ -67,6 +67,8 @@ async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
         const blob = await encode(canvas, "image/webp", quality);
         if (!blob) break;
         if (!best || blob.size < best.size) best = blob;
+        // Already in the sweet spot: don't degrade it further.
+        if (blob.size <= IDEAL_BYTES) break;
         if (blob.size <= TARGET_BYTES) break;
       }
 
@@ -74,8 +76,8 @@ async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
     }
 
     bitmap.close?.();
-    void IDEAL_BYTES;
     return best && best.size < file.size ? best : file;
+
   } catch {
     return file;
   }
