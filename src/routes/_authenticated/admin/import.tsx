@@ -106,6 +106,9 @@ function ImportAdmin() {
             : "published") as "draft" | "published" | "archived",
           is_active: values["is_active"] ? values["is_active"] !== "false" : true,
           is_featured: values["is_featured"] === "true",
+          is_preorder: values["is_preorder"] === "true",
+          preorder_release_date: values["preorder_release_date"] || null,
+          preorder_note: values["preorder_note"] || null,
         };
       });
 

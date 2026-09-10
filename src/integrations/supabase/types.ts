@@ -294,10 +294,13 @@ export type Database = {
           is_best_seller: boolean
           is_featured: boolean
           is_new_arrival: boolean
+          is_preorder: boolean
           low_stock_threshold: number
           manufacturer: string | null
           name: string
           old_price: number | null
+          preorder_note: string | null
+          preorder_release_date: string | null
           price: number
           sale_ends_at: string | null
           sale_price: number | null
@@ -331,10 +334,13 @@ export type Database = {
           is_best_seller?: boolean
           is_featured?: boolean
           is_new_arrival?: boolean
+          is_preorder?: boolean
           low_stock_threshold?: number
           manufacturer?: string | null
           name: string
           old_price?: number | null
+          preorder_note?: string | null
+          preorder_release_date?: string | null
           price: number
           sale_ends_at?: string | null
           sale_price?: number | null
@@ -368,10 +374,13 @@ export type Database = {
           is_best_seller?: boolean
           is_featured?: boolean
           is_new_arrival?: boolean
+          is_preorder?: boolean
           low_stock_threshold?: number
           manufacturer?: string | null
           name?: string
           old_price?: number | null
+          preorder_note?: string | null
+          preorder_release_date?: string | null
           price?: number
           sale_ends_at?: string | null
           sale_price?: number | null

@@ -50,6 +50,9 @@ type Draft = {
   stock: string;
   low_stock_threshold: string;
   allow_backorder: boolean;
+  is_preorder: boolean;
+  preorder_release_date: string;
+  preorder_note: string;
   weight_kg: string;
   status: ProductStatus;
   is_featured: boolean;
@@ -77,6 +80,9 @@ function emptyDraft(): Draft {
     stock: "0",
     low_stock_threshold: "5",
     allow_backorder: false,
+    is_preorder: false,
+    preorder_release_date: "",
+    preorder_note: "",
     weight_kg: "",
     status: "draft",
     is_featured: false,
@@ -112,6 +118,9 @@ export type ProductFormInitial = {
   stock: number;
   low_stock_threshold: number;
   allow_backorder: boolean;
+  is_preorder: boolean;
+  preorder_release_date: string | null;
+  preorder_note: string | null;
   weight_kg: number | null;
   status: ProductStatus;
   is_featured: boolean;
@@ -153,6 +162,9 @@ export function ProductForm({
       stock: String(initial.stock ?? 0),
       low_stock_threshold: String(initial.low_stock_threshold ?? 5),
       allow_backorder: Boolean(initial.allow_backorder),
+      is_preorder: Boolean(initial.is_preorder),
+      preorder_release_date: initial.preorder_release_date ?? "",
+      preorder_note: initial.preorder_note ?? "",
       weight_kg: initial.weight_kg == null ? "" : String(initial.weight_kg),
       status: initial.status,
       is_featured: initial.is_featured,
@@ -222,6 +234,9 @@ export function ProductForm({
         stock: Number(draft.stock),
         low_stock_threshold: Number(draft.low_stock_threshold || 5),
         allow_backorder: draft.allow_backorder,
+        is_preorder: draft.is_preorder,
+        preorder_release_date: draft.preorder_release_date || null,
+        preorder_note: draft.preorder_note.trim() || null,
         weight_kg: draft.weight_kg.trim() ? Number(draft.weight_kg) : null,
         status,
         is_active: status !== "archived",
@@ -427,6 +442,36 @@ export function ProductForm({
                 onCheckedChange={(v) => set("allow_backorder", v)}
               />
             </div>
+            <div className="flex items-center justify-between rounded-xl border border-border px-4 py-3 sm:col-span-2">
+              <div>
+                <p className="text-sm font-medium">Sell as pre-order</p>
+                <p className="text-xs text-muted-foreground">
+                  Shows a Pre-order badge and lists the product on the Pre-order page
+                </p>
+              </div>
+              <Switch
+                checked={draft.is_preorder}
+                onCheckedChange={(v) => set("is_preorder", v)}
+              />
+            </div>
+            {draft.is_preorder ? (
+              <>
+                <Field label="Expected arrival date">
+                  <Input
+                    type="date"
+                    value={draft.preorder_release_date}
+                    onChange={(e) => set("preorder_release_date", e.target.value)}
+                  />
+                </Field>
+                <Field label="Pre-order note">
+                  <Input
+                    value={draft.preorder_note}
+                    onChange={(e) => set("preorder_note", e.target.value)}
+                    placeholder="e.g. Ships within 7 days of arrival"
+                  />
+                </Field>
+              </>
+            ) : null}
             {draft.sale_price && Number(draft.sale_price) < Number(draft.price) ? (
               <p className="text-xs text-moss sm:col-span-2">
                 Customers will pay {formatBDT(draft.sale_price)} instead of{" "}

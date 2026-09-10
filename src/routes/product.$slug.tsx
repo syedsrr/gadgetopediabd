@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/lib/catalog";
-import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { formatBDT, formatReleaseDate, isPreorder, isPurchasable, priceInfo } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ params, context }) => {
@@ -83,8 +83,12 @@ export const Route = createFileRoute("/product/$slug")({
               price: priceInfo(product).selling,
               url,
               ...(product.sku ? { sku: product.sku } : {}),
-              availability:
-                product.stock > 0
+              ...(isPreorder(product) && product.preorder_release_date
+                ? { availabilityStarts: product.preorder_release_date }
+                : {}),
+              availability: isPreorder(product)
+                ? "https://schema.org/PreOrder"
+                : product.stock > 0
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
             },
@@ -160,7 +164,9 @@ function ProductPage() {
   }
 
   const { selling, compareAt, off } = priceInfo(product);
-  const soldOut = !isPurchasable(product);
+  const preorder = isPreorder(product);
+  const soldOut = !isPurchasable(product) && !preorder;
+  const arrival = formatReleaseDate(product.preorder_release_date);
   const gallery = product.product_images?.length
     ? product.product_images
     : product.image_url
@@ -178,7 +184,7 @@ function ProductPage() {
     slug: product.slug,
     price: selling,
     image_url: product.image_url,
-    max_stock: Number(product.stock ?? 0),
+    max_stock: preorder ? 99 : Number(product.stock ?? 0),
   };
 
   return (
@@ -270,12 +276,21 @@ function ProductPage() {
             </div>
 
             <p className="mt-3 text-sm">
-              {soldOut ? (
+              {preorder ? (
+                <span className="font-semibold text-moss">
+                  Pre-order · {arrival ? `expected ${arrival}` : "ships when stock arrives"}
+                </span>
+              ) : soldOut ? (
                 <span className="font-semibold text-sale">Out of stock</span>
               ) : (
                 <span className="font-medium text-moss">In stock · {product.stock} available</span>
               )}
             </p>
+            {preorder && product.preorder_note && (
+              <p className="mt-2 rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                {product.preorder_note}
+              </p>
+            )}
 
             <Separator className="my-6" />
 
@@ -294,7 +309,9 @@ function ProductPage() {
                   variant="ghost"
                   size="icon"
                   aria-label="Increase quantity"
-                  onClick={() => setQty((q) => Math.min(product.stock || 99, q + 1))}
+                  onClick={() =>
+                    setQty((q) => Math.min(preorder ? 99 : product.stock || 99, q + 1))
+                  }
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -308,7 +325,8 @@ function ProductPage() {
                   toast.success("Added to cart");
                 }}
               >
-                <ShoppingBag className="mr-1.5 h-4 w-4" /> Add to cart
+                <ShoppingBag className="mr-1.5 h-4 w-4" />{" "}
+                {preorder ? "Pre-order now" : "Add to cart"}
               </Button>
 
               <Button
@@ -320,7 +338,7 @@ function ProductPage() {
                   navigate({ to: "/checkout" });
                 }}
               >
-                Order now
+                {preorder ? "Reserve & checkout" : "Order now"}
               </Button>
             </div>
 
