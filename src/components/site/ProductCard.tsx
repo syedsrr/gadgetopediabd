@@ -106,8 +106,15 @@ export function ProductCard({
             </span>
           )}
         </div>
-        {!soldOut && product.stock > 0 && product.stock <= lowThreshold && (
-          <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
+        {preorder ? (
+          <p className="text-xs font-semibold text-moss">
+            {arrival ? `Ships from ${arrival}` : "Ships when stock arrives"}
+          </p>
+        ) : (
+          product.stock > 0 &&
+          product.stock <= lowThreshold && (
+            <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
+          )
         )}
         <Button
           size="sm"
@@ -120,12 +127,12 @@ export function ProductCard({
               slug: product.slug,
               price: selling,
               image_url: product.image_url,
-              max_stock: Number(product.stock ?? 0),
+              max_stock: preorder ? 99 : Number(product.stock ?? 0),
             })
           }
         >
           <ShoppingBag className="mr-1.5 h-4 w-4" />
-          {soldOut ? "Out of stock" : "Add to cart"}
+          {soldOut ? "Out of stock" : preorder ? "Pre-order now" : "Add to cart"}
         </Button>
         {onQuickView && (
           <Button
