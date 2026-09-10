@@ -325,7 +325,8 @@ function ProductPage() {
                   toast.success("Added to cart");
                 }}
               >
-                <ShoppingBag className="mr-1.5 h-4 w-4" /> Add to cart
+                <ShoppingBag className="mr-1.5 h-4 w-4" />{" "}
+                {preorder ? "Pre-order now" : "Add to cart"}
               </Button>
 
               <Button
@@ -337,7 +338,7 @@ function ProductPage() {
                   navigate({ to: "/checkout" });
                 }}
               >
-                Order now
+                {preorder ? "Reserve & checkout" : "Order now"}
               </Button>
             </div>
 
