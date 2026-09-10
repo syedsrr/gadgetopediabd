@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
 import { categoriesQuery, productQuery, productsQuery, withCategories } from "@/lib/catalog";
-import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { formatBDT, formatReleaseDate, isPreorder, isPurchasable, priceInfo } from "@/lib/format";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ params, context }) => {
