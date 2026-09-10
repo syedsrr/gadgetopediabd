@@ -309,7 +309,9 @@ function ProductPage() {
                   variant="ghost"
                   size="icon"
                   aria-label="Increase quantity"
-                  onClick={() => setQty((q) => Math.min(product.stock || 99, q + 1))}
+                  onClick={() =>
+                    setQty((q) => Math.min(preorder ? 99 : product.stock || 99, q + 1))
+                  }
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
