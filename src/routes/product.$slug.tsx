@@ -83,8 +83,12 @@ export const Route = createFileRoute("/product/$slug")({
               price: priceInfo(product).selling,
               url,
               ...(product.sku ? { sku: product.sku } : {}),
-              availability:
-                product.stock > 0
+              ...(isPreorder(product) && product.preorder_release_date
+                ? { availabilityStarts: product.preorder_release_date }
+                : {}),
+              availability: isPreorder(product)
+                ? "https://schema.org/PreOrder"
+                : product.stock > 0
                   ? "https://schema.org/InStock"
                   : "https://schema.org/OutOfStock",
             },
