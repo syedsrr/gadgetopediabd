@@ -20,8 +20,10 @@ export function ProductCard({
   const { ids, toggle, isSignedIn } = useWishlist();
   const saved = ids.has(product.id);
   const { selling, compareAt, off } = priceInfo(product);
-  const soldOut = !isPurchasable(product);
+  const preorder = isPreorder(product);
+  const soldOut = !isPurchasable(product) && !preorder;
   const lowThreshold = Number(product.low_stock_threshold ?? 5);
+  const arrival = formatReleaseDate(product.preorder_release_date);
 
   return (
     <article className="card-hover group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
