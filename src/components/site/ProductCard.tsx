@@ -55,6 +55,11 @@ export function ProductCard({
             -{off}%
           </span>
         )}
+        {preorder && (
+          <span className="absolute left-3 bottom-3 rounded-full bg-canopy px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wide text-canopy-foreground">
+            Pre-order
+          </span>
+        )}
         {soldOut && (
           <span className="absolute inset-0 flex items-center justify-center bg-canopy/60">
             <span className="rounded-full bg-canopy px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
