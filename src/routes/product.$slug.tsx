@@ -276,12 +276,21 @@ function ProductPage() {
             </div>
 
             <p className="mt-3 text-sm">
-              {soldOut ? (
+              {preorder ? (
+                <span className="font-semibold text-moss">
+                  Pre-order · {arrival ? `expected ${arrival}` : "ships when stock arrives"}
+                </span>
+              ) : soldOut ? (
                 <span className="font-semibold text-sale">Out of stock</span>
               ) : (
                 <span className="font-medium text-moss">In stock · {product.stock} available</span>
               )}
             </p>
+            {preorder && product.preorder_note && (
+              <p className="mt-2 rounded-xl border border-border bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                {product.preorder_note}
+              </p>
+            )}
 
             <Separator className="my-6" />
 
