@@ -149,6 +149,9 @@ export type ProductInput = {
   stock: number;
   low_stock_threshold: number;
   allow_backorder: boolean;
+  is_preorder: boolean;
+  preorder_release_date: string | null;
+  preorder_note: string | null;
   weight_kg: number | null;
   status: ProductStatus;
   is_active: boolean;
@@ -199,6 +202,9 @@ export async function saveProduct(input: ProductInput) {
     stock: input.stock,
     low_stock_threshold: input.low_stock_threshold,
     allow_backorder: input.allow_backorder,
+    is_preorder: input.is_preorder,
+    preorder_release_date: input.preorder_release_date,
+    preorder_note: input.preorder_note,
     weight_kg: input.weight_kg,
     status: input.status,
     is_active: input.is_active,
