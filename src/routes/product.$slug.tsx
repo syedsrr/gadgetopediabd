@@ -164,7 +164,9 @@ function ProductPage() {
   }
 
   const { selling, compareAt, off } = priceInfo(product);
-  const soldOut = !isPurchasable(product);
+  const preorder = isPreorder(product);
+  const soldOut = !isPurchasable(product) && !preorder;
+  const arrival = formatReleaseDate(product.preorder_release_date);
   const gallery = product.product_images?.length
     ? product.product_images
     : product.image_url
