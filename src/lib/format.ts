@@ -57,6 +57,22 @@ export function isPurchasable(product: StockedProduct): boolean {
   return Number(product.stock ?? 0) > 0 || Boolean(product.allow_backorder);
 }
 
+type PreorderProduct = StockedProduct & { is_preorder?: boolean | null };
+
+/** Manual pre-order flag, or a zero-stock item you allow to be ordered anyway. */
+export function isPreorder(product: PreorderProduct): boolean {
+  if (product.is_preorder) return true;
+  return Number(product.stock ?? 0) <= 0 && Boolean(product.allow_backorder);
+}
+
+/** "20 Sep 2026" — friendly arrival date, or null when there is none. */
+export function formatReleaseDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const d = new Date(value.length <= 10 ? `${value}T00:00:00` : value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
 export function slugify(value: string): string {
   return value
     .toLowerCase()
