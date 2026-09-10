@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { formatBDT, formatReleaseDate, isPreorder, isPurchasable, priceInfo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useWishlist } from "@/lib/wishlist";
 
