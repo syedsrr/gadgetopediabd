@@ -184,7 +184,7 @@ function ProductPage() {
     slug: product.slug,
     price: selling,
     image_url: product.image_url,
-    max_stock: Number(product.stock ?? 0),
+    max_stock: preorder ? 99 : Number(product.stock ?? 0),
   };
 
   return (
