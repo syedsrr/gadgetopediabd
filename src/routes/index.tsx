@@ -8,6 +8,7 @@ import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
+import { isPreorder } from "@/lib/format";
 import type { ProductWithCategory } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
@@ -52,6 +53,7 @@ function Home() {
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
   const featured = liveProducts.filter((p) => p.is_featured);
   const latest = liveProducts.slice(0, 12);
+  const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
   const isPending = productsPending || categoriesPending;
 
   return (
@@ -156,6 +158,29 @@ function Home() {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {featured.map((p) => (
+              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Pre-order */}
+      {preorders.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 pt-14">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <span className="eyebrow text-moss">Coming soon</span>
+              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Pre-order now</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Reserve the next drop and we ship it the moment it lands.
+              </p>
+            </div>
+            <Button variant="ghost" asChild>
+              <Link to="/pre-order">View all</Link>
+            </Button>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {preorders.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
           </div>
