@@ -43,6 +43,13 @@ export function Header() {
             Shop
           </Link>
           <Link
+            to="/pre-order"
+            className="text-foreground/75 transition-colors hover:text-moss"
+            activeProps={{ className: "text-moss" }}
+          >
+            Pre-order
+          </Link>
+          <Link
             to="/about"
             className="text-foreground/75 transition-colors hover:text-moss"
             activeProps={{ className: "text-moss" }}
