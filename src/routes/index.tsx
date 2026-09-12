@@ -144,29 +144,9 @@ function Home() {
         </div>
       </section>
 
-      {/* Featured */}
-      {featured.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pb-4">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow text-moss">Handpicked</span>
-              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Featured picks</h2>
-            </div>
-            <Button variant="ghost" asChild>
-              <Link to="/shop">View all</Link>
-            </Button>
-          </div>
-          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Pre-order */}
+      {/* Pre-order — first product row so upcoming drops lead the page */}
       {preorders.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pt-14">
+        <section className="mx-auto max-w-6xl px-5 pb-4">
           <div className="flex items-end justify-between gap-4">
             <div>
               <span className="eyebrow text-moss">Coming soon</span>
@@ -181,6 +161,26 @@ function Home() {
           </div>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {preorders.map((p) => (
+              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Featured */}
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 pt-14">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <span className="eyebrow text-moss">Handpicked</span>
+              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Featured picks</h2>
+            </div>
+            <Button variant="ghost" asChild>
+              <Link to="/shop">View all</Link>
+            </Button>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {featured.map((p) => (
               <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
           </div>
