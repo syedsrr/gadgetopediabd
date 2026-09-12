@@ -50,6 +50,13 @@ export function Header() {
             Pre-order
           </Link>
           <Link
+            to="/sold-out"
+            className="text-foreground/75 transition-colors hover:text-moss"
+            activeProps={{ className: "text-moss" }}
+          >
+            Sold out
+          </Link>
+          <Link
             to="/about"
             className="text-foreground/75 transition-colors hover:text-moss"
             activeProps={{ className: "text-moss" }}
@@ -138,6 +145,8 @@ export function Header() {
                   <ul className="space-y-1 text-sm">
                     {[
                       { to: "/shop" as const, label: "All products" },
+                      { to: "/pre-order" as const, label: "Pre-order" },
+                      { to: "/sold-out" as const, label: "Sold out" },
                       { to: "/about" as const, label: "About us" },
                       { to: "/contact" as const, label: "Contact" },
                       { to: "/cart" as const, label: "Your cart" },
