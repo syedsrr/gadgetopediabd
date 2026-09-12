@@ -8,7 +8,7 @@ import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";
-import { isPreorder } from "@/lib/format";
+import { isPreorder, isSoldOut } from "@/lib/format";
 import type { ProductWithCategory } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
@@ -54,6 +54,7 @@ function Home() {
   const featured = liveProducts.filter((p) => p.is_featured);
   const latest = liveProducts.slice(0, 12);
   const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
+  const soldOut = liveProducts.filter((p) => isSoldOut(p)).slice(0, 8);
   const isPending = productsPending || categoriesPending;
 
   return (
@@ -204,6 +205,29 @@ function Home() {
           </Button>
         </div>
       </section>
+      {/* Sold out */}
+      {soldOut.length > 0 && (
+        <section className="mx-auto max-w-6xl border-t border-border px-5 py-14">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <span className="eyebrow text-moss">Currently unavailable</span>
+              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Sold out</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                These favourites ran out. Restocks land often — keep an eye on this list.
+              </p>
+            </div>
+            <Button variant="ghost" asChild>
+              <Link to="/sold-out">View all</Link>
+            </Button>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {soldOut.map((p) => (
+              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            ))}
+          </div>
+        </section>
+      )}
+
       <ProductSpecsDrawer
         product={selected}
         open={selected !== null}
