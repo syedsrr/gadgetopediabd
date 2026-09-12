@@ -65,6 +65,11 @@ export function isPreorder(product: PreorderProduct): boolean {
   return Number(product.stock ?? 0) <= 0 && Boolean(product.allow_backorder);
 }
 
+/** Nothing left, no backorder, not a pre-order — customers cannot buy it. */
+export function isSoldOut(product: PreorderProduct): boolean {
+  return !isPurchasable(product) && !isPreorder(product);
+}
+
 /** "20 Sep 2026" — friendly arrival date, or null when there is none. */
 export function formatReleaseDate(value: string | null | undefined): string | null {
   if (!value) return null;
