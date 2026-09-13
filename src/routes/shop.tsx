@@ -328,6 +328,29 @@ function Shop() {
           </div>
         </div>
 
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            aria-pressed={inStockOnly}
+            onClick={() => setInStockOnly((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+              inStockOnly
+                ? "border-transparent bg-moss text-canopy-foreground"
+                : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
+            )}
+          >
+            In stock only
+          </button>
+          <Link
+            to="/sold-out"
+            className="text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-moss hover:underline"
+          >
+            See sold out items
+          </Link>
+        </div>
+
+
         {isPending ? (
           <ProductSkeletonGrid />
         ) : error ? (
