@@ -381,6 +381,7 @@ function Shop() {
               onClick={() => {
                 setSearch("");
                 setActiveCategory("all");
+                setInStockOnly(false);
               }}
             >
               Reset Filters
