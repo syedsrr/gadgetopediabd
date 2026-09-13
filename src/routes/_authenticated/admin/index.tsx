@@ -85,7 +85,7 @@ function Dashboard() {
         })}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-3">
         <StockList
           title="Running low"
           tone="low"
@@ -93,10 +93,16 @@ function Dashboard() {
           loading={lowStock.isPending}
         />
         <StockList
-          title="Out of stock"
-          tone="out"
-          rows={outOfStock.data?.rows ?? []}
-          loading={outOfStock.isPending}
+          title="Sold out"
+          tone="soldout"
+          rows={soldOut.data?.rows ?? []}
+          loading={soldOut.isPending}
+        />
+        <StockList
+          title="Pre-order"
+          tone="preorder"
+          rows={preorder.data?.rows ?? []}
+          loading={preorder.isPending}
         />
       </div>
     </div>
