@@ -113,21 +113,46 @@ async function countProducts(build: (q: any) => any) {
 export const dashboardStatsQuery = queryOptions({
   queryKey: ["admin-dashboard-stats"],
   queryFn: async () => {
-    const [total, published, draft, archived, outOfStock, lowStock, featured, orders] =
-      await Promise.all([
-        countProducts((q) => q),
-        countProducts((q) => q.eq("status", "published")),
-        countProducts((q) => q.eq("status", "draft")),
-        countProducts((q) => q.eq("status", "archived")),
-        countProducts((q) => q.lte("stock", 0)),
-        countProducts((q) => q.gt("stock", 0).lte("stock", 5)),
-        countProducts((q) => q.eq("is_featured", true)),
-        supabase
-          .from("orders")
-          .select("id", { count: "exact", head: true })
-          .then(({ count }) => count ?? 0),
-      ]);
-    return { total, published, draft, archived, outOfStock, lowStock, featured, orders };
+    const [
+      total,
+      published,
+      draft,
+      archived,
+      outOfStock,
+      soldOut,
+      preorder,
+      lowStock,
+      featured,
+      orders,
+    ] = await Promise.all([
+      countProducts((q) => q),
+      countProducts((q) => q.eq("status", "published")),
+      countProducts((q) => q.eq("status", "draft")),
+      countProducts((q) => q.eq("status", "archived")),
+      countProducts((q) => q.lte("stock", 0)),
+      countProducts((q) =>
+        q.lte("stock", 0).eq("allow_backorder", false).eq("is_preorder", false),
+      ),
+      countProducts((q) => q.eq("is_preorder", true)),
+      countProducts((q) => q.gt("stock", 0).lte("stock", 5)),
+      countProducts((q) => q.eq("is_featured", true)),
+      supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .then(({ count }) => count ?? 0),
+    ]);
+    return {
+      total,
+      published,
+      draft,
+      archived,
+      outOfStock,
+      soldOut,
+      preorder,
+      lowStock,
+      featured,
+      orders,
+    };
   },
 });
 
