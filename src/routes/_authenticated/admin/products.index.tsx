@@ -52,15 +52,17 @@ import {
   updateStock,
   type ProductFilters,
 } from "@/lib/adminCatalog";
-import { formatBDT, priceInfo } from "@/lib/format";
+import { formatBDT, isPreorder, isSoldOut, priceInfo } from "@/lib/format";
 
-type Search = { stock?: "all" | "in" | "low" | "out" };
+const STOCK_VALUES = ["all", "in", "low", "out", "soldout", "preorder"] as const;
+type StockValue = (typeof STOCK_VALUES)[number];
+type Search = { stock?: StockValue };
 
 export const Route = createFileRoute("/_authenticated/admin/products/")({
   validateSearch: (search: Record<string, unknown>): Search => {
     const value = search["stock"];
     return {
-      stock: value === "in" || value === "low" || value === "out" ? value : "all",
+      stock: STOCK_VALUES.includes(value as StockValue) ? (value as StockValue) : "all",
     };
   },
   component: ProductsAdmin,
@@ -215,6 +217,8 @@ function ProductsAdmin() {
               <SelectItem value="in">In stock</SelectItem>
               <SelectItem value="low">Low stock (1–5)</SelectItem>
               <SelectItem value="out">Out of stock</SelectItem>
+              <SelectItem value="soldout">Sold out (not buyable)</SelectItem>
+              <SelectItem value="preorder">Pre-order</SelectItem>
             </SelectContent>
           </Select>
 
@@ -330,17 +334,21 @@ function ProductsAdmin() {
                           />
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              p.status === "published"
-                                ? "default"
-                                : p.status === "draft"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {p.status}
-                          </Badge>
+                          <div className="flex flex-wrap gap-1">
+                            <Badge
+                              variant={
+                                p.status === "published"
+                                  ? "default"
+                                  : p.status === "draft"
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
+                              {p.status}
+                            </Badge>
+                            {isPreorder(p) && <Badge variant="outline">Pre-order</Badge>}
+                            {isSoldOut(p) && <Badge variant="destructive">Sold out</Badge>}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-1">

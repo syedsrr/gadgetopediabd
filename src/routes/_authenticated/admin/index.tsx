@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { adminProductsQuery, dashboardStatsQuery, DEFAULT_FILTERS } from "@/lib/adminCatalog";
 import { formatBDT } from "@/lib/format";
 
+type StockFilter = "in" | "low" | "out" | "soldout" | "preorder";
+
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Dashboard,
 });
@@ -18,18 +20,21 @@ function Dashboard() {
   const lowStock = useQuery(
     adminProductsQuery({ ...DEFAULT_FILTERS, stock: "low", sort: "stock_asc", pageSize: 6 }),
   );
-  const outOfStock = useQuery(
-    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "out", sort: "name", pageSize: 6 }),
+  const soldOut = useQuery(
+    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "soldout", sort: "name", pageSize: 6 }),
+  );
+  const preorder = useQuery(
+    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "preorder", sort: "name", pageSize: 6 }),
   );
 
-  const cards = [
+  const cards: { label: string; value: number | undefined; stock?: StockFilter }[] = [
     { label: "Total products", value: stats?.total },
     { label: "Published", value: stats?.published },
     { label: "Drafts", value: stats?.draft },
     { label: "Archived", value: stats?.archived },
-    { label: "Out of stock", value: stats?.outOfStock },
-    { label: "Low stock", value: stats?.lowStock },
-    { label: "Featured", value: stats?.featured },
+    { label: "Sold out", value: stats?.soldOut, stock: "soldout" },
+    { label: "Pre-order", value: stats?.preorder, stock: "preorder" },
+    { label: "Low stock", value: stats?.lowStock, stock: "low" },
     { label: "Orders", value: stats?.orders },
   ];
 
@@ -57,8 +62,8 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
-          <Card key={c.label}>
+        {cards.map((c) => {
+          const body = (
             <CardContent className="p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {c.label}
@@ -69,11 +74,18 @@ function Dashboard() {
                 <p className="mt-1 font-display text-3xl font-bold">{c.value ?? 0}</p>
               )}
             </CardContent>
-          </Card>
-        ))}
+          );
+          return c.stock ? (
+            <Link key={c.label} to="/admin/products" search={{ stock: c.stock }}>
+              <Card className="h-full transition hover:border-moss">{body}</Card>
+            </Link>
+          ) : (
+            <Card key={c.label}>{body}</Card>
+          );
+        })}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-3">
         <StockList
           title="Running low"
           tone="low"
@@ -81,10 +93,16 @@ function Dashboard() {
           loading={lowStock.isPending}
         />
         <StockList
-          title="Out of stock"
-          tone="out"
-          rows={outOfStock.data?.rows ?? []}
-          loading={outOfStock.isPending}
+          title="Sold out"
+          tone="soldout"
+          rows={soldOut.data?.rows ?? []}
+          loading={soldOut.isPending}
+        />
+        <StockList
+          title="Pre-order"
+          tone="preorder"
+          rows={preorder.data?.rows ?? []}
+          loading={preorder.isPending}
         />
       </div>
     </div>
@@ -98,7 +116,7 @@ function StockList({
   loading,
 }: {
   title: string;
-  tone: "low" | "out";
+  tone: StockFilter;
   rows: { id: string; name: string; stock: number; price: number; slug: string }[];
   loading: boolean;
 }) {
@@ -106,7 +124,9 @@ function StockList({
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle className="flex items-center gap-2 text-base">
-          <AlertTriangle className={tone === "out" ? "h-4 w-4 text-sale" : "h-4 w-4 text-moss"} />
+          <AlertTriangle
+            className={tone === "soldout" ? "h-4 w-4 text-sale" : "h-4 w-4 text-moss"}
+          />
           {title}
         </CardTitle>
         <Button asChild variant="ghost" size="sm">

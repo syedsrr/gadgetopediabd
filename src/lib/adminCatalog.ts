@@ -12,7 +12,7 @@ export type ProductFilters = {
   search: string;
   categoryId: string; // "all" | uuid
   brand: string; // "all" | brand
-  stock: "all" | "in" | "low" | "out";
+  stock: "all" | "in" | "low" | "out" | "soldout" | "preorder";
   status: "all" | ProductStatus;
   featured: "all" | "featured" | "regular";
   sort: "recent" | "updated" | "name" | "price_asc" | "price_desc" | "stock_asc";
@@ -33,7 +33,7 @@ export const DEFAULT_FILTERS: ProductFilters = {
 };
 
 const LIST_COLUMNS =
-  "id, name, slug, sku, brand, price, sale_price, stock, low_stock_threshold, status, is_featured, is_active, image_url, category_id, updated_at, categories!products_category_id_fkey(id, name, slug)";
+  "id, name, slug, sku, brand, price, sale_price, stock, low_stock_threshold, allow_backorder, is_preorder, preorder_release_date, status, is_featured, is_active, image_url, category_id, updated_at, categories!products_category_id_fkey(id, name, slug)";
 
 /** Server-side filtered + paginated product list for the admin table. */
 export function adminProductsQuery(filters: ProductFilters) {
@@ -56,6 +56,10 @@ export function adminProductsQuery(filters: ProductFilters) {
       if (filters.stock === "out") q = q.lte("stock", 0);
       if (filters.stock === "in") q = q.gt("stock", 0);
       if (filters.stock === "low") q = q.gt("stock", 0).lte("stock", 5);
+      // Sold out = nothing left, no backorder and not flagged as a pre-order.
+      if (filters.stock === "soldout")
+        q = q.lte("stock", 0).eq("allow_backorder", false).eq("is_preorder", false);
+      if (filters.stock === "preorder") q = q.eq("is_preorder", true);
 
       if (filters.sort === "recent") q = q.order("created_at", { ascending: false });
       else if (filters.sort === "updated") q = q.order("updated_at", { ascending: false });
@@ -109,21 +113,46 @@ async function countProducts(build: (q: any) => any) {
 export const dashboardStatsQuery = queryOptions({
   queryKey: ["admin-dashboard-stats"],
   queryFn: async () => {
-    const [total, published, draft, archived, outOfStock, lowStock, featured, orders] =
-      await Promise.all([
-        countProducts((q) => q),
-        countProducts((q) => q.eq("status", "published")),
-        countProducts((q) => q.eq("status", "draft")),
-        countProducts((q) => q.eq("status", "archived")),
-        countProducts((q) => q.lte("stock", 0)),
-        countProducts((q) => q.gt("stock", 0).lte("stock", 5)),
-        countProducts((q) => q.eq("is_featured", true)),
-        supabase
-          .from("orders")
-          .select("id", { count: "exact", head: true })
-          .then(({ count }) => count ?? 0),
-      ]);
-    return { total, published, draft, archived, outOfStock, lowStock, featured, orders };
+    const [
+      total,
+      published,
+      draft,
+      archived,
+      outOfStock,
+      soldOut,
+      preorder,
+      lowStock,
+      featured,
+      orders,
+    ] = await Promise.all([
+      countProducts((q) => q),
+      countProducts((q) => q.eq("status", "published")),
+      countProducts((q) => q.eq("status", "draft")),
+      countProducts((q) => q.eq("status", "archived")),
+      countProducts((q) => q.lte("stock", 0)),
+      countProducts((q) =>
+        q.lte("stock", 0).eq("allow_backorder", false).eq("is_preorder", false),
+      ),
+      countProducts((q) => q.eq("is_preorder", true)),
+      countProducts((q) => q.gt("stock", 0).lte("stock", 5)),
+      countProducts((q) => q.eq("is_featured", true)),
+      supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .then(({ count }) => count ?? 0),
+    ]);
+    return {
+      total,
+      published,
+      draft,
+      archived,
+      outOfStock,
+      soldOut,
+      preorder,
+      lowStock,
+      featured,
+      orders,
+    };
   },
 });
 

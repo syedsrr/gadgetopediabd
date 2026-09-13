@@ -219,6 +219,7 @@ function Shop() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selected, setSelected] = useState<ProductRecord | null>(null);
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const term = search.trim().toLowerCase();
 
@@ -240,9 +241,10 @@ function Shop() {
           (p.specs_description ?? "").toLowerCase().includes(term) ||
           (p.category ?? "").toLowerCase().includes(term)
         : true;
-      return matchesCategory && matchesTerm;
+      const matchesStock = !inStockOnly || Number(p.stock ?? 0) > 0;
+      return matchesCategory && matchesTerm && matchesStock;
     });
-  }, [products, activeCategory, term]);
+  }, [products, activeCategory, term, inStockOnly]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: products?.length ?? 0 };
@@ -326,6 +328,29 @@ function Shop() {
           </div>
         </div>
 
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            aria-pressed={inStockOnly}
+            onClick={() => setInStockOnly((v) => !v)}
+            className={cn(
+              "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+              inStockOnly
+                ? "border-transparent bg-moss text-canopy-foreground"
+                : "border-border bg-card text-foreground/70 hover:border-moss hover:text-moss",
+            )}
+          >
+            In stock only
+          </button>
+          <Link
+            to="/sold-out"
+            className="text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-moss hover:underline"
+          >
+            See sold out items
+          </Link>
+        </div>
+
+
         {isPending ? (
           <ProductSkeletonGrid />
         ) : error ? (
@@ -356,6 +381,7 @@ function Shop() {
               onClick={() => {
                 setSearch("");
                 setActiveCategory("all");
+                setInStockOnly(false);
               }}
             >
               Reset Filters
