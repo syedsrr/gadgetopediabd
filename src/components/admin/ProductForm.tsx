@@ -472,6 +472,12 @@ export function ProductForm({
                 </Field>
               </>
             ) : null}
+            {Number(draft.stock || 0) <= 0 && !draft.allow_backorder && !draft.is_preorder ? (
+              <p className="rounded-xl border border-sale/30 bg-sale/10 px-4 py-3 text-xs font-medium text-sale sm:col-span-2">
+                With no stock left and backorders off, this product shows as “Sold out” on the store
+                and appears on the Sold out page. Turn on pre-order to keep taking orders.
+              </p>
+            ) : null}
             {draft.sale_price && Number(draft.sale_price) < Number(draft.price) ? (
               <p className="text-xs text-moss sm:col-span-2">
                 Customers will pay {formatBDT(draft.sale_price)} instead of{" "}
