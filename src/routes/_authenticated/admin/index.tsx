@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { adminProductsQuery, dashboardStatsQuery, DEFAULT_FILTERS } from "@/lib/adminCatalog";
 import { formatBDT } from "@/lib/format";
 
+type StockFilter = "in" | "low" | "out" | "soldout" | "preorder";
+
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Dashboard,
 });
