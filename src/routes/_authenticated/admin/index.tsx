@@ -20,8 +20,11 @@ function Dashboard() {
   const lowStock = useQuery(
     adminProductsQuery({ ...DEFAULT_FILTERS, stock: "low", sort: "stock_asc", pageSize: 6 }),
   );
-  const outOfStock = useQuery(
-    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "out", sort: "name", pageSize: 6 }),
+  const soldOut = useQuery(
+    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "soldout", sort: "name", pageSize: 6 }),
+  );
+  const preorder = useQuery(
+    adminProductsQuery({ ...DEFAULT_FILTERS, stock: "preorder", sort: "name", pageSize: 6 }),
   );
 
   const cards: { label: string; value: number | undefined; stock?: StockFilter }[] = [
