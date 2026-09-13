@@ -52,7 +52,7 @@ import {
   updateStock,
   type ProductFilters,
 } from "@/lib/adminCatalog";
-import { formatBDT, priceInfo } from "@/lib/format";
+import { formatBDT, isPreorder, isSoldOut, priceInfo } from "@/lib/format";
 
 const STOCK_VALUES = ["all", "in", "low", "out", "soldout", "preorder"] as const;
 type StockValue = (typeof STOCK_VALUES)[number];
@@ -334,17 +334,21 @@ function ProductsAdmin() {
                           />
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              p.status === "published"
-                                ? "default"
-                                : p.status === "draft"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {p.status}
-                          </Badge>
+                          <div className="flex flex-wrap gap-1">
+                            <Badge
+                              variant={
+                                p.status === "published"
+                                  ? "default"
+                                  : p.status === "draft"
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
+                              {p.status}
+                            </Badge>
+                            {isPreorder(p) && <Badge variant="outline">Pre-order</Badge>}
+                            {isSoldOut(p) && <Badge variant="destructive">Sold out</Badge>}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-1">
