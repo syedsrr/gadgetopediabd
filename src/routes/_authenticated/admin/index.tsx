@@ -116,7 +116,7 @@ function StockList({
   loading,
 }: {
   title: string;
-  tone: "low" | "out";
+  tone: StockFilter;
   rows: { id: string; name: string; stock: number; price: number; slug: string }[];
   loading: boolean;
 }) {
