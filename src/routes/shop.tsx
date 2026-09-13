@@ -219,6 +219,7 @@ function Shop() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selected, setSelected] = useState<ProductRecord | null>(null);
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const term = search.trim().toLowerCase();
 
@@ -240,9 +241,10 @@ function Shop() {
           (p.specs_description ?? "").toLowerCase().includes(term) ||
           (p.category ?? "").toLowerCase().includes(term)
         : true;
-      return matchesCategory && matchesTerm;
+      const matchesStock = !inStockOnly || Number(p.stock ?? 0) > 0;
+      return matchesCategory && matchesTerm && matchesStock;
     });
-  }, [products, activeCategory, term]);
+  }, [products, activeCategory, term, inStockOnly]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: products?.length ?? 0 };
