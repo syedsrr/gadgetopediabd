@@ -22,14 +22,14 @@ function Dashboard() {
     adminProductsQuery({ ...DEFAULT_FILTERS, stock: "out", sort: "name", pageSize: 6 }),
   );
 
-  const cards = [
+  const cards: { label: string; value: number | undefined; stock?: StockFilter }[] = [
     { label: "Total products", value: stats?.total },
     { label: "Published", value: stats?.published },
     { label: "Drafts", value: stats?.draft },
     { label: "Archived", value: stats?.archived },
-    { label: "Out of stock", value: stats?.outOfStock },
-    { label: "Low stock", value: stats?.lowStock },
-    { label: "Featured", value: stats?.featured },
+    { label: "Sold out", value: stats?.soldOut, stock: "soldout" },
+    { label: "Pre-order", value: stats?.preorder, stock: "preorder" },
+    { label: "Low stock", value: stats?.lowStock, stock: "low" },
     { label: "Orders", value: stats?.orders },
   ];
 
@@ -57,8 +57,8 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
-          <Card key={c.label}>
+        {cards.map((c) => {
+          const body = (
             <CardContent className="p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {c.label}
@@ -69,8 +69,15 @@ function Dashboard() {
                 <p className="mt-1 font-display text-3xl font-bold">{c.value ?? 0}</p>
               )}
             </CardContent>
-          </Card>
-        ))}
+          );
+          return c.stock ? (
+            <Link key={c.label} to="/admin/products" search={{ stock: c.stock }}>
+              <Card className="h-full transition hover:border-moss">{body}</Card>
+            </Link>
+          ) : (
+            <Card key={c.label}>{body}</Card>
+          );
+        })}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
