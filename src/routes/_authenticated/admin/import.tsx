@@ -176,6 +176,13 @@ function ImportAdmin() {
             placeholder={PRODUCT_CSV_TEMPLATE}
             className="font-mono text-xs"
           />
+          <p className="text-xs text-muted-foreground">
+            Availability columns: <code>stock</code>, <code>low_stock_threshold</code>,{" "}
+            <code>allow_backorder</code>, <code>is_preorder</code>,{" "}
+            <code>preorder_release_date</code> (YYYY-MM-DD) and <code>preorder_note</code>. A row
+            with <code>stock</code> 0 and <code>allow_backorder</code> false shows as sold out;{" "}
+            <code>is_preorder</code> true lists it on the Pre-order page.
+          </p>
           <Button variant="secondary" onClick={() => analyse(text)} disabled={!text.trim()}>
             Check rows
           </Button>
