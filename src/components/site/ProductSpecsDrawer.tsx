@@ -14,7 +14,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { formatBDT, isPreorder, isPurchasable, priceInfo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -28,8 +28,9 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const info = product ? priceInfo(product) : null;
   const off = info?.off ?? null;
   const selling = info?.selling ?? 0;
-  const soldOut = product ? !isPurchasable(product) : true;
-  const maxQty = Math.max(1, product?.stock ?? 1);
+  const preorder = product ? isPreorder(product) : false;
+  const soldOut = product ? !isPurchasable(product) && !preorder : true;
+  const maxQty = preorder ? 99 : Math.max(1, product?.stock ?? 1);
 
   const { data: specs = [] } = useQuery({
     queryKey: ["product-specs", product?.id],
@@ -108,7 +109,14 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                 { label: "Brand", value: product.brand },
                 { label: "SKU", value: product.sku },
                 ...specs.map((sp) => ({ label: sp.name, value: sp.value })),
-                { label: "Availability", value: soldOut ? "Sold out" : `${product.stock} in stock` },
+                {
+                  label: "Availability",
+                  value: preorder
+                    ? "Pre-order"
+                    : soldOut
+                      ? "Sold out"
+                      : `${product.stock} in stock`,
+                },
               ]
                 .filter((r) => r.value)
                 .map((r) => (
@@ -187,7 +195,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                     slug: product.slug,
                     price: selling,
                     image_url: product.image_url,
-                    max_stock: Number(product.stock ?? 0),
+                    max_stock: preorder ? 99 : Number(product.stock ?? 0),
                   },
                   qty,
                 );
@@ -195,7 +203,11 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />
-              {soldOut ? "Sold out" : `Add ${qty} to cart · ${formatBDT(selling * qty)}`}
+              {soldOut
+                ? "Sold out"
+                : preorder
+                  ? `Pre-order ${qty} · ${formatBDT(selling * qty)}`
+                  : `Add ${qty} to cart · ${formatBDT(selling * qty)}`}
             </Button>
           </>
         )}
