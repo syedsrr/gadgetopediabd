@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { priceInfo } from "@/lib/format";
+import { isPreorder, priceInfo } from "@/lib/format";
 
 const phoneRegex = /^[0-9+\-\s]{11,15}$/;
 
@@ -58,7 +58,7 @@ export const placeOrder = createServerFn({ method: "POST" })
     const { data: products, error: productError } = await supabaseAdmin
       .from("products")
       .select(
-        "id, name, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, is_active, status",
+        "id, name, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, is_preorder, is_active, status",
       )
       .in("id", ids);
     if (productError) throw new Error("Could not verify products");
@@ -68,7 +68,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       if (!product || !product.is_active || product.status !== "published") {
         throw new Error("A product is no longer available");
       }
-      if (product.stock < item.quantity && !product.allow_backorder) {
+      if (product.stock < item.quantity && !product.allow_backorder && !isPreorder(product)) {
         throw new Error(`Not enough stock for ${product.name}`);
       }
       return {
