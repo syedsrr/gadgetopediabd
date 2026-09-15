@@ -109,7 +109,14 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                 { label: "Brand", value: product.brand },
                 { label: "SKU", value: product.sku },
                 ...specs.map((sp) => ({ label: sp.name, value: sp.value })),
-                { label: "Availability", value: soldOut ? "Sold out" : `${product.stock} in stock` },
+                {
+                  label: "Availability",
+                  value: preorder
+                    ? "Pre-order"
+                    : soldOut
+                      ? "Sold out"
+                      : `${product.stock} in stock`,
+                },
               ]
                 .filter((r) => r.value)
                 .map((r) => (
@@ -188,7 +195,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                     slug: product.slug,
                     price: selling,
                     image_url: product.image_url,
-                    max_stock: Number(product.stock ?? 0),
+                    max_stock: preorder ? 99 : Number(product.stock ?? 0),
                   },
                   qty,
                 );
@@ -196,7 +203,11 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />
-              {soldOut ? "Sold out" : `Add ${qty} to cart · ${formatBDT(selling * qty)}`}
+              {soldOut
+                ? "Sold out"
+                : preorder
+                  ? `Pre-order ${qty} · ${formatBDT(selling * qty)}`
+                  : `Add ${qty} to cart · ${formatBDT(selling * qty)}`}
             </Button>
           </>
         )}
