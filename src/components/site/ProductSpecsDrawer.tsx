@@ -14,7 +14,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import type { ProductWithCategory } from "@/lib/catalog";
-import { formatBDT, isPurchasable, priceInfo } from "@/lib/format";
+import { formatBDT, isPreorder, isPurchasable, priceInfo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -28,8 +28,9 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const info = product ? priceInfo(product) : null;
   const off = info?.off ?? null;
   const selling = info?.selling ?? 0;
-  const soldOut = product ? !isPurchasable(product) : true;
-  const maxQty = Math.max(1, product?.stock ?? 1);
+  const preorder = product ? isPreorder(product) : false;
+  const soldOut = product ? !isPurchasable(product) && !preorder : true;
+  const maxQty = preorder ? 99 : Math.max(1, product?.stock ?? 1);
 
   const { data: specs = [] } = useQuery({
     queryKey: ["product-specs", product?.id],
