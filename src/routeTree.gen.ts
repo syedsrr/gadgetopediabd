@@ -17,9 +17,11 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PreOrderRouteImport } from './routes/pre-order'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SoldOutRouteImport } from './routes/sold-out'
+import { Route as StoreRouteImport } from './routes/store'
 import { Route as TrackOrderRouteImport } from './routes/track-order'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
@@ -73,6 +75,11 @@ const PreOrderRoute = PreOrderRouteImport.update({
   path: '/pre-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -86,6 +93,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SoldOutRoute = SoldOutRouteImport.update({
   id: '/sold-out',
   path: '/sold-out',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoreRoute = StoreRouteImport.update({
+  id: '/store',
+  path: '/store',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrackOrderRoute = TrackOrderRouteImport.update({
@@ -168,9 +180,11 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
+  '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/account': typeof AuthenticatedAccountRoute
@@ -193,9 +207,11 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
+  '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
   '/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -219,9 +235,11 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
+  '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRoute
@@ -246,9 +264,11 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/pre-order'
+    | '/reset-password'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
+    | '/store'
     | '/track-order'
     | '/admin'
     | '/account'
@@ -271,9 +291,11 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/pre-order'
+    | '/reset-password'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
+    | '/store'
     | '/track-order'
     | '/account'
     | '/category/$slug'
@@ -296,9 +318,11 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/pre-order'
+    | '/reset-password'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
+    | '/store'
     | '/track-order'
     | '/_authenticated/admin'
     | '/_authenticated/account'
@@ -323,9 +347,11 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   PreOrderRoute: typeof PreOrderRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoldOutRoute: typeof SoldOutRoute
+  StoreRoute: typeof StoreRoute
   TrackOrderRoute: typeof TrackOrderRoute
   CategorySlugRoute: typeof CategorySlugRoute
   OrderSuccessIdRoute: typeof OrderSuccessIdRoute
@@ -390,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -409,6 +442,13 @@ declare module '@tanstack/react-router' {
       path: '/sold-out'
       fullPath: '/sold-out'
       preLoaderRoute: typeof SoldOutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/track-order': {
@@ -553,9 +593,11 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   PreOrderRoute: PreOrderRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoldOutRoute: SoldOutRoute,
+  StoreRoute: StoreRoute,
   TrackOrderRoute: TrackOrderRoute,
   CategorySlugRoute: CategorySlugRoute,
   OrderSuccessIdRoute: OrderSuccessIdRoute,
