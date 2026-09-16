@@ -32,7 +32,7 @@ async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
 export const listUsersWithRoles = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<ManagedUser[]> => {
-    await assertAdmin(context.supabase as never, context.userId);
+    await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const [{ data: profiles, error: profileError }, { data: roles, error: roleError }] =
@@ -70,7 +70,7 @@ export const setUserRole = createServerFn({ method: "POST" })
     z.object({ userId: z.string().uuid(), role: roleSchema }).parse(data),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase as never, context.userId);
+    await assertAdmin(context.supabase, context.userId);
 
     if (data.userId === context.userId && data.role !== "admin") {
       throw new Error("You cannot remove your own admin access");
