@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import {
+  Boxes,
   FolderTree,
   LayoutDashboard,
   LogOut,
@@ -8,6 +9,7 @@ import {
   ReceiptText,
   Store,
   Upload,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,9 +50,11 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/inventory", label: "Inventory", icon: Boxes },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/import", label: "CSV import", icon: Upload },
   { to: "/admin/orders", label: "Orders", icon: ReceiptText },
+  { to: "/admin/users", label: "User roles", icon: Users },
 ] as const;
 
 function AdminLayout() {
