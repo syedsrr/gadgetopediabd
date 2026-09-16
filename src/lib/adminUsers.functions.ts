@@ -1,7 +1,9 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const roleSchema = z.enum(["admin", "staff", "customer"]);
 
@@ -17,16 +19,7 @@ export type ManagedUser = {
 };
 
 /** Throws unless the caller holds the admin role (checked with the caller's own RLS scope). */
-async function assertAdmin(supabase: {
-  from: (t: "user_roles") => {
-    select: (c: string) => {
-      eq: (
-        c: string,
-        v: string,
-      ) => { eq: (c: string, v: string) => { maybeSingle: () => Promise<{ data: unknown }> } };
-    };
-  };
-}, userId: string) {
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
   const { data } = await supabase
     .from("user_roles")
     .select("role")
