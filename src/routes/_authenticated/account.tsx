@@ -165,6 +165,23 @@ function AccountPage() {
     onError: () => toast.error("Could not update your profile"),
   });
 
+  const [passwordForm, setPasswordForm] = useState({ current: "", next: "" });
+  const changePassword = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordForm.next,
+        // Signed-in changes may require confirming the current password.
+        current_password: passwordForm.current,
+      } as Parameters<typeof supabase.auth.updateUser>[0]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Password updated");
+      setPasswordForm({ current: "", next: "" });
+    },
+    onError: (e: Error) => toast.error(e.message || "Could not update your password"),
+  });
+
   // ---- Wish list -----------------------------------------------------------
   const { ids: wishIds, toggle: toggleWish } = useWishlist();
   const { add } = useCart();
@@ -472,6 +489,45 @@ function AccountPage() {
               <p className="text-xs text-muted-foreground">
                 Payment is collected on delivery, so no card details are ever stored.
               </p>
+            </form>
+
+            <form
+              className="mt-5 max-w-xl space-y-4 rounded-2xl border border-border bg-card p-5 shadow-soft"
+              onSubmit={(e) => {
+                e.preventDefault();
+                changePassword.mutate();
+              }}
+            >
+              <h2 className="font-display text-lg font-bold">Change password</h2>
+              <div className="space-y-1.5">
+                <Label htmlFor="cur-pass">Current password</Label>
+                <Input
+                  id="cur-pass"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={passwordForm.current}
+                  onChange={(e) =>
+                    setPasswordForm((f) => ({ ...f, current: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="new-pass">New password</Label>
+                <Input
+                  id="new-pass"
+                  type="password"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  value={passwordForm.next}
+                  onChange={(e) => setPasswordForm((f) => ({ ...f, next: e.target.value }))}
+                  placeholder="At least 8 characters"
+                />
+              </div>
+              <Button type="submit" variant="secondary" disabled={changePassword.isPending}>
+                {changePassword.isPending ? "Updating…" : "Update password"}
+              </Button>
             </form>
           </TabsContent>
 
