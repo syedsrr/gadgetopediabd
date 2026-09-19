@@ -473,6 +473,45 @@ function AccountPage() {
                 Payment is collected on delivery, so no card details are ever stored.
               </p>
             </form>
+
+            <form
+              className="mt-5 max-w-xl space-y-4 rounded-2xl border border-border bg-card p-5 shadow-soft"
+              onSubmit={(e) => {
+                e.preventDefault();
+                changePassword.mutate();
+              }}
+            >
+              <h2 className="font-display text-lg font-bold">Change password</h2>
+              <div className="space-y-1.5">
+                <Label htmlFor="cur-pass">Current password</Label>
+                <Input
+                  id="cur-pass"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={passwordForm.current}
+                  onChange={(e) =>
+                    setPasswordForm((f) => ({ ...f, current: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="new-pass">New password</Label>
+                <Input
+                  id="new-pass"
+                  type="password"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  value={passwordForm.next}
+                  onChange={(e) => setPasswordForm((f) => ({ ...f, next: e.target.value }))}
+                  placeholder="At least 8 characters"
+                />
+              </div>
+              <Button type="submit" variant="secondary" disabled={changePassword.isPending}>
+                {changePassword.isPending ? "Updating…" : "Update password"}
+              </Button>
+            </form>
           </TabsContent>
 
           {/* Addresses */}
