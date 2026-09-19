@@ -78,6 +78,20 @@ export function AuthModal({ open, onOpenChange }: Props) {
     }
   }
 
+  async function forgotPassword() {
+    if (!email.trim()) {
+      toast.error("Enter your email first, then tap “Forgot password”.");
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Check your email for the password reset link.");
+  }
+
   async function emailSignUp(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
