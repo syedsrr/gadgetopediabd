@@ -49,6 +49,20 @@ function AuthPage() {
     if (error) toast.error(error.message);
   }
 
+  async function forgotPassword() {
+    if (!email.trim()) {
+      toast.error("Enter your email first, then tap “Forgot password”.");
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else toast.success("Check your email for the password reset link.");
+  }
+
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
