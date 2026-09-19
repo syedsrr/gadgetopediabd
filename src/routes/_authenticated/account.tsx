@@ -165,6 +165,23 @@ function AccountPage() {
     onError: () => toast.error("Could not update your profile"),
   });
 
+  const [passwordForm, setPasswordForm] = useState({ current: "", next: "" });
+  const changePassword = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordForm.next,
+        // Signed-in changes may require confirming the current password.
+        current_password: passwordForm.current,
+      } as Parameters<typeof supabase.auth.updateUser>[0]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Password updated");
+      setPasswordForm({ current: "", next: "" });
+    },
+    onError: (e: Error) => toast.error(e.message || "Could not update your password"),
+  });
+
   // ---- Wish list -----------------------------------------------------------
   const { ids: wishIds, toggle: toggleWish } = useWishlist();
   const { add } = useCart();
