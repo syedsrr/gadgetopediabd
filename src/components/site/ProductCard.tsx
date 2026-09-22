@@ -26,7 +26,7 @@ export function ProductCard({
   const arrival = formatReleaseDate(product.preorder_release_date);
 
   return (
-    <article className="card-hover group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+    <article className="card-hover group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft sm:rounded-2xl">
       <Link
         to="/product/$slug"
         params={{ slug: product.slug }}
@@ -51,12 +51,12 @@ export function ProductCard({
         )}
 
         {off !== null && (
-          <span className="absolute left-3 top-3 rounded-full bg-sale px-2.5 py-1 text-[0.7rem] font-bold text-sale-foreground">
+          <span className="absolute left-2 top-2 rounded-full bg-sale px-2 py-1 text-[0.65rem] font-bold text-sale-foreground sm:left-3 sm:top-3 sm:px-2.5 sm:text-[0.7rem]">
             -{off}%
           </span>
         )}
         {preorder && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-canopy px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wide text-canopy-foreground">
+          <span className="absolute bottom-2 left-2 rounded-full bg-canopy px-2 py-1 text-[0.65rem] font-bold uppercase text-canopy-foreground sm:bottom-3 sm:left-3 sm:px-2.5 sm:text-[0.7rem]">
             Pre-order
           </span>
         )}
@@ -69,11 +69,13 @@ export function ProductCard({
         )}
       </Link>
 
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         type="button"
         aria-label={saved ? "Remove from wish list" : "Save to wish list"}
         aria-pressed={saved}
-        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-background/90 text-muted-foreground shadow-soft transition hover:text-sale"
+        className="absolute right-2 top-2 h-10 w-10 rounded-full bg-background/90 text-muted-foreground shadow-soft hover:text-sale sm:right-3 sm:top-3"
         onClick={() => {
           if (!isSignedIn) {
             toast.info("Sign in to save products to your wish list");
@@ -83,25 +85,25 @@ export function ProductCard({
         }}
       >
         <Heart className={cn("h-4 w-4", saved && "fill-sale text-sale")} />
-      </button>
+      </Button>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-3 sm:gap-2 sm:p-4">
         {product.categories?.name && (
           <span className="eyebrow text-muted-foreground">{product.categories.name}</span>
         )}
         <Link
           to="/product/$slug"
           params={{ slug: product.slug }}
-          className="font-display text-[0.95rem] font-semibold leading-snug text-foreground transition-colors hover:text-moss"
+          className="line-clamp-2 min-h-10 font-display text-sm font-semibold leading-snug text-foreground transition-colors hover:text-moss sm:text-[0.95rem]"
         >
           {product.name}
         </Link>
         <div className="mt-auto flex items-baseline gap-2 pt-1">
-          <span className="font-display text-lg font-bold text-primary">
+          <span className="font-display text-base font-bold text-primary sm:text-lg">
             {formatBDT(selling)}
           </span>
           {compareAt !== null && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="hidden text-xs text-muted-foreground line-through min-[390px]:inline sm:text-sm">
               {formatBDT(compareAt)}
             </span>
           )}
@@ -118,7 +120,7 @@ export function ProductCard({
         )}
         <Button
           size="sm"
-          className="mt-2 w-full"
+          className="mt-2 h-10 w-full px-2 text-xs sm:h-8 sm:px-3"
           disabled={soldOut}
           onClick={() =>
             add({
@@ -138,7 +140,7 @@ export function ProductCard({
           <Button
             size="sm"
             variant="ghost"
-            className="mt-1 w-full text-xs text-muted-foreground hover:text-moss"
+            className="mt-0.5 h-9 w-full px-1 text-[0.7rem] text-muted-foreground hover:text-moss sm:h-8 sm:text-xs"
             onClick={() => onQuickView(product)}
           >
             View full specs

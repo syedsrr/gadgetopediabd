@@ -113,7 +113,7 @@ function Checkout() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto max-w-5xl px-5 py-10">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-5 sm:py-10">
         <span className="eyebrow text-moss">Secure checkout</span>
         <h1 className="mt-1 font-display text-3xl font-bold">Complete your order</h1>
 
@@ -126,7 +126,7 @@ function Checkout() {
           </div>
         ) : (
           <form onSubmit={submit} className="mt-8 grid gap-8 lg:grid-cols-[1fr_20rem]">
-            <div className="space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
+            <div className="space-y-5 rounded-xl border border-border bg-card p-4 shadow-soft sm:rounded-2xl sm:p-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="name">Customer name</Label>
@@ -220,12 +220,12 @@ function Checkout() {
               </p>
             </div>
 
-            <aside className="h-fit rounded-2xl border border-border bg-card p-5 shadow-soft">
+             <aside className="h-fit rounded-xl border border-border bg-card p-4 shadow-soft sm:rounded-2xl sm:p-5">
               <h2 className="font-display text-lg font-bold">Order summary</h2>
               <ul className="mt-4 space-y-3 text-sm">
                 {lines.map((l) => (
-                  <li key={l.id} className="flex justify-between gap-3">
-                    <span className="min-w-0 flex-1 text-muted-foreground">
+                   <li key={l.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
+                     <span className="min-w-0 break-words text-muted-foreground">
                       {l.name} <span className="text-foreground">× {l.quantity}</span>
                     </span>
                     <span className="font-medium">{formatBDT(l.price * l.quantity)}</span>

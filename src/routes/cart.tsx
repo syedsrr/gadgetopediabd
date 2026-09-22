@@ -27,7 +27,7 @@ function CartPage() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto max-w-5xl px-5 py-10">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-5 sm:py-10">
         <span className="eyebrow text-moss">Checkout step 1</span>
         <h1 className="mt-1 font-display text-3xl font-bold">Your cart</h1>
 
@@ -44,12 +44,12 @@ function CartPage() {
               {lines.map((l) => (
                 <li
                   key={l.id}
-                  className="flex gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft"
+                  className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 rounded-xl border border-border bg-card p-3 shadow-soft sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:gap-4 sm:rounded-2xl sm:p-4"
                 >
                   <Link
                     to="/product/$slug"
                     params={{ slug: l.slug }}
-                    className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-secondary"
+                    className="h-18 w-18 shrink-0 overflow-hidden rounded-lg bg-secondary sm:h-20 sm:w-20 sm:rounded-xl"
                   >
                     {l.image_url && (
                       <img src={l.image_url} alt={l.name} className="h-full w-full object-cover" />
@@ -64,12 +64,12 @@ function CartPage() {
                       {l.name}
                     </Link>
                     <p className="mt-1 text-sm font-bold text-primary">{formatBDT(l.price)}</p>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex items-center justify-between gap-2 sm:justify-start">
                       <div className="flex items-center rounded-full border border-border">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-10 w-10"
                           aria-label={`Decrease ${l.name}`}
                           onClick={() => setQuantity(l.id, l.quantity - 1)}
                         >
@@ -79,7 +79,7 @@ function CartPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-10 w-10"
                           aria-label={`Increase ${l.name}`}
                           onClick={() => setQuantity(l.id, l.quantity + 1)}
                         >
@@ -89,7 +89,7 @@ function CartPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-sale"
+                        className="h-10 w-10 text-muted-foreground hover:text-sale"
                         aria-label={`Remove ${l.name}`}
                         onClick={() => remove(l.id)}
                       >
@@ -97,12 +97,12 @@ function CartPage() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm font-bold">{formatBDT(l.price * l.quantity)}</p>
+                  <p className="col-start-2 text-right text-sm font-bold sm:col-start-auto sm:text-left">{formatBDT(l.price * l.quantity)}</p>
                 </li>
               ))}
             </ul>
 
-            <aside className="h-fit rounded-2xl border border-border bg-card p-5 shadow-soft">
+            <aside className="h-fit rounded-xl border border-border bg-card p-4 shadow-soft sm:rounded-2xl sm:p-5">
               <h2 className="font-display text-lg font-bold">Order summary</h2>
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between">

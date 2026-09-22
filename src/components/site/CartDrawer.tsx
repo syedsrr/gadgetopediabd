@@ -22,7 +22,7 @@ export function CartDrawer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Open cart drawer" className="relative">
+        <Button variant="ghost" size="icon" aria-label="Open cart drawer" className="relative h-11 w-11">
           <ShoppingBag className="h-5 w-5" />
           {count > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-sale px-1 text-[0.65rem] font-bold text-sale-foreground">
@@ -31,7 +31,7 @@ export function CartDrawer() {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="flex w-full flex-col sm:max-w-md">
+      <SheetContent side="right" className="flex w-full flex-col p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-w-md sm:p-6">
         <SheetHeader className="text-left">
           <SheetTitle className="font-display text-xl">Your cart</SheetTitle>
           <SheetDescription>
@@ -51,7 +51,7 @@ export function CartDrawer() {
           <>
             <ul className="mt-4 flex-1 space-y-3 overflow-y-auto pr-1">
               {lines.map((l) => (
-                <li key={l.id} className="flex gap-3 rounded-xl border border-border bg-card p-3">
+                <li key={l.id} className="grid grid-cols-[4rem_minmax(0,1fr)] gap-3 rounded-xl border border-border bg-card p-3">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-secondary">
                     {l.image_url && (
                       <img src={l.image_url} alt={l.name} className="h-full w-full object-cover" />
@@ -60,22 +60,22 @@ export function CartDrawer() {
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-sm font-semibold">{l.name}</p>
                     <p className="mt-0.5 text-sm font-bold text-primary">{formatBDT(l.price)}</p>
-                    <div className="mt-1.5 flex items-center gap-1.5">
+                    <div className="mt-2 flex items-center justify-between gap-2">
                       <div className="flex items-center rounded-full border border-border">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7"
+                          className="h-10 w-10"
                           aria-label={`Decrease ${l.name}`}
                           onClick={() => updateQuantity(l.id, l.quantity - 1)}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="w-7 text-center text-xs font-semibold">{l.quantity}</span>
+                        <span className="w-8 text-center text-sm font-semibold">{l.quantity}</span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7"
+                          className="h-10 w-10"
                           aria-label={`Increase ${l.name}`}
                           disabled={l.quantity >= l.max_stock}
                           onClick={() => updateQuantity(l.id, l.quantity + 1)}
@@ -86,7 +86,7 @@ export function CartDrawer() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:text-sale"
+                        className="h-10 w-10 text-muted-foreground hover:text-sale"
                         aria-label={`Remove ${l.name}`}
                         onClick={() => removeFromCart(l.id)}
                       >
@@ -94,7 +94,8 @@ export function CartDrawer() {
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm font-bold">{formatBDT(l.price * l.quantity)}</p>
+                    </div>
+                  <p className="col-start-2 text-right text-sm font-bold">{formatBDT(l.price * l.quantity)}</p>
                 </li>
               ))}
             </ul>

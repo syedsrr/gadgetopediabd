@@ -189,8 +189,8 @@ function ProductPage() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto max-w-6xl px-5 py-8">
-        <nav className="text-xs text-muted-foreground">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-5 sm:py-8">
+        <nav className="truncate text-xs text-muted-foreground">
           <Link to="/" className="hover:text-moss">
             Home
           </Link>
@@ -212,7 +212,7 @@ function ProductPage() {
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
           <div>
-            <div className="overflow-hidden rounded-3xl border border-border bg-secondary shadow-soft">
+            <div className="overflow-hidden rounded-xl border border-border bg-secondary shadow-soft sm:rounded-3xl">
               {activeImage ? (
                 <img
                   src={activeImage.url}
@@ -254,7 +254,7 @@ function ProductPage() {
 
           <div>
             {product.brand && <span className="eyebrow text-moss">{product.brand}</span>}
-            <h1 className="mt-2 font-display text-3xl font-bold leading-tight">{product.name}</h1>
+            <h1 className="mt-2 font-display text-2xl font-bold leading-tight sm:text-3xl">{product.name}</h1>
             {product.short_description && (
               <p className="mt-3 text-sm text-muted-foreground">{product.short_description}</p>
             )}
@@ -294,11 +294,12 @@ function ProductPage() {
 
             <Separator className="my-6" />
 
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center rounded-full border border-border">
+            <div className="grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+              <div className="grid grid-cols-[2.75rem_minmax(2.25rem,auto)_2.75rem] items-center justify-self-start rounded-full border border-border">
                 <Button
                   variant="ghost"
                   size="icon"
+                 className="h-11 w-11"
                   aria-label="Decrease quantity"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                 >
@@ -308,6 +309,7 @@ function ProductPage() {
                 <Button
                   variant="ghost"
                   size="icon"
+                 className="h-11 w-11"
                   aria-label="Increase quantity"
                   onClick={() =>
                     setQty((q) => Math.min(preorder ? 99 : product.stock || 99, q + 1))
@@ -319,6 +321,7 @@ function ProductPage() {
 
               <Button
                 size="lg"
+                className="w-full sm:w-auto"
                 disabled={soldOut}
                 onClick={() => {
                   add(line, qty);
@@ -332,6 +335,7 @@ function ProductPage() {
               <Button
                 size="lg"
                 variant="secondary"
+                className="w-full sm:w-auto"
                 disabled={soldOut}
                 onClick={() => {
                   add(line, qty);
@@ -361,9 +365,9 @@ function ProductPage() {
             <h2 className="font-display text-xl font-bold">Specifications</h2>
             <dl className="mt-4 divide-y divide-border rounded-2xl border border-border">
               {specs.map((sp) => (
-                <div key={sp.id} className="flex justify-between gap-6 px-4 py-3 text-sm">
+                <div key={sp.id} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-4 px-4 py-3 text-sm">
                   <dt className="text-muted-foreground">{sp.name}</dt>
-                  <dd className="text-right font-medium">{sp.value}</dd>
+                  <dd className="break-words text-right font-medium">{sp.value}</dd>
                 </div>
               ))}
             </dl>

@@ -59,7 +59,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
+      <SheetContent side="right" className="flex w-full flex-col overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-w-md sm:p-6">
         {product && (
           <>
             <SheetHeader className="text-left">
@@ -69,7 +69,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               </SheetDescription>
             </SheetHeader>
 
-            <div className="mt-5 aspect-square overflow-hidden rounded-2xl border border-border bg-secondary">
+            <div className="mt-5 aspect-[4/3] shrink-0 overflow-hidden rounded-xl border border-border bg-secondary sm:aspect-square sm:rounded-2xl">
               {product.image_url ? (
                 <img
                   src={product.image_url}
@@ -120,9 +120,9 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               ]
                 .filter((r) => r.value)
                 .map((r) => (
-                  <div key={r.label} className="flex justify-between gap-4">
+                  <div key={r.label} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-4">
                     <dt className="text-muted-foreground">{r.label}</dt>
-                    <dd className="text-right font-medium text-foreground">{r.value}</dd>
+                    <dd className="break-words text-right font-medium text-foreground">{r.value}</dd>
                   </div>
                 ))}
             </dl>
@@ -155,7 +155,8 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               <div className="mt-2 flex items-center gap-3">
                 <Button
                   variant="outline"
-                  size="icon"
+                   size="icon"
+                   className="h-11 w-11"
                   aria-label="Decrease quantity"
                   disabled={qty <= 1}
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -165,7 +166,8 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                 <span className="min-w-8 text-center font-display text-base font-semibold">{qty}</span>
                 <Button
                   variant="outline"
-                  size="icon"
+                   size="icon"
+                   className="h-11 w-11"
                   aria-label="Increase quantity"
                   disabled={qty >= maxQty || soldOut}
                   onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
@@ -185,7 +187,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
             )}
 
             <Button
-              className="mt-6 w-full"
+              className="sticky bottom-0 mt-6 min-h-11 w-full shadow-lift"
               disabled={soldOut}
               onClick={() => {
                 add(
