@@ -94,7 +94,6 @@ export function CartDrawer() {
                       </Button>
                     </div>
                   </div>
-                    </div>
                   <p className="col-start-2 text-right text-sm font-bold">{formatBDT(l.price * l.quantity)}</p>
                 </li>
               ))}
