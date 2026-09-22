@@ -31,8 +31,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3">
-        <Logo />
+      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 lg:flex">
+        <div className="min-w-0">
+          <Logo />
+        </div>
 
         <nav className="ml-8 hidden items-center gap-6 text-sm font-medium lg:flex">
           <Link
@@ -79,10 +81,11 @@ export function Header() {
           </Link>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0 lg:ml-auto lg:gap-1">
           <Button
             variant="ghost"
             size="icon"
+            className="h-11 w-11"
             aria-label="Search products"
             onClick={() => setSearchOpen((v) => !v)}
           >
@@ -92,7 +95,7 @@ export function Header() {
           <CartDrawer />
 
           {session ? (
-            <Button variant="ghost" size="icon" aria-label="My account" asChild>
+            <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="My account" asChild>
               <Link to="/account">
                 <User className="h-5 w-5" />
               </Link>
@@ -101,6 +104,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
+              className="h-11 w-11"
               aria-label="Sign in"
               onClick={() => setAuthOpen(true)}
             >
@@ -112,7 +116,7 @@ export function Header() {
           {/* Categories live behind this three-dot menu */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Browse categories and menu">
+              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Browse categories and menu">
                 <MoreVertical className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -172,8 +176,8 @@ export function Header() {
       </div>
 
       {searchOpen && (
-        <form onSubmit={submitSearch} className="border-t border-border/70 bg-secondary/60 px-5 py-3">
-          <div className="mx-auto flex max-w-6xl gap-2">
+        <form onSubmit={submitSearch} className="border-t border-border/70 bg-secondary/60 px-4 py-3 sm:px-5">
+          <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] gap-2">
             <Input
               autoFocus
               value={term}

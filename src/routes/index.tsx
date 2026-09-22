@@ -76,7 +76,7 @@ function Home() {
         <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-20 lg:py-28">
           <div className="max-w-2xl">
             <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
-            <h1 className="mt-3 font-display text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
               Everyday tech that
               <span className="text-accent"> feels good</span> to own.
             </h1>
