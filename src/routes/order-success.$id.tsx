@@ -29,7 +29,15 @@ function OrderSuccess() {
   const { id } = Route.useParams();
   const { data, isPending, error } = useQuery({
     queryKey: ["order", id],
-    queryFn: () => getOrderById({ data: { id } }),
+    queryFn: () => {
+      let orderCode: string | undefined;
+      try {
+        orderCode = sessionStorage.getItem(`order-code:${id}`) ?? undefined;
+      } catch {
+        orderCode = undefined;
+      }
+      return getOrderById({ data: { id, orderCode } });
+    },
   });
 
   return (

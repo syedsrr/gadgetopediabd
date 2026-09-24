@@ -102,6 +102,11 @@ function Checkout() {
         },
       });
       clearCart();
+      try {
+        sessionStorage.setItem(`order-code:${result.id}`, result.order_code);
+      } catch {
+        // sessionStorage unavailable; the confirmation page will fall back to tracking
+      }
       navigate({ to: "/order-success/$id", params: { id: result.id } });
     } catch (err) {
       console.error(err);
