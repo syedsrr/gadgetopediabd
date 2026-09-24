@@ -127,18 +127,57 @@ export const placeOrder = createServerFn({ method: "POST" })
   });
 
 export const getOrderById = createServerFn({ method: "GET" })
-  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
+  .inputValidator((data: unknown) =>
+    z
+      .object({ id: z.string().uuid(), orderCode: z.string().trim().max(20).optional() })
+      .parse(data),
+  )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Caller identity from the request bearer token only, never from input.
+    let callerId: string | null = null;
+    try {
+      const { getRequest } = await import("@tanstack/react-start/server");
+      const header = getRequest()?.headers.get("authorization") ?? "";
+      const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+      if (token.split(".").length === 3) {
+        const { data: userData } = await supabaseAdmin.auth.getUser(token);
+        callerId = userData?.user?.id ?? null;
+      }
+    } catch {
+      callerId = null;
+    }
+
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, order_code, area, subtotal, delivery_fee, total, status, created_at, order_items(product_name, quantity, unit_price)",
+        "id, order_code, user_id, area, subtotal, delivery_fee, total, status, created_at, order_items(product_name, quantity, unit_price)",
       )
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error("Could not load the order");
-    return order ?? null;
+    if (!order) return null;
+
+    // Access is bound to the caller: the signed-in order owner, an admin,
+    // or a guest who also knows the order code (shown once at checkout).
+    let allowed = order.user_id !== null && callerId === order.user_id;
+    if (!allowed && callerId) {
+      const { data: roleRow } = await supabaseAdmin
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", callerId)
+        .eq("role", "admin")
+        .maybeSingle();
+      allowed = !!roleRow;
+    }
+    if (!allowed && data.orderCode) {
+      allowed = order.order_code === data.orderCode.toUpperCase();
+    }
+    if (!allowed) return null;
+
+    const { user_id: _userId, ...safe } = order;
+    return safe;
   });
 
 export const trackOrders = createServerFn({ method: "POST" })
