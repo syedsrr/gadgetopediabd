@@ -21,12 +21,12 @@ export const Route = createFileRoute("/track-order")({
       {
         name: "description",
         content:
-          "Check your gadgetOpedia n' Lifestyle delivery status. Enter your phone number or order code to see live order progress.",
+          "Check your gadgetOpedia n' Lifestyle delivery status. Enter your order code and phone number to see live order progress.",
       },
       { property: "og:title", content: "Track your order — gadgetOpedia n' Lifestyle" },
       {
         property: "og:description",
-        content: "Enter your phone number or order code to see live delivery status.",
+        content: "Enter your order code and phone number to see live delivery status.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -76,21 +76,22 @@ function StatusTimeline({ status }: { status: string }) {
 function TrackOrder() {
   const { q } = Route.useSearch();
   const [query, setQuery] = useState(q ?? "");
+  const [phone, setPhone] = useState("");
   const lookup = useServerFn(trackOrders);
   const mutation = useMutation({
-    mutationFn: (value: string) => lookup({ data: { query: value } }),
+    mutationFn: (v: { orderCode: string; phone: string }) => lookup({ data: v }),
   });
 
   useEffect(() => {
-    if (q && q.length >= 4) mutation.mutate(q);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (q) setQuery(q);
   }, [q]);
+
+  const canSubmit = query.trim().length >= 4 && /^[0-9+\-\s]{11,15}$/.test(phone.trim());
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const value = query.trim();
-    if (value.length < 4) return;
-    mutation.mutate(value);
+    if (!canSubmit) return;
+    mutation.mutate({ orderCode: query.trim(), phone: phone.trim() });
   }
 
   const results = mutation.data;
@@ -101,23 +102,38 @@ function TrackOrder() {
         <span className="eyebrow text-moss">Order tracking</span>
         <h1 className="mt-1 font-display text-3xl font-bold">Where is my parcel?</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Enter the phone number you ordered with, or your order code (e.g. GO-A1B2C3).
+          Enter your order code (e.g. GO-A1B2C3) and the phone number you ordered with.
         </p>
 
         <form
           onSubmit={submit}
           className="mt-6 rounded-2xl border border-border bg-card p-5 shadow-soft"
         >
-          <Label htmlFor="track-query">Phone number or order code</Label>
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-            <Input
-              id="track-query"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="01XXXXXXXXX or GO-A1B2C3"
-              className="sm:flex-1"
-            />
-            <Button type="submit" disabled={mutation.isPending || query.trim().length < 4}>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="track-query">Order code</Label>
+              <Input
+                id="track-query"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="GO-A1B2C3"
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="track-phone">Phone number</Label>
+              <Input
+                id="track-phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="01XXXXXXXXX"
+                className="mt-2"
+              />
+            </div>
+          </div>
+          <div className="mt-3 flex">
+            <Button type="submit" className="w-full sm:w-auto" disabled={mutation.isPending || !canSubmit}>
               <Search className="mr-1.5 h-4 w-4" />
               {mutation.isPending ? "Searching…" : "Track order"}
             </Button>
@@ -135,7 +151,7 @@ function TrackOrder() {
             <PackageSearch className="mx-auto h-8 w-8 text-muted-foreground" />
             <p className="mt-3 text-sm font-medium">No orders found</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Double-check the phone number or order code you used at checkout.
+              Double-check the order code and phone number you used at checkout.
             </p>
             <Button variant="outline" className="mt-5" asChild>
               <Link to="/shop">Browse the shop</Link>
