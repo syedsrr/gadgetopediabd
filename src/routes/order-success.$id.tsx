@@ -56,7 +56,7 @@ function OrderSuccess() {
               <CheckCircle2 className="mx-auto h-14 w-14 text-moss" />
               <h1 className="mt-5 font-display text-3xl font-bold">Order confirmed</h1>
               <p className="mt-3 text-sm text-muted-foreground">
-                Thank you, {data.customer_name}! We&apos;ll call you shortly to confirm delivery.
+                Thank you! We&apos;ll call you shortly to confirm delivery.
               </p>
             </div>
 
