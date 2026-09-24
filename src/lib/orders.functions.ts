@@ -133,7 +133,7 @@ export const getOrderById = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, order_code, customer_name, area, address, phone, subtotal, delivery_fee, total, status, created_at, order_items(product_name, quantity, unit_price)",
+        "id, order_code, area, subtotal, delivery_fee, total, status, created_at, order_items(product_name, quantity, unit_price)",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -143,23 +143,26 @@ export const getOrderById = createServerFn({ method: "GET" })
 
 export const trackOrders = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
-    z.object({ query: z.string().trim().min(4).max(60) }).parse(data),
+    z
+      .object({
+        orderCode: z.string().trim().min(4).max(20),
+        phone: z.string().trim().regex(phoneRegex),
+      })
+      .parse(data),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const q = data.query;
-    const isPhone = phoneRegex.test(q);
+    const digits = (v: string) => v.replace(/[^0-9]/g, "").slice(-10);
 
-    const builder = supabaseAdmin
+    const { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select("id, order_code, status, total, area, created_at")
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    const { data: orders, error } = isPhone
-      ? await builder.eq("phone", q)
-      : await builder.eq("order_code", q.toUpperCase());
+      .select("id, order_code, status, total, area, created_at, phone")
+      .eq("order_code", data.orderCode.toUpperCase())
+      .maybeSingle();
 
     if (error) throw new Error("Could not look up orders");
-    return orders ?? [];
+    // Both the order code and the phone used at checkout must match.
+    if (!order || digits(order.phone) !== digits(data.phone)) return [];
+    const { phone: _phone, ...safe } = order;
+    return [safe];
   });
