@@ -108,7 +108,7 @@ function OrderSuccess() {
               <Separator className="my-5" />
 
               <p className="text-sm text-muted-foreground">
-                Delivering to: <span className="text-foreground">{data.address}</span>
+                Save your order code — you&apos;ll need it with your phone number to track delivery.
               </p>
             </div>
 
