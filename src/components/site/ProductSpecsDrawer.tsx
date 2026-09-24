@@ -187,7 +187,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
             )}
 
             <Button
-              className="sticky bottom-0 mt-6 min-h-11 w-full shadow-lift"
+              className="mt-6 min-h-11 w-full"
               disabled={soldOut}
               onClick={() => {
                 add(
