@@ -160,6 +160,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  p {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
   h1,
   h2,
   h3,
