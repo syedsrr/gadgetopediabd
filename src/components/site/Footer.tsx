@@ -55,6 +55,16 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link to="/return-policy" className="text-canopy-foreground/75 transition-colors hover:text-accent">
+                Return policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/warranty-policy" className="text-canopy-foreground/75 transition-colors hover:text-accent">
+                Warranty policy
+              </Link>
+            </li>
+            <li>
               <Link to="/auth" className="text-canopy-foreground/75 transition-colors hover:text-accent">
                 Staff login
               </Link>

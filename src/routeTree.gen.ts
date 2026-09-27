@@ -18,11 +18,13 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PreOrderRouteImport } from './routes/pre-order'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ReturnPolicyRouteImport } from './routes/return-policy'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SoldOutRouteImport } from './routes/sold-out'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as TrackOrderRouteImport } from './routes/track-order'
+import { Route as WarrantyPolicyRouteImport } from './routes/warranty-policy'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -82,6 +84,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnPolicyRoute = ReturnPolicyRouteImport.update({
+  id: '/return-policy',
+  path: '/return-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -105,6 +112,11 @@ const StoreRoute = StoreRouteImport.update({
 const TrackOrderRoute = TrackOrderRouteImport.update({
   id: '/track-order',
   path: '/track-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarrantyPolicyRoute = WarrantyPolicyRouteImport.update({
+  id: '/warranty-policy',
+  path: '/warranty-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
@@ -194,11 +206,13 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/return-policy': typeof ReturnPolicyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
   '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
+  '/warranty-policy': typeof WarrantyPolicyRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -223,11 +237,13 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/return-policy': typeof ReturnPolicyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
   '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
+  '/warranty-policy': typeof WarrantyPolicyRoute
   '/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
@@ -253,11 +269,13 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/pre-order': typeof PreOrderRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/return-policy': typeof ReturnPolicyRoute
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sold-out': typeof SoldOutRoute
   '/store': typeof StoreRoute
   '/track-order': typeof TrackOrderRoute
+  '/warranty-policy': typeof WarrantyPolicyRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/category/$slug': typeof CategorySlugRoute
@@ -284,11 +302,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pre-order'
     | '/reset-password'
+    | '/return-policy'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
     | '/store'
     | '/track-order'
+    | '/warranty-policy'
     | '/admin'
     | '/account'
     | '/category/$slug'
@@ -313,11 +333,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pre-order'
     | '/reset-password'
+    | '/return-policy'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
     | '/store'
     | '/track-order'
+    | '/warranty-policy'
     | '/account'
     | '/category/$slug'
     | '/order-success/$id'
@@ -342,11 +364,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pre-order'
     | '/reset-password'
+    | '/return-policy'
     | '/shop'
     | '/sitemap.xml'
     | '/sold-out'
     | '/store'
     | '/track-order'
+    | '/warranty-policy'
     | '/_authenticated/admin'
     | '/_authenticated/account'
     | '/category/$slug'
@@ -373,11 +397,13 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   PreOrderRoute: typeof PreOrderRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  ReturnPolicyRoute: typeof ReturnPolicyRoute
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SoldOutRoute: typeof SoldOutRoute
   StoreRoute: typeof StoreRoute
   TrackOrderRoute: typeof TrackOrderRoute
+  WarrantyPolicyRoute: typeof WarrantyPolicyRoute
   CategorySlugRoute: typeof CategorySlugRoute
   OrderSuccessIdRoute: typeof OrderSuccessIdRoute
   ProductSlugRoute: typeof ProductSlugRoute
@@ -448,6 +474,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/return-policy': {
+      id: '/return-policy'
+      path: '/return-policy'
+      fullPath: '/return-policy'
+      preLoaderRoute: typeof ReturnPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -481,6 +514,13 @@ declare module '@tanstack/react-router' {
       path: '/track-order'
       fullPath: '/track-order'
       preLoaderRoute: typeof TrackOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/warranty-policy': {
+      id: '/warranty-policy'
+      path: '/warranty-policy'
+      fullPath: '/warranty-policy'
+      preLoaderRoute: typeof WarrantyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account': {
@@ -637,11 +677,13 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   PreOrderRoute: PreOrderRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  ReturnPolicyRoute: ReturnPolicyRoute,
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SoldOutRoute: SoldOutRoute,
   StoreRoute: StoreRoute,
   TrackOrderRoute: TrackOrderRoute,
+  WarrantyPolicyRoute: WarrantyPolicyRoute,
   CategorySlugRoute: CategorySlugRoute,
   OrderSuccessIdRoute: OrderSuccessIdRoute,
   ProductSlugRoute: ProductSlugRoute,
