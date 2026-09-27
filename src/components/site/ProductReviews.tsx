@@ -75,8 +75,14 @@ export function ProductReviews({ productId }: { productId: string }) {
   const counts = [5, 4, 3, 2, 1].map((n) => reviews.filter((r) => r.rating === n).length);
 
   async function submit() {
-    if (!userId) return setAuthOpen(true);
-    if (rating < 1) return toast.error("Please choose a star rating");
+    if (!userId) {
+      setAuthOpen(true);
+      return;
+    }
+    if (rating < 1) {
+      toast.error("Please choose a star rating");
+      return;
+    }
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
@@ -87,7 +93,7 @@ export function ProductReviews({ productId }: { productId: string }) {
         .maybeSingle();
       const name = (
         profile?.full_name ||
-        u.user?.user_metadata?.full_name ||
+        u.user?.user_metadata?.['full_name'] ||
         (profile?.email ?? u.user?.email ?? "Customer").split("@")[0]
       ).slice(0, 60);
       const payload = {
@@ -112,7 +118,10 @@ export function ProductReviews({ productId }: { productId: string }) {
 
   async function remove(id: string) {
     const { error } = await db.from("product_reviews").delete().eq("id", id);
-    if (error) return toast.error("Could not delete review");
+    if (error) {
+      toast.error("Could not delete review");
+      return;
+    }
     setRating(0);
     setComment("");
     qc.invalidateQueries({ queryKey: ["reviews", productId] });
@@ -138,7 +147,7 @@ export function ProductReviews({ productId }: { productId: string }) {
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-moss"
-                  style={{ width: reviews.length ? `${(counts[i] / reviews.length) * 100}%` : 0 }}
+                  style={{ width: reviews.length ? `${((counts[i] ?? 0) / reviews.length) * 100}%` : 0 }}
                 />
               </div>
               <span className="w-6 text-right text-muted-foreground">{counts[i]}</span>
