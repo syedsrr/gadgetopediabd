@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { ProductReviews } from "@/components/site/ProductReviews";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/lib/cart";
@@ -382,6 +383,8 @@ function ProductPage() {
             </p>
           </section>
         )}
+
+        <ProductReviews productId={product.id} />
 
         {related.length > 0 && (
           <section className="mt-16">
