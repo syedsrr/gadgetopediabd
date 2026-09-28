@@ -172,8 +172,8 @@ function Home() {
                 key={f.title}
                 className="flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
               >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-moss/10 sm:h-10 sm:w-10">
-                  <f.icon className="h-4 w-4 text-moss sm:h-5 sm:w-5" />
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/10 sm:h-8 sm:w-8">
+                  <f.icon className="h-3.5 w-3.5 text-moss sm:h-4 sm:w-4" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-center text-[11px] font-semibold leading-tight text-foreground max-[359px]:text-[10px] sm:text-left sm:text-sm">

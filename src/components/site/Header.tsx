@@ -89,7 +89,7 @@ export function Header() {
             aria-label="Search products"
             onClick={() => setSearchOpen((v) => !v)}
           >
-            {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+            {searchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
 
           <CartDrawer />
@@ -97,7 +97,7 @@ export function Header() {
           {session ? (
             <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="My account" asChild>
               <Link to="/account">
-                <User className="h-5 w-5" />
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </Button>
           ) : (
@@ -108,7 +108,7 @@ export function Header() {
               aria-label="Sign in"
               onClick={() => setAuthOpen(true)}
             >
-              <User className="h-5 w-5" />
+              <User className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           )}
 
@@ -117,7 +117,7 @@ export function Header() {
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Browse categories and menu">
-                <MoreVertical className="h-5 w-5" />
+                <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[19rem] border-l-0 bg-canopy p-0 text-canopy-foreground">
