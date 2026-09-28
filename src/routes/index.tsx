@@ -127,30 +127,30 @@ function Home() {
       </section>
 
       {/* Categories */}
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-14">
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-5 sm:py-14">
         <div className="flex items-end justify-between gap-4">
           <div>
             <span className="eyebrow text-moss">Browse</span>
             <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Shop by category</h2>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-6 sm:gap-4 lg:grid-cols-4">
           {categories.map((c) => (
             <Link
               key={c.id}
               to="/category/$slug"
               params={{ slug: c.slug }}
-              className="card-hover grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 shadow-soft sm:block sm:min-h-0 sm:rounded-2xl sm:p-5"
+              className="card-hover grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-lg border border-border bg-card px-2 py-2 shadow-soft sm:block sm:min-h-0 sm:rounded-2xl sm:p-5"
             >
               <div className="min-w-0">
-                <p className="line-clamp-2 text-left font-display text-xs font-semibold leading-4 text-foreground sm:text-base">
+                <p className="line-clamp-2 text-left font-display text-[10px] font-semibold leading-[1.3] text-foreground sm:text-base">
                   {c.name}
                 </p>
-                <p className="mt-0.5 text-left text-[10px] leading-4 text-muted-foreground sm:mt-1 sm:text-xs">
+                <p className="mt-0.5 text-left text-[9px] leading-3 text-muted-foreground sm:mt-1 sm:text-xs sm:leading-4">
                   {liveProducts.filter((p) => p.categories?.slug === c.slug).length} products
                 </p>
               </div>
-              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-moss sm:hidden" />
+              <ArrowRight className="h-3 w-3 shrink-0 text-moss sm:hidden" />
               <span className="mt-3 hidden items-center text-xs font-medium text-moss sm:inline-flex">
                 Explore <ArrowRight className="ml-1 h-3 w-3" />
               </span>
