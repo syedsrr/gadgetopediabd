@@ -43,12 +43,6 @@ export function ProductCard({
             height={1024}
             className="h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.08]"
           />
-
-        )}
-      </Link>
-    </article>
-  );
-}
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
             <ImageOff className="h-6 w-6" aria-hidden="true" />
