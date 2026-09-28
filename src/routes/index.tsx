@@ -112,7 +112,7 @@ function Home() {
             >
               <f.icon className="h-5 w-5 shrink-0 text-moss sm:mt-0.5" />
               <div className="min-w-0">
-                <p className="text-center text-[12.5px] font-semibold leading-tight tracking-tight text-foreground sm:text-left sm:text-sm">
+                <p className="whitespace-nowrap text-center text-[11px] font-semibold leading-tight tracking-tight text-foreground sm:whitespace-normal sm:text-left sm:text-sm">
                   {f.title}
                 </p>
                 <p className="mt-1 text-center text-[10.5px] leading-[1.35] text-muted-foreground sm:mt-0 sm:text-left sm:text-xs sm:leading-normal">
