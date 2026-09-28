@@ -23,7 +23,7 @@ export function CartDrawer() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Open cart drawer" className="relative h-11 w-11">
-          <ShoppingBag className="h-5 w-5" />
+          <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5" />
           {count > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-sale px-1 text-[0.65rem] font-bold text-sale-foreground">
               {count}
