@@ -15,7 +15,7 @@ import {
   Lightbulb,
   Package,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
@@ -71,6 +71,22 @@ const CATEGORY_ICON_RULES: Array<[RegExp, typeof Package]> = [
   [/light|lamp|bulb/, Lightbulb],
 ];
 
+const CATEGORY_COVER_IMAGES: Record<string, string> = {
+  "knives-cutlery": "/images/cat-knives-cutlery.jpg",
+  "decorative-collectibles": "/images/cat-decorative-collectibles.jpg",
+  "fans-cooling": "/images/cat-fans-cooling.jpg",
+  "power-bank": "/images/cat-power-bank.jpg",
+  "accessories-cables": "/images/cat-accessories-cables.jpg",
+};
+
+const CATEGORY_TAGS: Record<string, string> = {
+  "knives-cutlery": "Field essentials",
+  "decorative-collectibles": "Rare finds",
+  "fans-cooling": "Cool comfort",
+  "power-bank": "Stay charged",
+  "accessories-cables": "Connection kits",
+};
+
 function categoryIcon(slug: string, name: string) {
   const key = `${slug} ${name}`.toLowerCase();
   return CATEGORY_ICON_RULES.find(([re]) => re.test(key))?.[1] ?? Package;
@@ -81,6 +97,21 @@ function Home() {
   const { data: categories = [], isPending: categoriesPending } = useQuery(categoriesQuery);
   const liveProducts = withCategories(products, categories);
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [activeCategoryDot, setActiveCategoryDot] = useState(0);
+  const onStripScroll = () => {
+    const el = stripRef.current;
+    if (!el || categories.length < 2) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const idx =
+      max <= 0
+        ? 0
+        : Math.min(
+            categories.length - 1,
+            Math.round((el.scrollLeft / max) * (categories.length - 1)),
+          );
+    setActiveCategoryDot(idx);
+  };
   const featured = liveProducts.filter((p) => p.is_featured);
   const latest = liveProducts.slice(0, 12);
   const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
@@ -158,19 +189,30 @@ function Home() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Categories — side-by-side arched editorial strip */}
       <section className="mx-auto max-w-6xl px-4 py-7 sm:px-5 sm:py-12">
         <div className="flex items-end justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <span className="eyebrow text-moss">Browse</span>
-            <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Shop by category</h2>
+            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+              Shop by category
+            </h2>
           </div>
-          <Button variant="ghost" size="sm" asChild className="shrink-0">
+          <div className="hidden shrink-0 items-center gap-2 pb-1.5 sm:flex" aria-hidden="true">
+            <span className="h-[2px] w-10 bg-foreground" />
+            <span className="h-2 w-2 rounded-full border border-foreground" />
+          </div>
+          <Button variant="ghost" size="sm" asChild className="shrink-0 sm:hidden">
             <Link to="/shop">All products</Link>
           </Button>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <div
+          ref={stripRef}
+          onScroll={onStripScroll}
+          className="no-scrollbar -mx-4 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-6 sm:gap-5 sm:px-5"
+        >
           {categories.map((c) => {
+            const cover = CATEGORY_COVER_IMAGES[c.slug];
             const Icon = categoryIcon(c.slug, c.name);
             const count = liveProducts.filter((p) => p.categories?.slug === c.slug).length;
             return (
@@ -178,27 +220,56 @@ function Home() {
                 key={c.id}
                 to="/category/$slug"
                 params={{ slug: c.slug }}
-                className="card-hover group flex items-center gap-2.5 rounded-xl border border-border bg-card p-2.5 shadow-soft transition-colors hover:border-moss/50 sm:flex-col sm:items-start sm:gap-3 sm:rounded-2xl sm:p-4"
+                className="group flex-none w-[46vw] max-w-[190px] snap-start sm:w-[210px] lg:w-[calc((100%-4rem)/5)]"
               >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-moss/10 text-moss transition-colors group-hover:bg-moss/15 sm:h-11 sm:w-11 sm:rounded-xl">
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-left font-display text-[11px] font-semibold leading-tight text-foreground sm:text-sm">
-                    {c.name}
-                  </p>
-                  <p className="mt-1 text-left text-[10px] leading-none text-muted-foreground sm:text-xs">
-                    {count} {count === 1 ? "item" : "items"}
-                  </p>
+                <div className="relative overflow-hidden rounded-t-[999px] rounded-b-2xl bg-moss/10 sm:rounded-b-3xl">
+                  <div className="aspect-[3/4] w-full">
+                    {cover ? (
+                      <img
+                        src={cover}
+                        alt={`${c.name} collection`}
+                        width={800}
+                        height={1067}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <span className="grid h-full w-full place-items-center text-moss">
+                        <Icon className="h-8 w-8 sm:h-10 sm:w-10" />
+                      </span>
+                    )}
+                  </div>
+                  <div className="absolute left-3 top-6 rounded-full border border-canopy-foreground/25 bg-canopy/85 px-2.5 py-1 backdrop-blur-md sm:left-4 sm:top-8">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-canopy-foreground sm:text-[10px]">
+                      {count} {count === 1 ? "item" : "items"}
+                    </span>
+                  </div>
                 </div>
-                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-moss transition-transform group-hover:translate-x-0.5 sm:hidden" />
-                <span className="mt-1 hidden items-center text-xs font-medium text-moss sm:inline-flex">
-                  Explore
-                  <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                </span>
+                <h3 className="mt-3 font-display text-sm font-bold leading-tight text-foreground sm:text-lg">
+                  {c.name}
+                </h3>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="h-px w-4 shrink-0 bg-moss" aria-hidden="true" />
+                  <span className="text-[9px] font-medium uppercase tracking-wider text-moss sm:text-[10px]">
+                    {CATEGORY_TAGS[c.slug] ?? "Explore"}
+                  </span>
+                </div>
               </Link>
             );
           })}
+        </div>
+        <div className="mt-4 flex items-center justify-center gap-1.5 lg:hidden" aria-hidden="true">
+          {categories.map((c, i) => (
+            <span
+              key={c.id}
+              className={
+                i === activeCategoryDot
+                  ? "h-1 w-6 rounded-full bg-foreground"
+                  : "h-1.5 w-1.5 rounded-full bg-border"
+              }
+            />
+          ))}
         </div>
       </section>
 
