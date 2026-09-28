@@ -197,71 +197,81 @@ function Home() {
 
       {/* Categories — side-by-side arched editorial strip */}
       <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-7">
-        <div className="flex items-end justify-between gap-4">
-          <div className="min-w-0">
-            <span className="eyebrow text-moss">Browse</span>
-            <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
-              Shop by category
-            </h2>
+        <Reveal>
+          <div className="flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              <span className="eyebrow text-moss">Browse</span>
+              <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                Shop by category
+              </h2>
+            </div>
+            <div className="hidden shrink-0 items-center gap-2 pb-1.5 sm:flex" aria-hidden="true">
+              <span className="h-[2px] w-10 bg-foreground" />
+              <span className="h-2 w-2 rounded-full border border-foreground" />
+            </div>
+            <Button variant="ghost" size="sm" asChild className="shrink-0 sm:hidden">
+              <Link to="/shop">All products</Link>
+            </Button>
           </div>
-          <div className="hidden shrink-0 items-center gap-2 pb-1.5 sm:flex" aria-hidden="true">
-            <span className="h-[2px] w-10 bg-foreground" />
-            <span className="h-2 w-2 rounded-full border border-foreground" />
-          </div>
-          <Button variant="ghost" size="sm" asChild className="shrink-0 sm:hidden">
-            <Link to="/shop">All products</Link>
-          </Button>
-        </div>
+        </Reveal>
         <div
           ref={stripRef}
           onScroll={onStripScroll}
           className="no-scrollbar -mx-4 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-4 sm:gap-4 sm:px-5"
         >
-          {categories.map((c) => {
+          {categories.map((c, i) => {
             const cover = CATEGORY_COVER_IMAGES[c.slug];
             const Icon = categoryIcon(c.slug, c.name);
             const count = liveProducts.filter((p) => p.categories?.slug === c.slug).length;
             return (
-              <Link
+              <Reveal
                 key={c.id}
-                to="/category/$slug"
-                params={{ slug: c.slug }}
-                className="group flex-none w-[46vw] max-w-[190px] snap-start sm:w-[210px] lg:w-[calc((100%-4rem)/5)]"
+                delay={i * 90}
+                className="flex-none w-[46vw] max-w-[190px] snap-start sm:w-[210px] lg:w-[calc((100%-4rem)/5)]"
               >
-                <div className="relative overflow-hidden rounded-t-[999px] rounded-b-2xl bg-moss/10 sm:rounded-b-3xl">
-                  <div className="aspect-[4/5] w-full">
-                    {cover ? (
-                      <img
-                        src={cover}
-                        alt={`${c.name} collection`}
-                        width={800}
-                        height={1067}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <span className="grid h-full w-full place-items-center text-moss">
-                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: c.slug }}
+                  className="press group block"
+                >
+                  <div className="relative overflow-hidden rounded-t-[999px] rounded-b-2xl bg-moss/10 sm:rounded-b-3xl">
+                    <div className="aspect-[4/5] w-full">
+                      {cover ? (
+                        <img
+                          src={cover}
+                          alt={`${c.name} collection`}
+                          width={800}
+                          height={1067}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.08]"
+                        />
+                      ) : (
+                        <span className="grid h-full w-full place-items-center text-moss">
+                          <Icon className="h-5 w-5 transition-transform duration-500 group-hover:scale-110 sm:h-6 sm:w-6" />
+                        </span>
+                      )}
+                    </div>
+                    <div className="absolute left-3 top-6 rounded-full border border-canopy-foreground/25 bg-canopy/85 px-2.5 py-1 backdrop-blur-md transition-transform duration-500 group-hover:-translate-y-0.5 sm:left-4 sm:top-8">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-canopy-foreground sm:text-[10px]">
+                        {count} {count === 1 ? "item" : "items"}
                       </span>
-                    )}
+                    </div>
                   </div>
-                  <div className="absolute left-3 top-6 rounded-full border border-canopy-foreground/25 bg-canopy/85 px-2.5 py-1 backdrop-blur-md sm:left-4 sm:top-8">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-canopy-foreground sm:text-[10px]">
-                      {count} {count === 1 ? "item" : "items"}
+                  <h3 className="mt-2 font-display text-xs font-bold leading-tight text-foreground transition-colors duration-300 group-hover:text-moss sm:text-base lg:text-lg">
+                    {c.name}
+                  </h3>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span
+                      className="h-px w-4 shrink-0 origin-left bg-moss transition-transform duration-500 group-hover:scale-x-[2]"
+                      aria-hidden="true"
+                    />
+                    <span className="text-[9px] font-medium uppercase tracking-wider text-moss sm:text-[10px]">
+                      {CATEGORY_TAGS[c.slug] ?? "Explore"}
                     </span>
                   </div>
-                </div>
-                <h3 className="mt-2 font-display text-xs font-bold leading-tight text-foreground sm:text-base lg:text-lg">
-                  {c.name}
-                </h3>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="h-px w-4 shrink-0 bg-moss" aria-hidden="true" />
-                  <span className="text-[9px] font-medium uppercase tracking-wider text-moss sm:text-[10px]">
-                    {CATEGORY_TAGS[c.slug] ?? "Explore"}
-                  </span>
-                </div>
-              </Link>
+                </Link>
+              </Reveal>
             );
           })}
         </div>
@@ -271,8 +281,8 @@ function Home() {
               key={c.id}
               className={
                 i === activeCategoryDot
-                  ? "h-1 w-6 rounded-full bg-foreground"
-                  : "h-1.5 w-1.5 rounded-full bg-border"
+                  ? "h-1 w-6 rounded-full bg-foreground transition-all duration-300"
+                  : "h-1.5 w-1.5 rounded-full bg-border transition-all duration-300"
               }
             />
           ))}
