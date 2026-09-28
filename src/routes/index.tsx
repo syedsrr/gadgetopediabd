@@ -297,7 +297,7 @@ function Home() {
           </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {preorders.map((p, i) => (
-              <Reveal key={p.id} delay={i * 70} className="flex">
+              <Reveal key={p.id} delay={i * 70} className="flex h-full [&>article]:w-full">
                 <ProductCard product={p} onQuickView={setSelected} />
               </Reveal>
             ))}
@@ -321,7 +321,7 @@ function Home() {
           </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {featured.map((p, i) => (
-              <Reveal key={p.id} delay={(i % 4) * 70} className="flex">
+              <Reveal key={p.id} delay={(i % 4) * 70} className="flex h-full [&>article]:w-full">
                 <ProductCard product={p} onQuickView={setSelected} />
               </Reveal>
             ))}
@@ -344,7 +344,7 @@ function Home() {
         </Reveal>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p, i) => (
-            <Reveal key={p.id} delay={(i % 4) * 70} className="flex">
+            <Reveal key={p.id} delay={(i % 4) * 70} className="flex h-full [&>article]:w-full">
               <ProductCard product={p} onQuickView={setSelected} />
             </Reveal>
           ))}
@@ -383,7 +383,7 @@ function Home() {
           </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {soldOut.map((p, i) => (
-              <Reveal key={p.id} delay={i * 70} className="flex">
+              <Reveal key={p.id} delay={i * 70} className="flex h-full [&>article]:w-full">
                 <ProductCard product={p} onQuickView={setSelected} />
               </Reveal>
             ))}
