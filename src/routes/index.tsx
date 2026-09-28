@@ -1,6 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BadgeCheck, Truck, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  BadgeCheck,
+  Truck,
+  ShieldCheck,
+  ArrowRight,
+  Fan,
+  BatteryCharging,
+  Sparkles,
+  Cable,
+  UtensilsCrossed,
+  Headphones,
+  Watch,
+  Lightbulb,
+  Package,
+} from "lucide-react";
 import { useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
