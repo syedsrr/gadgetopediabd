@@ -209,7 +209,7 @@ function Home() {
         <div
           ref={stripRef}
           onScroll={onStripScroll}
-          className="no-scrollbar -mx-4 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-6 sm:gap-5 sm:px-5"
+          className="no-scrollbar -mx-4 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-4 sm:gap-4 sm:px-5"
         >
           {categories.map((c) => {
             const cover = CATEGORY_COVER_IMAGES[c.slug];
@@ -223,7 +223,7 @@ function Home() {
                 className="group flex-none w-[46vw] max-w-[190px] snap-start sm:w-[210px] lg:w-[calc((100%-4rem)/5)]"
               >
                 <div className="relative overflow-hidden rounded-t-[999px] rounded-b-2xl bg-moss/10 sm:rounded-b-3xl">
-                  <div className="aspect-[3/4] w-full">
+                  <div className="aspect-[4/5] w-full">
                     {cover ? (
                       <img
                         src={cover}
@@ -236,7 +236,7 @@ function Home() {
                       />
                     ) : (
                       <span className="grid h-full w-full place-items-center text-moss">
-                        <Icon className="h-8 w-8 sm:h-10 sm:w-10" />
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </span>
                     )}
                   </div>
@@ -246,7 +246,7 @@ function Home() {
                     </span>
                   </div>
                 </div>
-                <h3 className="mt-3 font-display text-sm font-bold leading-tight text-foreground sm:text-lg">
+                <h3 className="mt-2 font-display text-xs font-bold leading-tight text-foreground sm:text-base lg:text-lg">
                   {c.name}
                 </h3>
                 <div className="mt-1 flex items-center gap-2">
@@ -259,7 +259,7 @@ function Home() {
             );
           })}
         </div>
-        <div className="mt-4 flex items-center justify-center gap-1.5 lg:hidden" aria-hidden="true">
+        <div className="mt-3 flex items-center justify-center gap-1.5 lg:hidden" aria-hidden="true">
           {categories.map((c, i) => (
             <span
               key={c.id}
