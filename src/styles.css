@@ -208,3 +208,12 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
+
+/* Hide scrollbars on horizontal snap strips (category band) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
