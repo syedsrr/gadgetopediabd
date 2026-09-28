@@ -9,5 +9,5 @@
 - [x] Compact mobile categories so products appear sooner
 - [x] Validate the revised homepage at common phone widths
 # Arched editorial category strip
-- [ ] Rebuild categories section as side-by-side arched scroll strip
-- [ ] Verify sizing/professionalism at phone, tablet, desktop widths
+- [x] Rebuild categories section as side-by-side arched scroll strip
+- [x] Verify sizing/professionalism at phone, tablet, desktop widths
