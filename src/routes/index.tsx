@@ -134,7 +134,7 @@ function Home() {
             className="absolute inset-0 h-full w-full object-cover opacity-35"
           />
         </picture>
-        <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-20 lg:py-28">
+        <div className="relative mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:gap-8 sm:py-12 lg:py-16">
           <div className="max-w-2xl">
             <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
             <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
@@ -161,7 +161,7 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-6">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-5 sm:py-4">
           <ul className="grid grid-cols-3 divide-x divide-border/60">
             {[
               { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
@@ -190,7 +190,7 @@ function Home() {
       </section>
 
       {/* Categories — side-by-side arched editorial strip */}
-      <section className="mx-auto max-w-6xl px-4 py-7 sm:px-5 sm:py-12">
+      <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-7">
         <div className="flex items-end justify-between gap-4">
           <div className="min-w-0">
             <span className="eyebrow text-moss">Browse</span>
@@ -209,7 +209,7 @@ function Home() {
         <div
           ref={stripRef}
           onScroll={onStripScroll}
-          className="no-scrollbar -mx-4 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-6 sm:gap-5 sm:px-5"
+          className="no-scrollbar -mx-4 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-4 sm:gap-4 sm:px-5"
         >
           {categories.map((c) => {
             const cover = CATEGORY_COVER_IMAGES[c.slug];
@@ -223,7 +223,7 @@ function Home() {
                 className="group flex-none w-[46vw] max-w-[190px] snap-start sm:w-[210px] lg:w-[calc((100%-4rem)/5)]"
               >
                 <div className="relative overflow-hidden rounded-t-[999px] rounded-b-2xl bg-moss/10 sm:rounded-b-3xl">
-                  <div className="aspect-[3/4] w-full">
+                  <div className="aspect-[4/5] w-full">
                     {cover ? (
                       <img
                         src={cover}
@@ -236,7 +236,7 @@ function Home() {
                       />
                     ) : (
                       <span className="grid h-full w-full place-items-center text-moss">
-                        <Icon className="h-8 w-8 sm:h-10 sm:w-10" />
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </span>
                     )}
                   </div>
@@ -246,7 +246,7 @@ function Home() {
                     </span>
                   </div>
                 </div>
-                <h3 className="mt-3 font-display text-sm font-bold leading-tight text-foreground sm:text-lg">
+                <h3 className="mt-2 font-display text-xs font-bold leading-tight text-foreground sm:text-base lg:text-lg">
                   {c.name}
                 </h3>
                 <div className="mt-1 flex items-center gap-2">
@@ -259,7 +259,7 @@ function Home() {
             );
           })}
         </div>
-        <div className="mt-4 flex items-center justify-center gap-1.5 lg:hidden" aria-hidden="true">
+        <div className="mt-3 flex items-center justify-center gap-1.5 lg:hidden" aria-hidden="true">
           {categories.map((c, i) => (
             <span
               key={c.id}
@@ -299,7 +299,7 @@ function Home() {
 
       {/* Featured */}
       {featured.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pt-14">
+        <section className="mx-auto max-w-6xl px-5 pt-6 sm:pt-9">
           <div className="flex items-end justify-between gap-4">
             <div>
               <span className="eyebrow text-moss">Handpicked</span>
@@ -318,7 +318,7 @@ function Home() {
       )}
 
       {/* Latest */}
-      <section className="mx-auto max-w-6xl px-5 py-14">
+      <section className="mx-auto max-w-6xl px-5 py-8 sm:py-11">
         <span className="eyebrow text-moss">Fresh in</span>
         <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
