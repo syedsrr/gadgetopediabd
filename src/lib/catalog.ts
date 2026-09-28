@@ -18,26 +18,36 @@ export type ProductFull = ProductWithCategory & {
   product_specifications: ProductSpec[];
 };
 
-/** Columns the storefront grid needs — keeps payloads small. */
+/** Columns the storefront grid needs — keeps payloads small.
+ *  Long text (description, specs_description) is intentionally excluded and
+ *  loaded on demand by the product page / quick-view drawer. */
 const CARD_COLUMNS =
-  "id, name, title, slug, sku, brand, manufacturer, weight_kg, specs_description, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, low_stock_threshold, image_url, image_alt, short_description, description, category_id, category, is_featured, is_new_arrival, is_best_seller, is_preorder, preorder_release_date, preorder_note, sort_priority, status, is_active, created_at";
+  "id, name, title, slug, sku, brand, manufacturer, weight_kg, price, sale_price, old_price, sale_starts_at, sale_ends_at, stock, allow_backorder, low_stock_threshold, image_url, image_alt, short_description, category_id, category, is_featured, is_new_arrival, is_best_seller, is_preorder, preorder_release_date, preorder_note, sort_priority, status, is_active, created_at";
+
+/** Storefront catalog data changes rarely — cache it so navigation is instant. */
+const CATALOG_STALE_TIME = 5 * 60_000;
+const CATALOG_GC_TIME = 30 * 60_000;
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories"],
+  staleTime: CATALOG_STALE_TIME,
+  gcTime: CATALOG_GC_TIME,
   queryFn: async (): Promise<Category[]> => {
     const { data, error } = await supabase
       .from("categories")
-      .select("*")
+      .select("id, name, slug, description, image_url, is_active, sort_order, created_at")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
     if (error) throw error;
-    return data ?? [];
+    return (data ?? []) as unknown as Category[];
   },
 });
 
 /** Published, visible products only — the storefront source of truth. */
 export const productsQuery = queryOptions({
   queryKey: ["products", "published"],
+  staleTime: CATALOG_STALE_TIME,
+  gcTime: CATALOG_GC_TIME,
   queryFn: async () => {
     const { data, error } = await supabase
       .from("products")
@@ -50,6 +60,7 @@ export const productsQuery = queryOptions({
     return (data ?? []) as unknown as Product[];
   },
 });
+
 
 export function withCategories(
   products: Product[],
