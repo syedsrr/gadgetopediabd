@@ -299,7 +299,7 @@ function Home() {
 
       {/* Featured */}
       {featured.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pt-14">
+        <section className="mx-auto max-w-6xl px-5 pt-6 sm:pt-9">
           <div className="flex items-end justify-between gap-4">
             <div>
               <span className="eyebrow text-moss">Handpicked</span>
@@ -318,7 +318,7 @@ function Home() {
       )}
 
       {/* Latest */}
-      <section className="mx-auto max-w-6xl px-5 py-14">
+      <section className="mx-auto max-w-6xl px-5 py-8 sm:py-11">
         <span className="eyebrow text-moss">Fresh in</span>
         <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
