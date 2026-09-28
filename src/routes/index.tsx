@@ -184,7 +184,7 @@ function Home() {
                   <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-left font-display text-xs font-semibold leading-tight text-foreground sm:whitespace-normal sm:text-sm">
+                  <p className="line-clamp-2 text-left font-display text-[11px] font-semibold leading-tight text-foreground sm:text-sm">
                     {c.name}
                   </p>
                   <p className="mt-1 text-left text-[10px] leading-none text-muted-foreground sm:text-xs">
