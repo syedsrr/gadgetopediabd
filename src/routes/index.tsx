@@ -71,6 +71,22 @@ const CATEGORY_ICON_RULES: Array<[RegExp, typeof Package]> = [
   [/light|lamp|bulb/, Lightbulb],
 ];
 
+const CATEGORY_COVER_IMAGES: Record<string, string> = {
+  "knives-cutlery": "/images/cat-knives-cutlery.jpg",
+  "decorative-collectibles": "/images/cat-decorative-collectibles.jpg",
+  "fans-cooling": "/images/cat-fans-cooling.jpg",
+  "power-bank": "/images/cat-power-bank.jpg",
+  "accessories-cables": "/images/cat-accessories-cables.jpg",
+};
+
+const CATEGORY_TAGS: Record<string, string> = {
+  "knives-cutlery": "Field essentials",
+  "decorative-collectibles": "Rare finds",
+  "fans-cooling": "Cool comfort",
+  "power-bank": "Stay charged",
+  "accessories-cables": "Connection kits",
+};
+
 function categoryIcon(slug: string, name: string) {
   const key = `${slug} ${name}`.toLowerCase();
   return CATEGORY_ICON_RULES.find(([re]) => re.test(key))?.[1] ?? Package;
