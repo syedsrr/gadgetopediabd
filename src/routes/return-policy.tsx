@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PolicyPage } from "@/components/site/PolicyPage";
 
 const desc =
-  "Return and refund policy for gadgetOpedia n' Lifestyle: 7-day returns on damaged, defective or wrong items, with refunds or replacements across Bangladesh.";
+  "Return and refund policy for gadgetOpedia n' Lifestyle: 5-day returns on damaged, defective or wrong items, with refunds or replacements across Bangladesh.";
 
 export const Route = createFileRoute("/return-policy")({
   head: () => ({
@@ -30,10 +30,10 @@ export const Route = createFileRoute("/return-policy")({
           ),
         },
         {
-          heading: "7-day return window",
+          heading: "5-day easy replacement window",
           body: (
             <ul>
-              <li>Report the issue within 7 days of receiving your order.</li>
+              <li>Report the issue within 5 days of receiving your order.</li>
               <li>The item must be unused, with original box, accessories and invoice.</li>
               <li>Send a photo or short video of the problem via WhatsApp or email.</li>
             </ul>
