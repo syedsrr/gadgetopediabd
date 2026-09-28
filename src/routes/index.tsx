@@ -100,64 +100,78 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2 px-3 py-4 sm:gap-4 sm:px-5 sm:py-6">
-          {[
-            { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
-            { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
-            { icon: ShieldCheck, title: "Warranty backed", text: "Easy replacement support" },
-          ].map((f) => (
-            <div
-              key={f.title}
-              className="grid h-[94px] grid-rows-[20px_16px_1fr] items-start justify-items-center gap-y-1.5 rounded-xl border border-border/60 bg-card/70 px-1.5 py-2.5 text-center shadow-soft sm:flex sm:h-auto sm:flex-row sm:items-start sm:justify-items-stretch sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:text-left sm:shadow-none"
-            >
-              <f.icon className="h-5 w-5 shrink-0 self-center text-moss sm:mt-0.5 sm:self-auto" />
-              <div className="contents min-w-0 sm:block">
-                <p className="w-full whitespace-nowrap text-center text-[10px] font-semibold leading-4 text-foreground max-[359px]:text-[9px] sm:whitespace-normal sm:text-left sm:text-sm">
-                  {f.title}
-                </p>
-                <p className="line-clamp-2 w-full self-start text-center text-[9px] leading-[1.35] text-muted-foreground sm:mt-0 sm:block sm:text-left sm:text-xs sm:leading-normal">
-                  {f.text}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-6">
+          <ul className="grid grid-cols-3 divide-x divide-border/60">
+            {[
+              { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
+              { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
+              { icon: ShieldCheck, title: "Warranty backed", text: "Easy replacement support" },
+            ].map((f) => (
+              <li
+                key={f.title}
+                className="flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
+              >
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-moss/10 sm:h-10 sm:w-10">
+                  <f.icon className="h-4 w-4 text-moss sm:h-5 sm:w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-center text-[11px] font-semibold leading-tight text-foreground max-[359px]:text-[10px] sm:text-left sm:text-sm">
+                    {f.title}
+                  </p>
+                  <p className="mt-0.5 text-center text-[9.5px] leading-snug text-muted-foreground sm:text-left sm:text-xs">
+                    {f.text}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
-
-
       </section>
 
       {/* Categories */}
-      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-5 sm:py-14">
+      <section className="mx-auto max-w-6xl px-4 py-7 sm:px-5 sm:py-12">
         <div className="flex items-end justify-between gap-4">
           <div>
             <span className="eyebrow text-moss">Browse</span>
             <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Shop by category</h2>
           </div>
+          <Button variant="ghost" size="sm" asChild className="shrink-0">
+            <Link to="/shop">All products</Link>
+          </Button>
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-6 sm:gap-4 lg:grid-cols-4">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              to="/category/$slug"
-              params={{ slug: c.slug }}
-              className="card-hover grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-1 rounded-lg border border-border bg-card px-2 py-2 shadow-soft sm:block sm:min-h-0 sm:rounded-2xl sm:p-5"
-            >
-              <div className="min-w-0">
-                <p className="line-clamp-2 text-left font-display text-[10px] font-semibold leading-[1.3] text-foreground sm:text-base">
-                  {c.name}
-                </p>
-                <p className="mt-0.5 text-left text-[9px] leading-3 text-muted-foreground sm:mt-1 sm:text-xs sm:leading-4">
-                  {liveProducts.filter((p) => p.categories?.slug === c.slug).length} products
-                </p>
-              </div>
-              <ArrowRight className="h-3 w-3 shrink-0 text-moss sm:hidden" />
-              <span className="mt-3 hidden items-center text-xs font-medium text-moss sm:inline-flex">
-                Explore <ArrowRight className="ml-1 h-3 w-3" />
-              </span>
-            </Link>
-          ))}
+        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+          {categories.map((c) => {
+            const Icon = categoryIcon(c.slug, c.name);
+            const count = liveProducts.filter((p) => p.categories?.slug === c.slug).length;
+            return (
+              <Link
+                key={c.id}
+                to="/category/$slug"
+                params={{ slug: c.slug }}
+                className="card-hover group flex items-center gap-2.5 rounded-xl border border-border bg-card p-2.5 shadow-soft transition-colors hover:border-moss/50 sm:flex-col sm:items-start sm:gap-3 sm:rounded-2xl sm:p-4"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-moss/10 text-moss transition-colors group-hover:bg-moss/15 sm:h-11 sm:w-11 sm:rounded-xl">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-left font-display text-xs font-semibold leading-tight text-foreground sm:whitespace-normal sm:text-sm">
+                    {c.name}
+                  </p>
+                  <p className="mt-1 text-left text-[10px] leading-none text-muted-foreground sm:text-xs">
+                    {count} {count === 1 ? "item" : "items"}
+                  </p>
+                </div>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-moss transition-transform group-hover:translate-x-0.5 sm:hidden" />
+                <span className="mt-1 hidden items-center text-xs font-medium text-moss sm:inline-flex">
+                  Explore
+                  <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
+
 
       {/* Pre-order — first product row so upcoming drops lead the page */}
       {preorders.length > 0 && (
