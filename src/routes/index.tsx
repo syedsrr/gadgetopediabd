@@ -135,27 +135,27 @@ function Home() {
             height={907}
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover opacity-35"
+            className="enter-zoom absolute inset-0 h-full w-full object-cover opacity-35"
           />
         </picture>
         <div className="relative mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:gap-8 sm:py-12 lg:py-16">
           <div className="max-w-2xl">
-            <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
-            <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
+            <span className="eyebrow enter-fade block text-accent">Gadgets · Audio · Lifestyle</span>
+            <h1 className="enter-up enter-d1 mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
               Everyday tech that
               <span className="text-accent"> feels good</span> to own.
             </h1>
-            <p className="mt-5 max-w-xl text-base text-canopy-foreground/80">
+            <p className="enter-up enter-d2 mt-5 max-w-xl text-base text-canopy-foreground/80">
               Handpicked smart watches, earbuds, chargers and home upgrades — genuine stock,
               honest prices, and cash on delivery anywhere in Bangladesh.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" asChild>
+            <div className="enter-up enter-d3 mt-8 flex flex-wrap gap-3">
+              <Button size="lg" asChild className="press">
                 <Link to="/shop">
-                  Shop all products <ArrowRight className="ml-1.5 h-4 w-4" />
+                  Shop all products <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-canopy-foreground/30 bg-transparent text-canopy-foreground hover:bg-canopy-foreground/10">
+              <Button size="lg" variant="outline" asChild className="press border-canopy-foreground/30 bg-transparent text-canopy-foreground hover:bg-canopy-foreground/10">
                 <Link to="/about">Our story</Link>
               </Button>
             </div>
@@ -171,22 +171,24 @@ function Home() {
               { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
               { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
               { icon: ShieldCheck, title: "Warranty backed", text: "Easy replacement support" },
-            ].map((f) => (
-              <li
-                key={f.title}
-                className="flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
-              >
-                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/10 sm:h-8 sm:w-8">
-                  <f.icon className="h-3.5 w-3.5 text-moss sm:h-4 sm:w-4" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-center text-[11px] font-semibold leading-tight text-foreground max-[359px]:text-[10px] sm:text-left sm:text-sm">
-                    {f.title}
-                  </p>
-                  <p className="mt-0.5 text-center text-[9.5px] leading-snug text-muted-foreground sm:text-left sm:text-xs">
-                    {f.text}
-                  </p>
-                </div>
+            ].map((f, i) => (
+              <li key={f.title} className="min-w-0">
+                <Reveal
+                  delay={i * 110}
+                  className="group flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
+                >
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/10 transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8">
+                    <f.icon className="h-3.5 w-3.5 text-moss sm:h-4 sm:w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-center text-[11px] font-semibold leading-tight text-foreground max-[359px]:text-[10px] sm:text-left sm:text-sm">
+                      {f.title}
+                    </p>
+                    <p className="mt-0.5 text-center text-[9.5px] leading-snug text-muted-foreground sm:text-left sm:text-xs">
+                      {f.text}
+                    </p>
+                  </div>
+                </Reveal>
               </li>
             ))}
           </ul>
