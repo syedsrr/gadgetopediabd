@@ -112,10 +112,14 @@ function Home() {
           );
     setActiveCategoryDot(idx);
   };
-  const featured = liveProducts.filter((p) => p.is_featured);
-  const latest = liveProducts.slice(0, 12);
-  const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
-  const soldOut = liveProducts.filter((p) => isSoldOut(p)).slice(0, 8);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
+  const [showAllLatest, setShowAllLatest] = useState(false);
+  const allFeatured = liveProducts.filter((p) => p.is_featured);
+  const featured = showAllFeatured ? allFeatured.slice(0, 12) : allFeatured.slice(0, 6);
+  const allLatest = liveProducts.slice(0, 12);
+  const latest = showAllLatest ? allLatest : allLatest.slice(0, 6);
+  const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 4);
+  const soldOut = liveProducts.filter((p) => isSoldOut(p)).slice(0, 4);
   const isPending = productsPending || categoriesPending;
 
   return (
@@ -314,6 +318,13 @@ function Home() {
               <ProductCard key={p.id} product={p} onQuickView={setSelected} />
             ))}
           </div>
+          {!showAllFeatured && allFeatured.length > featured.length && (
+            <div className="mt-6 flex justify-center">
+              <Button variant="outline" onClick={() => setShowAllFeatured(true)}>
+                Show more featured picks
+              </Button>
+            </div>
+          )}
         </section>
       )}
 
@@ -326,6 +337,13 @@ function Home() {
             <ProductCard key={p.id} product={p} onQuickView={setSelected} />
           ))}
         </div>
+        {!showAllLatest && allLatest.length > latest.length && (
+          <div className="mt-6 flex justify-center">
+            <Button variant="outline" onClick={() => setShowAllLatest(true)}>
+              Show more new arrivals
+            </Button>
+          </div>
+        )}
         <div className="mt-8 flex justify-center">
           <Button size="lg" asChild>
             <Link to="/shop">

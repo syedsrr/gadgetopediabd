@@ -35,6 +35,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const { data: specs = [] } = useQuery({
     queryKey: ["product-specs", product?.id],
     enabled: Boolean(product?.id) && open,
+    staleTime: 5 * 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("product_specifications")
@@ -45,6 +46,23 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
       return data ?? [];
     },
   });
+
+  /** Long description is not part of the lightweight grid payload — fetch it only when opened. */
+  const { data: details } = useQuery({
+    queryKey: ["product-details", product?.id],
+    enabled: Boolean(product?.id) && open,
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("description")
+        .eq("id", product!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data ?? null;
+    },
+  });
+  const description = details?.description ?? null;
 
   const variations = product
     ? [product.brand ? `${product.brand} — Standard` : "Standard"]
@@ -177,11 +195,11 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               </div>
             </div>
 
-            {product.description && (
+            {description && (
               <>
                 <Separator className="my-5" />
                 <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-                  {product.description}
+                  {description}
                 </p>
               </>
             )}
