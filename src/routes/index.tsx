@@ -281,21 +281,25 @@ function Home() {
       {/* Pre-order — first product row so upcoming drops lead the page */}
       {preorders.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 pb-4">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow text-moss">Coming soon</span>
-              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Pre-order now</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Reserve the next drop and we ship it the moment it lands.
-              </p>
+          <Reveal>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span className="eyebrow text-moss">Coming soon</span>
+                <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Pre-order now</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Reserve the next drop and we ship it the moment it lands.
+                </p>
+              </div>
+              <Button variant="ghost" asChild>
+                <Link to="/pre-order">View all</Link>
+              </Button>
             </div>
-            <Button variant="ghost" asChild>
-              <Link to="/pre-order">View all</Link>
-            </Button>
-          </div>
+          </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {preorders.map((p) => (
-              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            {preorders.map((p, i) => (
+              <Reveal key={p.id} delay={i * 70} className="flex">
+                <ProductCard product={p} onQuickView={setSelected} />
+              </Reveal>
             ))}
           </div>
         </section>
@@ -304,23 +308,27 @@ function Home() {
       {/* Featured */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 pt-6 sm:pt-9">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow text-moss">Handpicked</span>
-              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Featured picks</h2>
+          <Reveal>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span className="eyebrow text-moss">Handpicked</span>
+                <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Featured picks</h2>
+              </div>
+              <Button variant="ghost" asChild>
+                <Link to="/shop">View all</Link>
+              </Button>
             </div>
-            <Button variant="ghost" asChild>
-              <Link to="/shop">View all</Link>
-            </Button>
-          </div>
+          </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            {featured.map((p, i) => (
+              <Reveal key={p.id} delay={(i % 4) * 70} className="flex">
+                <ProductCard product={p} onQuickView={setSelected} />
+              </Reveal>
             ))}
           </div>
           {!showAllFeatured && allFeatured.length > featured.length && (
             <div className="mt-6 flex justify-center">
-              <Button variant="outline" onClick={() => setShowAllFeatured(true)}>
+              <Button variant="outline" className="press" onClick={() => setShowAllFeatured(true)}>
                 Show more featured picks
               </Button>
             </div>
@@ -330,46 +338,54 @@ function Home() {
 
       {/* Latest */}
       <section className="mx-auto max-w-6xl px-5 py-8 sm:py-11">
-        <span className="eyebrow text-moss">Fresh in</span>
-        <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
+        <Reveal>
+          <span className="eyebrow text-moss">Fresh in</span>
+          <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
+        </Reveal>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {latest.map((p) => (
-            <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+          {latest.map((p, i) => (
+            <Reveal key={p.id} delay={(i % 4) * 70} className="flex">
+              <ProductCard product={p} onQuickView={setSelected} />
+            </Reveal>
           ))}
         </div>
         {!showAllLatest && allLatest.length > latest.length && (
           <div className="mt-6 flex justify-center">
-            <Button variant="outline" onClick={() => setShowAllLatest(true)}>
+            <Button variant="outline" className="press" onClick={() => setShowAllLatest(true)}>
               Show more new arrivals
             </Button>
           </div>
         )}
-        <div className="mt-8 flex justify-center">
-          <Button size="lg" asChild>
+        <Reveal className="mt-8 flex justify-center">
+          <Button size="lg" asChild className="press">
             <Link to="/shop">
               Browse all products <ArrowRight className="ml-1.5 h-4 w-4" />
             </Link>
           </Button>
-        </div>
+        </Reveal>
       </section>
       {/* Sold out */}
       {soldOut.length > 0 && (
         <section className="mx-auto max-w-6xl border-t border-border px-5 py-14">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow text-moss">Currently unavailable</span>
-              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Sold out</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                These favourites ran out. Restocks land often — keep an eye on this list.
-              </p>
+          <Reveal>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span className="eyebrow text-moss">Currently unavailable</span>
+                <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Sold out</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  These favourites ran out. Restocks land often — keep an eye on this list.
+                </p>
+              </div>
+              <Button variant="ghost" asChild>
+                <Link to="/sold-out">View all</Link>
+              </Button>
             </div>
-            <Button variant="ghost" asChild>
-              <Link to="/sold-out">View all</Link>
-            </Button>
-          </div>
+          </Reveal>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {soldOut.map((p) => (
-              <ProductCard key={p.id} product={p} onQuickView={setSelected} />
+            {soldOut.map((p, i) => (
+              <Reveal key={p.id} delay={i * 70} className="flex">
+                <ProductCard product={p} onQuickView={setSelected} />
+              </Reveal>
             ))}
           </div>
         </section>
