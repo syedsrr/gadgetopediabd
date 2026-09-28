@@ -134,7 +134,7 @@ function Home() {
             className="absolute inset-0 h-full w-full object-cover opacity-35"
           />
         </picture>
-        <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-20 lg:py-28">
+        <div className="relative mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:gap-8 sm:py-12 lg:py-16">
           <div className="max-w-2xl">
             <span className="eyebrow text-accent">Gadgets · Audio · Lifestyle</span>
             <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
@@ -161,7 +161,7 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-6">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-5 sm:py-4">
           <ul className="grid grid-cols-3 divide-x divide-border/60">
             {[
               { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
@@ -190,7 +190,7 @@ function Home() {
       </section>
 
       {/* Categories — side-by-side arched editorial strip */}
-      <section className="mx-auto max-w-6xl px-4 py-7 sm:px-5 sm:py-12">
+      <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-7">
         <div className="flex items-end justify-between gap-4">
           <div className="min-w-0">
             <span className="eyebrow text-moss">Browse</span>
