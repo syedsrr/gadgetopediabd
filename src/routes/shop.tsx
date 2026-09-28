@@ -73,8 +73,7 @@ function Shop() {
           product.brand,
           product.manufacturer,
           product.short_description,
-          product.description,
-          product.specs_description,
+          product.sku,
           category,
         ]
           .filter(Boolean)
