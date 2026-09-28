@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Download, Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,48 @@ import { slugify } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/admin/import")({
   component: ImportAdmin,
 });
+
+// Strip scripts, dangerous blocks, event handlers and all remaining HTML tags.
+function sanitizeText(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const clean = v
+    .replace(/<(script|style|iframe|object|embed|svg|math)[\s\S]*?<\/\1\s*>/gi, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/javascript:/gi, "")
+    .replace(/\son\w+\s*=/gi, " ")
+    .trim();
+  return clean || null;
+}
+
+const rowSchema = z.object({
+  name: z.string().trim().min(1, "Missing product name").max(200),
+  slug: z.string().regex(/^[a-z0-9-]+$/, "Slug may only contain a-z, 0-9 and dashes").max(200),
+  price: z.number().positive("Price must be a number above 0"),
+  sale_price: z.number().positive().nullable(),
+  old_price: z.number().positive().nullable(),
+  stock: z.number().int("Stock must be a whole number").min(0, "Stock must be a whole number"),
+  low_stock_threshold: z.number().int().min(0),
+  weight_kg: z.number().nonnegative().nullable(),
+  image_url: z.string().url("Image URL is not valid").refine((u) => /^https?:/i.test(u), "Image URL must be http(s)").nullable(),
+  preorder_release_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Release date must be YYYY-MM-DD").nullable(),
+});
+
+const num = (v: string | undefined) => (v && v.trim() !== "" ? Number(v) : null);
+
+function validateRow(values: Record<string, string>, slug: string) {
+  return rowSchema.safeParse({
+    name: sanitizeText(values["name"] ?? values["title"]) ?? "",
+    slug,
+    price: Number(values["price"]),
+    sale_price: num(values["sale_price"]),
+    old_price: num(values["old_price"]),
+    stock: Number(values["stock"] ?? values["stock_quantity"] ?? 0),
+    low_stock_threshold: num(values["low_stock_threshold"]) ?? 5,
+    weight_kg: num(values["weight_kg"]),
+    image_url: values["image_url"]?.trim() || null,
+    preorder_release_date: values["preorder_release_date"]?.trim() || null,
+  });
+}
 
 type Parsed = {
   row: number;
@@ -47,6 +90,8 @@ function ImportAdmin() {
       if (!name.trim()) error = "Missing product name";
       else if (!Number.isFinite(price) || price <= 0) error = "Price must be a number above 0";
       else if (!Number.isInteger(stock) || stock < 0) error = "Stock must be a whole number";
+      else if (!validateRow(values, slug).success)
+        error = validateRow(values, slug).error?.issues[0]?.message ?? "Invalid row";
       else if (seen.has(slug)) error = "Duplicate row for the same product";
       else if (
         categoryName &&
@@ -69,7 +114,7 @@ function ImportAdmin() {
     mutationFn: async () => {
       const good = (parsed ?? []).filter((p) => !p.error);
       const payload = good.map(({ values }) => {
-        const name = values["name"] || values["title"] || "";
+        const name = sanitizeText(values["name"] || values["title"]) ?? "";
         const categoryName = values["category"] ?? "";
         const category = categories.find(
           (c) =>
@@ -77,13 +122,13 @@ function ImportAdmin() {
             c.name.toLowerCase() === categoryName.toLowerCase() ||
             c.slug === slugify(categoryName),
         );
-        const description = values["description"] || values["specs_description"] || null;
-        const brand = values["brand"] || values["manufacturer"] || null;
+        const description = sanitizeText(values["description"] || values["specs_description"]);
+        const brand = sanitizeText(values["brand"] || values["manufacturer"]);
         return {
           name,
           title: name,
           slug: values["slug"]!,
-          sku: values["sku"] || null,
+          sku: sanitizeText(values["sku"]),
           brand,
           manufacturer: brand,
           category_id: category?.id ?? null,
@@ -96,8 +141,8 @@ function ImportAdmin() {
             ? Number(values["low_stock_threshold"])
             : 5,
           image_url: values["image_url"] || null,
-          image_alt: values["image_alt"] || name,
-          short_description: values["short_description"] || null,
+          image_alt: sanitizeText(values["image_alt"]) || name,
+          short_description: sanitizeText(values["short_description"]),
           description,
           specs_description: description,
           weight_kg: values["weight_kg"] ? Number(values["weight_kg"]) : null,
@@ -108,7 +153,7 @@ function ImportAdmin() {
           is_featured: values["is_featured"] === "true",
           is_preorder: values["is_preorder"] === "true",
           preorder_release_date: values["preorder_release_date"] || null,
-          preorder_note: values["preorder_note"] || null,
+          preorder_note: sanitizeText(values["preorder_note"]),
         };
       });
 
