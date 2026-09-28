@@ -60,6 +60,22 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const CATEGORY_ICON_RULES: Array<[RegExp, typeof Package]> = [
+  [/fan|cool/, Fan],
+  [/power|battery|charg/, BatteryCharging],
+  [/decor|collect|gift/, Sparkles],
+  [/cable|accessor/, Cable],
+  [/knife|knives|cutlery|kitchen/, UtensilsCrossed],
+  [/earbud|headphone|audio|speaker/, Headphones],
+  [/watch|wearable/, Watch],
+  [/light|lamp|bulb/, Lightbulb],
+];
+
+function categoryIcon(slug: string, name: string) {
+  const key = `${slug} ${name}`.toLowerCase();
+  return CATEGORY_ICON_RULES.find(([re]) => re.test(key))?.[1] ?? Package;
+}
+
 function Home() {
   const { data: products = [], isPending: productsPending } = useQuery(productsQuery);
   const { data: categories = [], isPending: categoriesPending } = useQuery(categoriesQuery);
