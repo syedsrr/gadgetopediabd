@@ -100,21 +100,22 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto grid max-w-6xl gap-4 px-5 py-6 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2 px-3 py-6 sm:gap-4 sm:px-5">
           {[
             { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
             { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
             { icon: ShieldCheck, title: "Warranty backed", text: "Easy replacement support" },
           ].map((f) => (
-            <div key={f.title} className="flex items-start gap-3">
-              <f.icon className="mt-0.5 h-5 w-5 shrink-0 text-moss" />
-              <div>
-                <p className="text-sm font-semibold text-foreground">{f.title}</p>
-                <p className="text-xs text-muted-foreground">{f.text}</p>
+            <div key={f.title} className="flex flex-col items-center gap-1.5 text-center sm:flex-row sm:items-start sm:gap-3 sm:text-left">
+              <f.icon className="h-5 w-5 shrink-0 text-moss sm:mt-0.5" />
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold leading-tight text-foreground sm:text-sm">{f.title}</p>
+                <p className="text-[11px] leading-snug text-muted-foreground sm:text-xs">{f.text}</p>
               </div>
             </div>
           ))}
         </div>
+
       </section>
 
       {/* Categories */}
