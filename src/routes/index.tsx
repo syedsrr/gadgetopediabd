@@ -112,10 +112,14 @@ function Home() {
           );
     setActiveCategoryDot(idx);
   };
-  const featured = liveProducts.filter((p) => p.is_featured);
-  const latest = liveProducts.slice(0, 12);
-  const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
-  const soldOut = liveProducts.filter((p) => isSoldOut(p)).slice(0, 8);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
+  const [showAllLatest, setShowAllLatest] = useState(false);
+  const allFeatured = liveProducts.filter((p) => p.is_featured);
+  const featured = showAllFeatured ? allFeatured.slice(0, 12) : allFeatured.slice(0, 6);
+  const allLatest = liveProducts.slice(0, 12);
+  const latest = showAllLatest ? allLatest : allLatest.slice(0, 6);
+  const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 4);
+  const soldOut = liveProducts.filter((p) => isSoldOut(p)).slice(0, 4);
   const isPending = productsPending || categoriesPending;
 
   return (
