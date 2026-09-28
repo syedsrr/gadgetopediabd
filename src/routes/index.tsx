@@ -97,6 +97,21 @@ function Home() {
   const { data: categories = [], isPending: categoriesPending } = useQuery(categoriesQuery);
   const liveProducts = withCategories(products, categories);
   const [selected, setSelected] = useState<ProductWithCategory | null>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [activeCategoryDot, setActiveCategoryDot] = useState(0);
+  const onStripScroll = () => {
+    const el = stripRef.current;
+    if (!el || categories.length < 2) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const idx =
+      max <= 0
+        ? 0
+        : Math.min(
+            categories.length - 1,
+            Math.round((el.scrollLeft / max) * (categories.length - 1)),
+          );
+    setActiveCategoryDot(idx);
+  };
   const featured = liveProducts.filter((p) => p.is_featured);
   const latest = liveProducts.slice(0, 12);
   const preorders = liveProducts.filter((p) => isPreorder(p)).slice(0, 8);
