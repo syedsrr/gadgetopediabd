@@ -6,6 +6,7 @@ import { RefreshCw, Search, X } from "lucide-react";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductGridSkeleton } from "@/components/site/ProductGridSkeleton";
 import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
+import { Reveal } from "@/components/site/Reveal";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -222,8 +223,14 @@ function Shop() {
           </div>
         ) : (
           <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} onQuickView={setSelected} />
+            {filtered.map((product, i) => (
+              <Reveal
+                key={product.id}
+                delay={(i % 4) * 70}
+                className="flex h-full [&>article]:w-full"
+              >
+                <ProductCard product={product} onQuickView={setSelected} />
+              </Reveal>
             ))}
           </div>
         )}
