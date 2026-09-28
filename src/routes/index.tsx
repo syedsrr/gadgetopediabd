@@ -109,9 +109,10 @@ function Home() {
             <div key={f.title} className="flex flex-col items-center gap-1.5 text-center sm:flex-row sm:items-start sm:gap-3 sm:text-left">
               <f.icon className="h-5 w-5 shrink-0 text-moss sm:mt-0.5" />
               <div className="min-w-0">
-                <p className="text-[13px] font-semibold leading-tight text-foreground sm:text-sm">{f.title}</p>
-                <p className="text-[11px] leading-snug text-muted-foreground sm:text-xs">{f.text}</p>
+                <p className="text-center text-[13px] font-semibold leading-tight text-foreground sm:text-left sm:text-sm">{f.title}</p>
+                <p className="text-center text-[11px] leading-snug text-muted-foreground sm:text-left sm:text-xs">{f.text}</p>
               </div>
+
             </div>
           ))}
         </div>
