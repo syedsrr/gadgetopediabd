@@ -100,22 +100,29 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2 px-3 py-6 sm:gap-4 sm:px-5">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2.5 px-4 py-5 sm:gap-4 sm:px-5 sm:py-6">
           {[
             { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
             { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
             { icon: ShieldCheck, title: "Warranty backed", text: "Easy replacement support" },
           ].map((f) => (
-            <div key={f.title} className="flex flex-col items-center gap-1.5 text-center sm:flex-row sm:items-start sm:gap-3 sm:text-left">
+            <div
+              key={f.title}
+              className="flex h-full flex-col items-center justify-start gap-2 rounded-2xl border border-border/60 bg-card/70 px-2.5 py-3.5 text-center shadow-soft sm:flex-row sm:items-start sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:text-left sm:shadow-none"
+            >
               <f.icon className="h-5 w-5 shrink-0 text-moss sm:mt-0.5" />
               <div className="min-w-0">
-                <p className="text-center text-[13px] font-semibold leading-tight text-foreground sm:text-left sm:text-sm">{f.title}</p>
-                <p className="text-center text-[11px] leading-snug text-muted-foreground sm:text-left sm:text-xs">{f.text}</p>
+                <p className="text-center text-[12.5px] font-semibold leading-tight tracking-tight text-foreground sm:text-left sm:text-sm">
+                  {f.title}
+                </p>
+                <p className="mt-1 text-center text-[10.5px] leading-[1.35] text-muted-foreground sm:mt-0 sm:text-left sm:text-xs sm:leading-normal">
+                  {f.text}
+                </p>
               </div>
-
             </div>
           ))}
         </div>
+
 
       </section>
 
