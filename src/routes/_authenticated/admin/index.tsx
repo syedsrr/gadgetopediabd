@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
 import { adminProductsQuery, dashboardStatsQuery, DEFAULT_FILTERS } from "@/lib/adminCatalog";
 import { formatBDT } from "@/lib/format";
 
@@ -26,6 +27,28 @@ function Dashboard() {
   const preorder = useQuery(
     adminProductsQuery({ ...DEFAULT_FILTERS, stock: "preorder", sort: "name", pageSize: 6 }),
   );
+
+  const orderStats = useQuery({
+    queryKey: ["admin-order-status-breakdown"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("orders").select("status, total");
+      if (error) throw new Error(error.message);
+      const counts = { pending: 0, confirmed: 0, shipped: 0, delivered: 0, cancelled: 0 };
+      let revenue = 0;
+      for (const o of data ?? []) {
+        counts[o.status] += 1;
+        if (o.status !== "cancelled") revenue += Number(o.total);
+      }
+      return { counts, revenue, count: data?.length ?? 0 };
+    },
+  });
+  const statusRows = [
+    { key: "pending", label: "Pending" },
+    { key: "confirmed", label: "Processing" },
+    { key: "shipped", label: "Shipped" },
+    { key: "delivered", label: "Delivered" },
+    { key: "cancelled", label: "Cancelled" },
+  ] as const;
 
   const cards: { label: string; value: number | undefined; stock?: StockFilter }[] = [
     { label: "Total products", value: stats?.total },
@@ -84,6 +107,40 @@ function Dashboard() {
           );
         })}
       </div>
+
+      <Card>
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+          <CardTitle className="text-base">Order fulfilment</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Order volume:{" "}
+            <span className="font-semibold text-foreground">
+              {orderStats.isPending ? "…" : formatBDT(orderStats.data?.revenue ?? 0)}
+            </span>
+          </p>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {statusRows.map((r) => {
+            const n = orderStats.data?.counts[r.key] ?? 0;
+            const total = orderStats.data?.count || 1;
+            return (
+              <div key={r.key} className="rounded-xl border border-border p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {r.label}
+                </p>
+                <p className="mt-1 font-display text-2xl font-bold">
+                  {orderStats.isPending ? "–" : n}
+                </p>
+                <div className="mt-2 h-1.5 rounded-full bg-secondary">
+                  <div
+                    className="h-1.5 rounded-full bg-moss"
+                    style={{ width: `${Math.round((n / total) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <StockList
