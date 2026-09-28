@@ -35,11 +35,11 @@ export const categoriesQuery = queryOptions({
   queryFn: async (): Promise<Category[]> => {
     const { data, error } = await supabase
       .from("categories")
-      .select("id, name, slug, description, image_url, is_active, sort_order, created_at")
+      .select("*")
       .eq("is_active", true)
       .order("sort_order", { ascending: true });
     if (error) throw error;
-    return (data ?? []) as unknown as Category[];
+    return data ?? [];
   },
 });
 
