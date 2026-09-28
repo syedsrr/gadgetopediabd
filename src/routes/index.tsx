@@ -15,7 +15,7 @@ import {
   Lightbulb,
   Package,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
