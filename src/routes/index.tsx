@@ -218,7 +218,7 @@ function Home() {
         <div
           ref={stripRef}
           onScroll={onStripScroll}
-          className="no-scrollbar -mx-4 mt-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-4 sm:gap-4 sm:px-5"
+          className="no-scrollbar -mx-4 mt-3 flex snap-x snap-mandatory scroll-px-4 sm:scroll-px-5 gap-3 overflow-x-auto px-4 pb-1 sm:-mx-5 sm:mt-4 sm:gap-4 sm:px-5"
         >
           {categories.map((c, i) => {
             const cover = CATEGORY_COVER_IMAGES[c.slug];
