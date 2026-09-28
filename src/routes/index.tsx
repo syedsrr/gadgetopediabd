@@ -19,6 +19,7 @@ import { useRef, useState } from "react";
 
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductSpecsDrawer } from "@/components/site/ProductSpecsDrawer";
+import { Reveal } from "@/components/site/Reveal";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { categoriesQuery, productsQuery, withCategories } from "@/lib/catalog";

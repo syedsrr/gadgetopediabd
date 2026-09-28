@@ -26,7 +26,7 @@ export function ProductCard({
   const arrival = formatReleaseDate(product.preorder_release_date);
 
   return (
-    <article className="card-hover group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft sm:rounded-2xl">
+    <article className="card-hover group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card shadow-soft transition-colors duration-300 hover:border-moss/40 sm:rounded-2xl">
       <Link
         to="/product/$slug"
         params={{ slug: product.slug }}
@@ -41,8 +41,14 @@ export function ProductCard({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
             width={1024}
             height={1024}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.08]"
           />
+
+        )}
+      </Link>
+    </article>
+  );
+}
         ) : (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
             <ImageOff className="h-6 w-6" aria-hidden="true" />
