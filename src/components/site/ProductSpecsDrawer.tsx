@@ -195,11 +195,11 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
               </div>
             </div>
 
-            {product.description && (
+            {description && (
               <>
                 <Separator className="my-5" />
                 <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
-                  {product.description}
+                  {description}
                 </p>
               </>
             )}
