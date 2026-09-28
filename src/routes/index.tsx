@@ -100,7 +100,7 @@ function Home() {
 
       {/* Trust bar */}
       <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2.5 px-4 py-5 sm:gap-4 sm:px-5 sm:py-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2 px-3 py-4 sm:gap-4 sm:px-5 sm:py-6">
           {[
             { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
             { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
@@ -108,14 +108,14 @@ function Home() {
           ].map((f) => (
             <div
               key={f.title}
-              className="flex h-full flex-col items-center justify-start gap-2 rounded-2xl border border-border/60 bg-card/70 px-2.5 py-3.5 text-center shadow-soft sm:flex-row sm:items-start sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:text-left sm:shadow-none"
+              className="grid h-[94px] grid-rows-[20px_16px_1fr] items-start justify-items-center gap-y-1.5 rounded-xl border border-border/60 bg-card/70 px-1.5 py-2.5 text-center shadow-soft sm:flex sm:h-auto sm:flex-row sm:items-start sm:justify-items-stretch sm:gap-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:text-left sm:shadow-none"
             >
-              <f.icon className="h-5 w-5 shrink-0 text-moss sm:mt-0.5" />
-              <div className="min-w-0">
-                <p className="whitespace-nowrap text-center text-[11px] font-semibold leading-tight tracking-tight text-foreground sm:whitespace-normal sm:text-left sm:text-sm">
+              <f.icon className="h-5 w-5 shrink-0 self-center text-moss sm:mt-0.5 sm:self-auto" />
+              <div className="contents min-w-0 sm:block">
+                <p className="w-full whitespace-nowrap text-center text-[10px] font-semibold leading-4 text-foreground max-[359px]:text-[9px] sm:whitespace-normal sm:text-left sm:text-sm">
                   {f.title}
                 </p>
-                <p className="mt-1 text-center text-[10.5px] leading-[1.35] text-muted-foreground sm:mt-0 sm:text-left sm:text-xs sm:leading-normal">
+                <p className="line-clamp-2 w-full self-start text-center text-[9px] leading-[1.35] text-muted-foreground sm:mt-0 sm:block sm:text-left sm:text-xs sm:leading-normal">
                   {f.text}
                 </p>
               </div>
@@ -127,26 +127,31 @@ function Home() {
       </section>
 
       {/* Categories */}
-      <section className="mx-auto max-w-6xl px-5 py-14">
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-14">
         <div className="flex items-end justify-between gap-4">
           <div>
             <span className="eyebrow text-moss">Browse</span>
-            <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Shop by category</h2>
+            <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Shop by category</h2>
           </div>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-2.5 sm:mt-6 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {categories.map((c) => (
             <Link
               key={c.id}
               to="/category/$slug"
               params={{ slug: c.slug }}
-              className="card-hover rounded-2xl border border-border bg-card p-5 shadow-soft"
+              className="card-hover grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 shadow-soft sm:block sm:min-h-0 sm:rounded-2xl sm:p-5"
             >
-              <p className="font-display text-base font-semibold text-foreground">{c.name}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {liveProducts.filter((p) => p.categories?.slug === c.slug).length} products
-              </p>
-              <span className="mt-3 inline-flex items-center text-xs font-medium text-moss">
+              <div className="min-w-0">
+                <p className="line-clamp-2 text-left font-display text-xs font-semibold leading-4 text-foreground sm:text-base">
+                  {c.name}
+                </p>
+                <p className="mt-0.5 text-left text-[10px] leading-4 text-muted-foreground sm:mt-1 sm:text-xs">
+                  {liveProducts.filter((p) => p.categories?.slug === c.slug).length} products
+                </p>
+              </div>
+              <ArrowRight className="h-3.5 w-3.5 shrink-0 text-moss sm:hidden" />
+              <span className="mt-3 hidden items-center text-xs font-medium text-moss sm:inline-flex">
                 Explore <ArrowRight className="ml-1 h-3 w-3" />
               </span>
             </Link>
