@@ -258,7 +258,9 @@
 }
 
 
-/* Ambient light field the glass surfaces refract */
+/* Ambient light field behind the glass surfaces.
+   Painted as static radial gradients — no blurred layers, so it costs the
+   compositor nothing while scrolling. */
 .ambient-field {
   position: fixed;
   inset: 0;
@@ -266,35 +268,12 @@
   pointer-events: none;
   overflow: hidden;
   background-color: var(--background);
+  background-image:
+    radial-gradient(60vmax 50vmax at 8% 0%, oklch(0.6 0.085 146 / 0.2), transparent 70%),
+    radial-gradient(52vmax 46vmax at 100% 34%, oklch(0.735 0.095 145 / 0.18), transparent 70%),
+    radial-gradient(56vmax 48vmax at 40% 108%, oklch(0.335 0.058 152 / 0.12), transparent 70%);
 }
 
-.ambient-field span {
-  position: absolute;
-  display: block;
-  border-radius: 9999px;
-  filter: blur(110px);
-}
-.ambient-field span:nth-child(1) {
-  top: -12%;
-  left: -8%;
-  height: 46vmax;
-  width: 46vmax;
-  background: oklch(0.6 0.085 146 / 0.22);
-}
-.ambient-field span:nth-child(2) {
-  top: 24%;
-  right: -12%;
-  height: 40vmax;
-  width: 40vmax;
-  background: oklch(0.735 0.095 145 / 0.2);
-}
-.ambient-field span:nth-child(3) {
-  bottom: -14%;
-  left: 22%;
-  height: 44vmax;
-  width: 44vmax;
-  background: oklch(0.335 0.058 152 / 0.14);
-}
 
 
 
