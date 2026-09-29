@@ -342,7 +342,7 @@ function Home() {
           </div>
           {!showAllFeatured && allFeatured.length > featured.length && (
             <div className="mt-6 flex justify-center">
-              <Button variant="outline" className="press" onClick={() => setShowAllFeatured(true)}>
+              <Button variant="outline" className="glass-pill press rounded-full border-0 text-foreground hover:text-moss" onClick={() => setShowAllFeatured(true)}>
                 Show more featured picks
               </Button>
             </div>
@@ -365,7 +365,7 @@ function Home() {
         </div>
         {!showAllLatest && allLatest.length > latest.length && (
           <div className="mt-6 flex justify-center">
-            <Button variant="outline" className="press" onClick={() => setShowAllLatest(true)}>
+            <Button variant="outline" className="glass-pill press rounded-full border-0 text-foreground hover:text-moss" onClick={() => setShowAllLatest(true)}>
               Show more new arrivals
             </Button>
           </div>
@@ -380,7 +380,7 @@ function Home() {
       </section>
       {/* Sold out */}
       {soldOut.length > 0 && (
-        <section className="mx-auto max-w-6xl border-t border-border px-5 py-14">
+        <section className="mx-auto max-w-6xl border-t border-white/50 px-5 py-14">
           <Reveal>
             <div className="flex items-end justify-between gap-4">
               <div>
