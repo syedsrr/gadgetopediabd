@@ -77,7 +77,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex w-full flex-col overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-w-md sm:p-6">
+      <SheetContent side="right" className="flex w-full flex-col overflow-y-auto rounded-l-3xl border-l border-white/40 bg-background/80 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-2xl sm:max-w-md sm:p-6">
         {product && (
           <>
             <SheetHeader className="text-left">
