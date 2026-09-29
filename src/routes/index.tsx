@@ -164,10 +164,10 @@ function Home() {
         </div>
       </section>
 
-      {/* Trust bar */}
-      <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-5 sm:py-4">
-          <ul className="grid grid-cols-3 divide-x divide-border/60">
+      {/* Trust bar — floating frosted capsules */}
+      <section className="relative">
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-5">
+          <ul className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
               { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
               { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
@@ -176,9 +176,9 @@ function Home() {
               <li key={f.title} className="min-w-0">
                 <Reveal
                   delay={i * 110}
-                  className="group flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
+                  className="glass-pill group flex h-full flex-col items-center gap-1.5 rounded-2xl px-2 py-2.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:rounded-3xl sm:px-4 sm:py-3 sm:text-left"
                 >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/10 transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/15 transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8">
                     <f.icon className="h-3.5 w-3.5 text-moss sm:h-4 sm:w-4" />
                   </span>
                   <div className="min-w-0">
@@ -195,6 +195,7 @@ function Home() {
           </ul>
         </div>
       </section>
+
 
       {/* Categories — side-by-side arched editorial strip */}
       <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-7">
@@ -253,7 +254,7 @@ function Home() {
                         </span>
                       )}
                     </div>
-                    <div className="absolute left-3 top-6 rounded-full border border-canopy-foreground/25 bg-canopy/85 px-2.5 py-1 backdrop-blur-md transition-transform duration-500 group-hover:-translate-y-0.5 sm:left-4 sm:top-8">
+                    <div className="glass-chip absolute left-3 top-6 rounded-full px-2.5 py-1 transition-transform duration-500 group-hover:-translate-y-0.5 sm:left-4 sm:top-8">
                       <span className="text-[9px] font-bold uppercase tracking-widest text-canopy-foreground sm:text-[10px]">
                         {count} {count === 1 ? "item" : "items"}
                       </span>
@@ -341,7 +342,7 @@ function Home() {
           </div>
           {!showAllFeatured && allFeatured.length > featured.length && (
             <div className="mt-6 flex justify-center">
-              <Button variant="outline" className="press" onClick={() => setShowAllFeatured(true)}>
+              <Button variant="outline" className="glass-pill press rounded-full border-0 text-foreground hover:text-moss" onClick={() => setShowAllFeatured(true)}>
                 Show more featured picks
               </Button>
             </div>
@@ -364,7 +365,7 @@ function Home() {
         </div>
         {!showAllLatest && allLatest.length > latest.length && (
           <div className="mt-6 flex justify-center">
-            <Button variant="outline" className="press" onClick={() => setShowAllLatest(true)}>
+            <Button variant="outline" className="glass-pill press rounded-full border-0 text-foreground hover:text-moss" onClick={() => setShowAllLatest(true)}>
               Show more new arrivals
             </Button>
           </div>
@@ -379,7 +380,7 @@ function Home() {
       </section>
       {/* Sold out */}
       {soldOut.length > 0 && (
-        <section className="mx-auto max-w-6xl border-t border-border px-5 py-14">
+        <section className="mx-auto max-w-6xl border-t border-white/50 px-5 py-14">
           <Reveal>
             <div className="flex items-end justify-between gap-4">
               <div>

@@ -123,7 +123,7 @@ function Shop() {
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search products…"
               aria-label="Search catalogue"
-              className="h-11 bg-card pl-9 pr-11"
+              className="glass-pill h-11 rounded-full border-0 pl-9 pr-11"
             />
             {search && (
               <Button
@@ -190,7 +190,8 @@ function Shop() {
         {isPending ? (
           <ProductGridSkeleton count={8} />
         ) : error ? (
-          <div className="mt-10 flex flex-col items-center rounded-xl border border-dashed border-border bg-card p-8 text-center">
+          <div className="glass-card mt-10 flex flex-col items-center rounded-xl p-8 text-center">
+
             <p className="text-sm text-muted-foreground">We couldn&apos;t load the catalogue right now.</p>
             <Button
               variant="outline"
@@ -205,7 +206,7 @@ function Shop() {
             </Button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="mt-10 flex flex-col items-center rounded-xl border border-dashed border-border bg-card p-8 text-center">
+          <div className="glass-card mt-10 flex flex-col items-center rounded-xl p-8 text-center">
             <p className="font-medium">No products found</p>
             <p className="mt-1 text-sm text-muted-foreground">Try another keyword or category.</p>
             <Button
