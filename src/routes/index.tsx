@@ -254,7 +254,7 @@ function Home() {
                         </span>
                       )}
                     </div>
-                    <div className="absolute left-3 top-6 rounded-full border border-canopy-foreground/25 bg-canopy/85 px-2.5 py-1 backdrop-blur-md transition-transform duration-500 group-hover:-translate-y-0.5 sm:left-4 sm:top-8">
+                    <div className="glass-chip absolute left-3 top-6 rounded-full px-2.5 py-1 transition-transform duration-500 group-hover:-translate-y-0.5 sm:left-4 sm:top-8">
                       <span className="text-[9px] font-bold uppercase tracking-widest text-canopy-foreground sm:text-[10px]">
                         {count} {count === 1 ? "item" : "items"}
                       </span>
