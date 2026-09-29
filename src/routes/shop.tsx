@@ -37,7 +37,14 @@ export const Route = createFileRoute("/shop")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(productsQuery),
+      context.queryClient.ensureQueryData(categoriesQuery),
+    ]);
+  },
   component: Shop,
+
 });
 
 function Shop() {

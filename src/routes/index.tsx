@@ -58,7 +58,14 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(productsQuery),
+      context.queryClient.ensureQueryData(categoriesQuery),
+    ]);
+  },
   component: Home,
+
 });
 
 const CATEGORY_ICON_RULES: Array<[RegExp, typeof Package]> = [
