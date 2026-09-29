@@ -51,18 +51,18 @@ export function ProductCard({
         )}
 
         {off !== null && (
-          <span className="absolute left-2 top-2 rounded-full bg-sale px-2 py-1 text-[0.65rem] font-bold text-sale-foreground sm:left-3 sm:top-3 sm:px-2.5 sm:text-[0.7rem]">
+          <span className="absolute left-2 top-2 rounded-full bg-sale/85 px-2 py-1 text-[0.65rem] font-bold text-sale-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_6px_16px_-6px_rgb(0_0_0/0.45)] backdrop-blur-md sm:left-3 sm:top-3 sm:px-2.5 sm:text-[0.7rem]">
             -{off}%
           </span>
         )}
         {preorder && (
-          <span className="absolute bottom-2 left-2 rounded-full bg-canopy px-2 py-1 text-[0.65rem] font-bold uppercase text-canopy-foreground sm:bottom-3 sm:left-3 sm:px-2.5 sm:text-[0.7rem]">
+          <span className="glass-chip absolute bottom-2 left-2 rounded-full px-2 py-1 text-[0.65rem] font-bold uppercase text-canopy-foreground sm:bottom-3 sm:left-3 sm:px-2.5 sm:text-[0.7rem]">
             Pre-order
           </span>
         )}
         {soldOut && (
-          <span className="absolute inset-0 flex items-center justify-center bg-canopy/60">
-            <span className="rounded-full bg-canopy px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
+          <span className="absolute inset-0 flex items-center justify-center bg-canopy/45 backdrop-blur-[3px]">
+            <span className="glass-chip rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-canopy-foreground">
               Out of stock
             </span>
           </span>
@@ -75,7 +75,7 @@ export function ProductCard({
         type="button"
         aria-label={saved ? "Remove from wish list" : "Save to wish list"}
         aria-pressed={saved}
-        className="absolute right-2 top-2 h-10 w-10 rounded-full bg-background/90 text-muted-foreground shadow-soft hover:text-sale sm:right-3 sm:top-3"
+        className="absolute right-2 top-2 h-10 w-10 rounded-full border border-white/40 bg-background/55 text-foreground/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_6px_16px_-6px_rgb(0_0_0/0.35)] backdrop-blur-md hover:text-sale sm:right-3 sm:top-3"
         onClick={() => {
           if (!isSignedIn) {
             toast.info("Sign in to save products to your wish list");
