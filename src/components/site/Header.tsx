@@ -30,52 +30,54 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-lg">
-      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 lg:flex">
+    <header className="sticky top-0 z-50 px-2.5 pt-2.5 sm:px-5 sm:pt-4">
+      <div className="glass-forest mx-auto max-w-6xl overflow-hidden rounded-2xl text-canopy-foreground sm:rounded-3xl">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3.5 py-2.5 sm:px-5 sm:py-3 lg:flex">
         <div className="min-w-0">
-          <Logo />
+          <Logo tone="dark" />
         </div>
+
 
         <nav className="ml-8 hidden items-center gap-6 text-sm font-medium lg:flex">
           <Link
             to="/shop"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             Shop
           </Link>
           <Link
             to="/pre-order"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             Pre-order
           </Link>
           <Link
             to="/sold-out"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             Sold out
           </Link>
           <Link
             to="/about"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             About
           </Link>
           <Link
             to="/track-order"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             Track order
           </Link>
           <Link
             to="/contact"
-            className="text-foreground/75 transition-colors hover:text-moss"
-            activeProps={{ className: "text-moss" }}
+            className="text-canopy-foreground/75 transition-colors hover:text-accent"
+            activeProps={{ className: "text-accent" }}
           >
             Contact
           </Link>
@@ -85,7 +87,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-11 w-11"
+            className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
             aria-label="Search products"
             onClick={() => setSearchOpen((v) => !v)}
           >
@@ -95,7 +97,7 @@ export function Header() {
           <CartDrawer />
 
           {session ? (
-            <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="My account" asChild>
+            <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="My account" asChild>
               <Link to="/account">
                 <User className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
@@ -104,7 +106,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-11 w-11"
+              className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
               aria-label="Sign in"
               onClick={() => setAuthOpen(true)}
             >
@@ -116,11 +118,11 @@ export function Header() {
           {/* Categories live behind this three-dot menu */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Browse categories and menu">
+              <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="Browse categories and menu">
                 <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[19rem] border-l-0 bg-canopy p-0 text-canopy-foreground">
+            <SheetContent side="right" className="glass-forest w-[19rem] rounded-l-3xl p-0 text-canopy-foreground">
               <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-6">
                 <span className="eyebrow text-accent">Browse</span>
                 <h2 className="mt-1 font-display text-xl font-bold">Categories</h2>
@@ -176,20 +178,22 @@ export function Header() {
       </div>
 
       {searchOpen && (
-        <form onSubmit={submitSearch} className="border-t border-border/70 bg-secondary/60 px-4 py-3 sm:px-5">
+        <form onSubmit={submitSearch} className="border-t border-white/10 px-3.5 py-3 sm:px-5">
           <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] gap-2">
             <Input
               autoFocus
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Search watches, earbuds, chargers…"
-              className="bg-card"
+              className="glass-inset rounded-xl text-canopy-foreground placeholder:text-canopy-foreground/50 focus-visible:ring-accent/50"
             />
-            <Button type="submit">Search</Button>
+            <Button type="submit" className="rounded-xl">Search</Button>
           </div>
         </form>
       )}
+      </div>
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
     </header>
+
   );
 }
