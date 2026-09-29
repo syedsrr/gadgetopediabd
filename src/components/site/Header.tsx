@@ -30,11 +30,13 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-lg">
-      <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 lg:flex">
+    <header className="sticky top-0 z-50 px-2.5 pt-2.5 sm:px-5 sm:pt-4">
+      <div className="glass-forest mx-auto max-w-6xl overflow-hidden rounded-2xl text-canopy-foreground sm:rounded-3xl">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3.5 py-2.5 sm:px-5 sm:py-3 lg:flex">
         <div className="min-w-0">
-          <Logo />
+          <Logo tone="dark" />
         </div>
+
 
         <nav className="ml-8 hidden items-center gap-6 text-sm font-medium lg:flex">
           <Link
