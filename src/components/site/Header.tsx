@@ -178,20 +178,22 @@ export function Header() {
       </div>
 
       {searchOpen && (
-        <form onSubmit={submitSearch} className="border-t border-border/70 bg-secondary/60 px-4 py-3 sm:px-5">
+        <form onSubmit={submitSearch} className="border-t border-white/10 px-3.5 py-3 sm:px-5">
           <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] gap-2">
             <Input
               autoFocus
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Search watches, earbuds, chargers…"
-              className="bg-card"
+              className="glass-inset rounded-xl text-canopy-foreground placeholder:text-canopy-foreground/50 focus-visible:ring-accent/50"
             />
-            <Button type="submit">Search</Button>
+            <Button type="submit" className="rounded-xl">Search</Button>
           </div>
         </form>
       )}
+      </div>
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
     </header>
+
   );
 }
