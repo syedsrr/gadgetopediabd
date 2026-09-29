@@ -54,11 +54,18 @@ export const Route = createFileRoute("/")({
         as: "image",
         href: "/images/hero.webp",
         type: "image/webp",
-        fetchpriority: "high",
+        fetchPriority: "high",
       },
     ],
   }),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(productsQuery),
+      context.queryClient.ensureQueryData(categoriesQuery),
+    ]);
+  },
   component: Home,
+
 });
 
 const CATEGORY_ICON_RULES: Array<[RegExp, typeof Package]> = [
