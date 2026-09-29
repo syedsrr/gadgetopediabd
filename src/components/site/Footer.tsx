@@ -9,8 +9,9 @@ export function Footer() {
   const { data: categories = [] } = useQuery(categoriesQuery);
 
   return (
-    <footer className="mt-20 bg-canopy text-canopy-foreground">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="glass-forest relative z-10 mx-auto mb-4 mt-20 w-[calc(100%-1.5rem)] max-w-6xl overflow-hidden rounded-3xl text-canopy-foreground">
+      <div className="grid gap-10 px-5 py-12 sm:grid-cols-2 lg:grid-cols-4">
+
         <div className="space-y-4">
           <Logo tone="dark" />
           <p className="max-w-xs text-sm text-canopy-foreground/70">
@@ -105,7 +106,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-canopy-foreground/10 px-5 py-5 text-center text-xs text-canopy-foreground/55">
+      <div className="border-t border-white/12 px-5 py-5 text-center text-xs text-canopy-foreground/60">
         © {new Date().getFullYear()} gadgetOpedia n&rsquo; Lifestyle. All rights reserved.
       </div>
     </footer>
