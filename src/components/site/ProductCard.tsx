@@ -77,7 +77,7 @@ export function ProductCard({
         type="button"
         aria-label={saved ? "Remove from wish list" : "Save to wish list"}
         aria-pressed={saved}
-        className="absolute right-2 top-2 h-10 w-10 rounded-full border border-white/40 bg-background/55 text-foreground/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_6px_16px_-6px_rgb(0_0_0/0.35)] backdrop-blur-md hover:text-sale sm:right-3 sm:top-3"
+        className="absolute right-2 top-2 h-10 w-10 rounded-full border border-white/50 bg-background/85 text-foreground/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.6),0_6px_16px_-6px_rgb(0_0_0/0.35)] hover:text-sale sm:right-3 sm:top-3"
         onClick={() => {
           if (!isSignedIn) {
             toast.info("Sign in to save products to your wish list");
