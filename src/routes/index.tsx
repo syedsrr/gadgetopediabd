@@ -164,10 +164,10 @@ function Home() {
         </div>
       </section>
 
-      {/* Trust bar */}
-      <section className="border-b border-border bg-secondary/60">
-        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-5 sm:py-4">
-          <ul className="grid grid-cols-3 divide-x divide-border/60">
+      {/* Trust bar — floating frosted capsules */}
+      <section className="relative">
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-5">
+          <ul className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
               { icon: Truck, title: "Fast delivery", text: "Inside Dhaka in 24–48 hours" },
               { icon: BadgeCheck, title: "100% genuine", text: "Sourced from official channels" },
@@ -176,9 +176,9 @@ function Home() {
               <li key={f.title} className="min-w-0">
                 <Reveal
                   delay={i * 110}
-                  className="group flex flex-col items-center gap-1.5 px-1.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:text-left lg:px-6"
+                  className="glass-pill group flex h-full flex-col items-center gap-1.5 rounded-2xl px-2 py-2.5 text-center sm:flex-row sm:items-center sm:gap-3 sm:rounded-3xl sm:px-4 sm:py-3 sm:text-left"
                 >
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/10 transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-moss/15 transition-transform duration-300 group-hover:scale-110 sm:h-8 sm:w-8">
                     <f.icon className="h-3.5 w-3.5 text-moss sm:h-4 sm:w-4" />
                   </span>
                   <div className="min-w-0">
@@ -195,6 +195,7 @@ function Home() {
           </ul>
         </div>
       </section>
+
 
       {/* Categories — side-by-side arched editorial strip */}
       <section className="mx-auto max-w-6xl px-4 py-4 sm:px-5 sm:py-7">

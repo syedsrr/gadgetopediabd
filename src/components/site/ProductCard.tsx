@@ -141,9 +141,10 @@ export function ProductCard({
           <Button
             size="sm"
             variant="ghost"
-            className="mt-0.5 h-9 w-full px-1 text-[0.7rem] text-muted-foreground hover:text-moss sm:h-8 sm:text-xs"
+            className="glass-pill press mt-1.5 h-9 w-full rounded-full px-1 text-[0.7rem] text-foreground/70 hover:text-moss sm:h-8 sm:text-xs"
             onClick={() => onQuickView(product)}
           >
+
             View full specs
           </Button>
         )}
