@@ -255,7 +255,7 @@ function ProductPage() {
 
           <div>
             {product.brand && <span className="eyebrow text-moss">{product.brand}</span>}
-            <h1 className="mt-2 font-display text-2xl font-bold leading-tight sm:text-3xl">{product.name}</h1>
+            <h1 className="mt-2 font-display text-xl font-bold leading-tight sm:text-3xl">{product.name}</h1>
             {product.short_description && (
               <p className="mt-3 text-sm text-muted-foreground">{product.short_description}</p>
             )}
