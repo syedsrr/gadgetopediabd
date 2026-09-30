@@ -364,7 +364,7 @@ function Home() {
       <section className="mx-auto max-w-6xl px-5 py-8 sm:py-11">
         <Reveal>
           <span className="eyebrow text-moss">Fresh in</span>
-          <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">New arrivals</h2>
+          <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">New arrivals</h2>
         </Reveal>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {latest.map((p, i) => (
