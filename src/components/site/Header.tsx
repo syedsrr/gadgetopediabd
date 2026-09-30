@@ -151,7 +151,6 @@ export function Header() {
               </Button>
             </SheetTrigger>
 
-            </SheetTrigger>
             <SheetContent side="right" className="glass-forest w-[19rem] rounded-l-3xl p-0 text-canopy-foreground">
               <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-6">
                 <span className="eyebrow text-accent">Browse</span>
