@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { categoriesQuery } from "@/lib/catalog";
 import { useSession } from "@/lib/useAdmin";
+import { cn } from "@/lib/utils";
+
 
 export function Header() {
   const { data: categories = [] } = useQuery(categoriesQuery);
@@ -45,11 +47,22 @@ export function Header() {
 
 
   return (
-    <header className="sticky top-0 z-50 px-2.5 pt-2.5 sm:px-5 sm:pt-4">
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300 sm:px-5 sm:pt-4",
+        compact ? "px-2 pt-1.5" : "px-2.5 pt-2.5",
+      )}
+    >
       <div className="glass-forest mx-auto max-w-6xl overflow-hidden rounded-2xl text-canopy-foreground sm:rounded-3xl">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3.5 py-2.5 sm:px-5 sm:py-3 lg:flex">
+      <div
+        className={cn(
+          "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 transition-all duration-300 sm:px-5 sm:py-3 lg:flex",
+          compact ? "px-3 py-1" : "px-3.5 py-2.5",
+        )}
+      >
         <div className="min-w-0">
-          <Logo tone="dark" />
+          <Logo tone="dark" compact={compact} />
+
         </div>
 
 
