@@ -125,7 +125,7 @@ export function ProductCard({
           size="sm"
           className="mt-2 h-10 w-full px-2 text-xs sm:h-8 sm:px-3"
           disabled={soldOut}
-          onClick={() =>
+          onClick={() => {
             add({
               id: product.id,
               name: product.name,
@@ -133,8 +133,9 @@ export function ProductCard({
               price: selling,
               image_url: product.image_url,
               max_stock: preorder ? 99 : Number(product.stock ?? 0),
-            })
-          }
+            });
+            if (preorder) navigate({ to: "/checkout" });
+          }}
         >
           <ShoppingBag className="mr-1.5 h-4 w-4" />
           {soldOut ? "Out of stock" : preorder ? "Pre-order now" : "Add to cart"}
