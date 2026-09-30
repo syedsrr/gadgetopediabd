@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { MoreVertical, Search, User, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 import { AuthModal } from "@/components/site/AuthModal";
 import { CartDrawer } from "@/components/site/CartDrawer";
@@ -19,8 +20,21 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [term, setTerm] = useState("");
+  const [compact, setCompact] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const iconBtn = cn(
+    "text-canopy-foreground/85 transition-all duration-300 hover:bg-white/10 hover:text-accent lg:h-11 lg:w-11",
+    compact ? "h-9 w-9" : "h-11 w-11",
+  );
+  const iconSize = cn("transition-all duration-300", compact ? "h-4 w-4" : "h-4 w-4 sm:h-5 sm:w-5");
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -28,6 +42,7 @@ export function Header() {
     setSearchOpen(false);
     navigate({ to: "/shop", search: q ? { q } : {} });
   }
+
 
   return (
     <header className="sticky top-0 z-50 px-2.5 pt-2.5 sm:px-5 sm:pt-4">
