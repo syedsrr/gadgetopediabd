@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { ImageOff, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -25,6 +26,7 @@ type Props = {
 
 export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const { add } = useCart();
+  const navigate = useNavigate();
   const info = product ? priceInfo(product) : null;
   const off = info?.off ?? null;
   const selling = info?.selling ?? 0;
@@ -220,6 +222,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                   qty,
                 );
                 onOpenChange(false);
+                if (preorder) navigate({ to: "/checkout" });
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />

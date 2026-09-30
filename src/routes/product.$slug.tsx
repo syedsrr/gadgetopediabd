@@ -326,6 +326,10 @@ function ProductPage() {
                 disabled={soldOut}
                 onClick={() => {
                   add(line, qty);
+                  if (preorder) {
+                    navigate({ to: "/checkout" });
+                    return;
+                  }
                   toast.success("Added to cart");
                 }}
               >
