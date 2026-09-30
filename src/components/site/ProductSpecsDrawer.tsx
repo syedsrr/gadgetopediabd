@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { ImageOff, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useEffect, useState } from "react";
 
