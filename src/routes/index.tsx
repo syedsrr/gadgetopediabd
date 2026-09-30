@@ -211,9 +211,10 @@ function Home() {
           <div className="flex items-end justify-between gap-4">
             <div className="min-w-0">
               <span className="eyebrow text-moss">Browse</span>
-              <h2 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+              <h2 className="mt-1 font-display text-xl font-bold tracking-tight sm:text-3xl">
                 Shop by category
               </h2>
+
             </div>
             <div className="hidden shrink-0 items-center gap-2 pb-1.5 sm:flex" aria-hidden="true">
               <span className="h-[2px] w-10 bg-foreground" />
