@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { MoreVertical, Search, User, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 import { AuthModal } from "@/components/site/AuthModal";
 import { CartDrawer } from "@/components/site/CartDrawer";
@@ -11,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { categoriesQuery } from "@/lib/catalog";
 import { useSession } from "@/lib/useAdmin";
+import { cn } from "@/lib/utils";
+
 
 export function Header() {
   const { data: categories = [] } = useQuery(categoriesQuery);
@@ -19,8 +22,21 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [term, setTerm] = useState("");
+  const [compact, setCompact] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const iconBtn = cn(
+    "text-canopy-foreground/85 transition-all duration-300 hover:bg-white/10 hover:text-accent lg:h-11 lg:w-11",
+    compact ? "h-9 w-9" : "h-11 w-11",
+  );
+  const iconSize = cn("transition-all duration-300", compact ? "h-4 w-4" : "h-4 w-4 sm:h-5 sm:w-5");
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -29,12 +45,24 @@ export function Header() {
     navigate({ to: "/shop", search: q ? { q } : {} });
   }
 
+
   return (
-    <header className="sticky top-0 z-50 px-2.5 pt-2.5 sm:px-5 sm:pt-4">
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300 sm:px-5 sm:pt-4",
+        compact ? "px-2 pt-1.5" : "px-2.5 pt-2.5",
+      )}
+    >
       <div className="glass-forest mx-auto max-w-6xl overflow-hidden rounded-2xl text-canopy-foreground sm:rounded-3xl">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3.5 py-2.5 sm:px-5 sm:py-3 lg:flex">
+      <div
+        className={cn(
+          "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 transition-all duration-300 sm:px-5 sm:py-3 lg:flex",
+          compact ? "px-3 py-1" : "px-3.5 py-2.5",
+        )}
+      >
         <div className="min-w-0">
-          <Logo tone="dark" />
+          <Logo tone="dark" compact={compact} />
+
         </div>
 
 
@@ -87,30 +115,30 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
+            className={iconBtn}
             aria-label="Search products"
             onClick={() => setSearchOpen((v) => !v)}
           >
-            {searchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
+            {searchOpen ? <X className={iconSize} /> : <Search className={iconSize} />}
           </Button>
 
-          <CartDrawer />
+          <CartDrawer compact={compact} />
 
           {session ? (
-            <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="My account" asChild>
+            <Button variant="ghost" size="icon" className={iconBtn} aria-label="My account" asChild>
               <Link to="/account">
-                <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                <User className={iconSize} />
               </Link>
             </Button>
           ) : (
             <Button
               variant="ghost"
               size="icon"
-              className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
+              className={iconBtn}
               aria-label="Sign in"
               onClick={() => setAuthOpen(true)}
             >
-              <User className="h-4 w-4 sm:h-5 sm:w-5" />
+              <User className={iconSize} />
             </Button>
           )}
 
@@ -118,10 +146,11 @@ export function Header() {
           {/* Categories live behind this three-dot menu */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="Browse categories and menu">
-                <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Button variant="ghost" size="icon" className={iconBtn} aria-label="Browse categories and menu">
+                <MoreVertical className={iconSize} />
               </Button>
             </SheetTrigger>
+
             <SheetContent side="right" className="glass-forest w-[19rem] rounded-l-3xl p-0 text-canopy-foreground">
               <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-6">
                 <span className="eyebrow text-accent">Browse</span>

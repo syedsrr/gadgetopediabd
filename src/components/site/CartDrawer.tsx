@@ -14,16 +14,26 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/lib/cart";
 import { formatBDT } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
-export function CartDrawer() {
+
+export function CartDrawer({ compact = false }: { compact?: boolean }) {
   const { lines, count, subtotal, updateQuantity, removeFromCart, clearCart } = useCart();
   const [open, setOpen] = useState(false);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Open cart drawer" className="relative h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent">
-          <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Open cart drawer"
+          className={cn(
+            "relative text-canopy-foreground/85 transition-all duration-300 hover:bg-white/10 hover:text-accent lg:h-11 lg:w-11",
+            compact ? "h-9 w-9" : "h-11 w-11",
+          )}
+        >
+          <ShoppingBag className={cn("transition-all duration-300", compact ? "h-4 w-4" : "h-4 w-4 sm:h-5 sm:w-5")} />
           {count > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-sale px-1 text-[0.65rem] font-bold text-sale-foreground">
               {count}
@@ -31,6 +41,7 @@ export function CartDrawer() {
           )}
         </Button>
       </SheetTrigger>
+
       <SheetContent side="right" className="glass-forest flex w-full flex-col rounded-l-3xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-canopy-foreground sm:max-w-md sm:p-6">
         <SheetHeader className="text-left">
           <SheetTitle className="font-display text-xl">Your cart</SheetTitle>
