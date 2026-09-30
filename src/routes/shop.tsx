@@ -122,15 +122,15 @@ function Shop() {
           </div>
         </div>
 
-        <div className="sticky top-[4.05rem] z-30 -mx-4 mt-5 border-y border-border/70 bg-background/95 px-4 py-3 backdrop-blur-lg sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
+        <div className="sticky top-[3.1rem] z-30 -mx-4 mt-4 border-y border-border/70 bg-background/95 px-4 py-1.5 backdrop-blur-lg sm:static sm:mx-0 sm:mt-5 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:backdrop-blur-none">
           <div className="relative w-full sm:mt-5 sm:w-80">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground sm:left-3 sm:h-4 sm:w-4" />
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search products…"
               aria-label="Search catalogue"
-              className="glass-pill h-11 rounded-full border-0 pl-9 pr-11"
+              className="glass-pill h-8 rounded-full border-0 pl-8 pr-9 text-xs sm:h-11 sm:pl-9 sm:pr-11 sm:text-sm"
             />
             {search && (
               <Button
@@ -138,16 +138,16 @@ function Shop() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setSearch("")}
-                className="absolute right-0 top-1/2 h-11 w-11 -translate-y-1/2"
+                className="absolute right-0 top-1/2 h-8 w-8 -translate-y-1/2 sm:h-11 sm:w-11"
                 aria-label="Clear catalogue search"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             )}
           </div>
 
-          <div className="-mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <div className="flex min-w-max gap-2 pb-1">
+          <div className="-mx-4 mt-1.5 overflow-x-auto px-4 sm:mx-0 sm:mt-3 sm:px-0">
+            <div className="flex min-w-max gap-1.5 pb-0.5 sm:gap-2 sm:pb-1">
               {["all", ...categoryNames].map((category) => (
                 <Button
                   key={category}
@@ -155,14 +155,14 @@ function Shop() {
                   variant={activeCategory === category ? "default" : "outline"}
                   onClick={() => setActiveCategory(category)}
                   className={cn(
-                    "h-10 rounded-full px-3 text-xs",
+                    "h-7 rounded-full px-2.5 text-[0.7rem] sm:h-10 sm:px-3 sm:text-xs",
                     activeCategory === category && "bg-canopy text-canopy-foreground hover:bg-canopy/90",
                   )}
                 >
                   {category === "all" ? "All" : category}
                   <span
                     className={cn(
-                      "rounded-full px-1.5 py-0.5 text-[0.65rem]",
+                      "rounded-full px-1.5 py-0.5 text-[0.6rem] sm:text-[0.65rem]",
                       activeCategory === category
                         ? "bg-canopy-foreground/20 text-canopy-foreground"
                         : "bg-muted text-muted-foreground",
@@ -175,24 +175,25 @@ function Shop() {
             </div>
           </div>
 
-          <div className="mt-2 flex items-center justify-between gap-3">
+          <div className="mt-1.5 flex items-center justify-between gap-3 sm:mt-2">
             <Button
               type="button"
               variant={inStockOnly ? "default" : "outline"}
               aria-pressed={inStockOnly}
               onClick={() => setInStockOnly((value) => !value)}
-              className="h-10 shrink-0 rounded-full px-3 text-xs"
+              className="h-7 shrink-0 rounded-full px-2.5 text-[0.7rem] sm:h-10 sm:px-3 sm:text-xs"
             >
               In stock only
             </Button>
             <Link
               to="/sold-out"
-              className="truncate text-xs font-medium text-muted-foreground underline-offset-4 hover:text-moss hover:underline sm:text-sm"
+              className="truncate text-[0.7rem] font-medium text-muted-foreground underline-offset-4 hover:text-moss hover:underline sm:text-sm"
             >
               See sold out items
             </Link>
           </div>
         </div>
+
 
         {isPending ? (
           <ProductGridSkeleton count={8} />
