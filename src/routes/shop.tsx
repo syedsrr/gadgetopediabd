@@ -113,7 +113,7 @@ function Shop() {
         <span className="eyebrow text-moss">Catalogue</span>
         <div className="mt-1 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
           <div className="min-w-0">
-            <h1 className="truncate font-display text-2xl font-bold sm:text-3xl">
+            <h1 className="truncate font-display text-xl font-bold sm:text-3xl">
               {term ? `Results for “${search.trim()}”` : "All products"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
