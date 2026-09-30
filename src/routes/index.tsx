@@ -308,10 +308,11 @@ function Home() {
             <div className="flex items-end justify-between gap-4">
               <div>
                 <span className="eyebrow text-moss">Coming soon</span>
-                <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Pre-order now</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Pre-order now</h2>
+                <p className="mt-1.5 text-xs text-muted-foreground sm:mt-2 sm:text-sm">
                   Reserve the next drop and we ship it the moment it lands.
                 </p>
+
               </div>
               <Button variant="ghost" asChild>
                 <Link to="/pre-order">View all</Link>
