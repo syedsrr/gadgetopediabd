@@ -97,30 +97,33 @@ export function ProductCard({
         <Link
           to="/product/$slug"
           params={{ slug: product.slug }}
-          className="line-clamp-2 min-h-10 font-display text-sm font-semibold leading-snug text-foreground transition-colors hover:text-moss sm:text-[0.95rem]"
+          className="line-clamp-2 min-h-8 font-display text-xs font-semibold leading-snug text-foreground transition-colors hover:text-moss sm:min-h-10 sm:text-[0.95rem]"
         >
           {product.name}
         </Link>
         <div className="mt-auto flex items-baseline gap-2 pt-1">
-          <span className="font-display text-base font-bold text-primary sm:text-lg">
+          <span className="font-display text-sm font-bold text-primary sm:text-lg">
             {formatBDT(selling)}
           </span>
           {compareAt !== null && (
-            <span className="hidden text-xs text-muted-foreground line-through min-[390px]:inline sm:text-sm">
+            <span className="hidden text-[11px] text-muted-foreground line-through min-[390px]:inline sm:text-sm">
               {formatBDT(compareAt)}
             </span>
           )}
         </div>
         {preorder ? (
-          <p className="text-xs font-semibold text-moss">
+          <p className="text-[11px] font-semibold text-moss sm:text-xs">
             {arrival ? `Ships from ${arrival}` : "Ships when stock arrives"}
           </p>
         ) : (
           product.stock > 0 &&
           product.stock <= lowThreshold && (
-            <p className="text-xs font-semibold text-sale">Only {product.stock} left in stock</p>
+            <p className="text-[11px] font-semibold text-sale sm:text-xs">
+              Only {product.stock} left in stock
+            </p>
           )
         )}
+
         <Button
           size="sm"
           className="mt-2 h-10 w-full px-2 text-xs sm:h-8 sm:px-3"
