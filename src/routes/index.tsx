@@ -148,25 +148,26 @@ function Home() {
         </picture>
         <div className="relative mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:gap-8 sm:py-12 lg:py-16">
           <div className="max-w-2xl">
-            <span className="eyebrow enter-fade block text-accent">Gadgets · Audio · Lifestyle</span>
-            <h1 className="enter-up enter-d1 mt-3 font-display text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
+            <span className="eyebrow enter-fade block text-[10px] text-accent sm:text-xs">Gadgets · Audio · Lifestyle</span>
+            <h1 className="enter-up enter-d1 mt-2 font-display text-2xl font-extrabold leading-snug sm:mt-3 sm:text-5xl sm:leading-tight lg:text-6xl">
               Everyday tech that
               <span className="text-accent"> feels good</span> to own.
             </h1>
-            <p className="enter-up enter-d2 mt-5 max-w-xl text-base text-canopy-foreground/80">
+            <p className="enter-up enter-d2 mt-3 max-w-xl text-[13px] leading-relaxed text-canopy-foreground/80 sm:mt-5 sm:text-base">
               Handpicked smart watches, earbuds, chargers and home upgrades — genuine stock,
               honest prices, and cash on delivery anywhere in Bangladesh.
             </p>
-            <div className="enter-up enter-d3 mt-8 flex flex-wrap gap-3">
-              <Button size="lg" asChild className="press">
+            <div className="enter-up enter-d3 mt-5 flex flex-wrap gap-2.5 sm:mt-8 sm:gap-3">
+              <Button size="lg" asChild className="press h-9 px-4 text-xs sm:h-11 sm:px-8 sm:text-sm">
                 <Link to="/shop">
                   Shop all products <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="press border-canopy-foreground/30 bg-transparent text-canopy-foreground hover:bg-canopy-foreground/10">
+              <Button size="lg" variant="outline" asChild className="press h-9 border-canopy-foreground/30 bg-transparent px-4 text-xs text-canopy-foreground hover:bg-canopy-foreground/10 sm:h-11 sm:px-8 sm:text-sm">
                 <Link to="/about">Our story</Link>
               </Button>
             </div>
+
           </div>
         </div>
       </section>
