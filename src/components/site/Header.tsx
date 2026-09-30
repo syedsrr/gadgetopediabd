@@ -115,30 +115,30 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
+            className={iconBtn}
             aria-label="Search products"
             onClick={() => setSearchOpen((v) => !v)}
           >
-            {searchOpen ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Search className="h-4 w-4 sm:h-5 sm:w-5" />}
+            {searchOpen ? <X className={iconSize} /> : <Search className={iconSize} />}
           </Button>
 
-          <CartDrawer />
+          <CartDrawer compact={compact} />
 
           {session ? (
-            <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="My account" asChild>
+            <Button variant="ghost" size="icon" className={iconBtn} aria-label="My account" asChild>
               <Link to="/account">
-                <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                <User className={iconSize} />
               </Link>
             </Button>
           ) : (
             <Button
               variant="ghost"
               size="icon"
-              className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent"
+              className={iconBtn}
               aria-label="Sign in"
               onClick={() => setAuthOpen(true)}
             >
-              <User className="h-4 w-4 sm:h-5 sm:w-5" />
+              <User className={iconSize} />
             </Button>
           )}
 
@@ -146,9 +146,11 @@ export function Header() {
           {/* Categories live behind this three-dot menu */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-11 w-11 text-canopy-foreground/85 hover:bg-white/10 hover:text-accent" aria-label="Browse categories and menu">
-                <MoreVertical className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Button variant="ghost" size="icon" className={iconBtn} aria-label="Browse categories and menu">
+                <MoreVertical className={iconSize} />
               </Button>
+            </SheetTrigger>
+
             </SheetTrigger>
             <SheetContent side="right" className="glass-forest w-[19rem] rounded-l-3xl p-0 text-canopy-foreground">
               <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-6">
