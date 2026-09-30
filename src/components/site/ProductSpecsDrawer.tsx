@@ -25,6 +25,7 @@ type Props = {
 
 export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
   const { add } = useCart();
+  const navigate = useNavigate();
   const info = product ? priceInfo(product) : null;
   const off = info?.off ?? null;
   const selling = info?.selling ?? 0;
@@ -220,6 +221,7 @@ export function ProductSpecsDrawer({ product, open, onOpenChange }: Props) {
                   qty,
                 );
                 onOpenChange(false);
+                if (preorder) navigate({ to: "/checkout" });
               }}
             >
               <ShoppingBag className="mr-1.5 h-4 w-4" />
