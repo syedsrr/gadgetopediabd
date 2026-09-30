@@ -336,7 +336,7 @@ function Home() {
             <div className="flex items-end justify-between gap-4">
               <div>
                 <span className="eyebrow text-moss">Handpicked</span>
-                <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Featured picks</h2>
+                <h2 className="mt-1 font-display text-xl font-bold sm:text-3xl">Featured picks</h2>
               </div>
               <Button variant="ghost" asChild>
                 <Link to="/shop">View all</Link>
