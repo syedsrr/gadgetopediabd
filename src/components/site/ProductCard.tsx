@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Heart, ImageOff, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,6 +17,7 @@ export function ProductCard({
   onQuickView?: (product: ProductWithCategory) => void;
 }) {
   const { add } = useCart();
+  const navigate = useNavigate();
   const { ids, toggle, isSignedIn } = useWishlist();
   const saved = ids.has(product.id);
   const { selling, compareAt, off } = priceInfo(product);
