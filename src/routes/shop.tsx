@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   categoriesQuery,
+  descriptionSearchQuery,
   productsQuery,
   withCategories,
   type ProductWithCategory,
@@ -37,11 +38,11 @@ export const Route = createFileRoute("/shop")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(productsQuery),
-      context.queryClient.ensureQueryData(categoriesQuery),
-    ]);
+  loader: ({ context }) => {
+    // Non-blocking prefetch: the shop renders instantly and shows its own
+    // skeleton / "try again" states if the catalogue is slow or fails.
+    void context.queryClient.prefetchQuery(productsQuery);
+    void context.queryClient.prefetchQuery(categoriesQuery);
   },
   component: Shop,
 
@@ -60,6 +61,9 @@ function Shop() {
     [productsQueryResult.data, categoriesQueryResult.data],
   );
   const term = search.trim().toLowerCase();
+  // Long description/specs text is excluded from the card payload, so match
+  // it with a lightweight server-side lookup when the shopper searches.
+  const { data: descriptionMatches } = useQuery(descriptionSearchQuery(term));
   const categoryNames = useMemo(
     () =>
       Array.from(
@@ -89,11 +93,13 @@ function Shop() {
           .toLowerCase();
         return (
           (activeCategory === "all" || category === activeCategory) &&
-          (!term || searchable.includes(term)) &&
+          (!term ||
+            searchable.includes(term) ||
+            (descriptionMatches?.has(product.id) ?? false)) &&
           (!inStockOnly || Number(product.stock) > 0 || isPreorder(product))
         );
       }),
-    [products, activeCategory, term, inStockOnly],
+    [products, activeCategory, term, inStockOnly, descriptionMatches],
   );
   const counts = useMemo(() => {
     const result: Record<string, number> = { all: products.length };

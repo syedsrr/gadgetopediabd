@@ -58,11 +58,11 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(productsQuery),
-      context.queryClient.ensureQueryData(categoriesQuery),
-    ]);
+  loader: ({ context }) => {
+    // Non-blocking prefetch: the page renders instantly and shows its own
+    // skeleton / retry states if the catalogue is slow or fails.
+    void context.queryClient.prefetchQuery(productsQuery);
+    void context.queryClient.prefetchQuery(categoriesQuery);
   },
   component: Home,
 
