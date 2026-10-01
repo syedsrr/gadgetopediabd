@@ -54,6 +54,7 @@ const NAV = [
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/import", label: "CSV import", icon: Upload },
   { to: "/admin/orders", label: "Orders", icon: ReceiptText },
+  { to: "/admin/customers", label: "Customers", icon: Users },
   { to: "/admin/users", label: "User roles", icon: Users },
 ] as const;
 
