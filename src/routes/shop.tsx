@@ -37,11 +37,11 @@ export const Route = createFileRoute("/shop")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(productsQuery),
-      context.queryClient.ensureQueryData(categoriesQuery),
-    ]);
+  loader: ({ context }) => {
+    // Non-blocking prefetch: the shop renders instantly and shows its own
+    // skeleton / "try again" states if the catalogue is slow or fails.
+    void context.queryClient.prefetchQuery(productsQuery);
+    void context.queryClient.prefetchQuery(categoriesQuery);
   },
   component: Shop,
 
