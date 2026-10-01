@@ -62,6 +62,29 @@ export const productsQuery = queryOptions({
 });
 
 
+/** Server-side full-text match on long description fields — keeps the card
+ *  payload small while letting shop search look inside descriptions. */
+export function descriptionSearchQuery(term: string) {
+  const escaped = term.replace(/[%,()"]/g, " ").trim();
+  return queryOptions({
+    queryKey: ["products", "description-search", escaped],
+    staleTime: CATALOG_STALE_TIME,
+    gcTime: CATALOG_GC_TIME,
+    enabled: escaped.length > 0,
+    queryFn: async (): Promise<Set<string>> => {
+      const pattern = `%${escaped}%`;
+      const { data, error } = await supabase
+        .from("products")
+        .select("id")
+        .eq("is_active", true)
+        .eq("status", "published")
+        .or(`description.ilike.${pattern},specs_description.ilike.${pattern}`);
+      if (error) throw error;
+      return new Set((data ?? []).map((row) => row.id));
+    },
+  });
+}
+
 export function withCategories(
   products: Product[],
   categories: Category[],
