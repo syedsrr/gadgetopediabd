@@ -93,11 +93,13 @@ function Shop() {
           .toLowerCase();
         return (
           (activeCategory === "all" || category === activeCategory) &&
-          (!term || searchable.includes(term)) &&
+          (!term ||
+            searchable.includes(term) ||
+            (descriptionMatches?.has(product.id) ?? false)) &&
           (!inStockOnly || Number(product.stock) > 0 || isPreorder(product))
         );
       }),
-    [products, activeCategory, term, inStockOnly],
+    [products, activeCategory, term, inStockOnly, descriptionMatches],
   );
   const counts = useMemo(() => {
     const result: Record<string, number> = { all: products.length };
