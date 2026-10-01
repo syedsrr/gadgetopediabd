@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   categoriesQuery,
+  descriptionSearchQuery,
   productsQuery,
   withCategories,
   type ProductWithCategory,
@@ -60,6 +61,9 @@ function Shop() {
     [productsQueryResult.data, categoriesQueryResult.data],
   );
   const term = search.trim().toLowerCase();
+  // Long description/specs text is excluded from the card payload, so match
+  // it with a lightweight server-side lookup when the shopper searches.
+  const { data: descriptionMatches } = useQuery(descriptionSearchQuery(term));
   const categoryNames = useMemo(
     () =>
       Array.from(
