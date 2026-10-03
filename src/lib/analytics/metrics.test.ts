@@ -1,3 +1,4 @@
+// @ts-expect-error bun:test types are not installed; run with `bun test`
 import { describe, expect, test } from "bun:test";
 
 import { computeAnalytics, growth, resolvePeriod } from "./metrics";
