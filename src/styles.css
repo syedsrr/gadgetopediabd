@@ -281,6 +281,39 @@
     radial-gradient(56vmax 48vmax at 40% 108%, oklch(0.335 0.058 152 / 0.12), transparent 70%);
 }
 
+/* Dark mode glass overrides */
+.dark .ambient-field {
+  background-image:
+    radial-gradient(60vmax 50vmax at 8% 0%, oklch(0.5 0.09 146 / 0.22), transparent 70%),
+    radial-gradient(52vmax 46vmax at 100% 34%, oklch(0.45 0.08 150 / 0.2), transparent 70%),
+    radial-gradient(56vmax 48vmax at 40% 108%, oklch(0.3 0.06 152 / 0.3), transparent 70%);
+}
+.dark .glass-card {
+  background: linear-gradient(
+    160deg,
+    oklch(0.27 0.035 152 / 0.92) 0%,
+    oklch(0.23 0.03 152 / 0.86) 100%
+  );
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 12px 32px -12px rgb(0 0 0 / 0.5);
+}
+.dark .glass-pill {
+  background: linear-gradient(
+    160deg,
+    oklch(0.28 0.035 152 / 0.85) 0%,
+    oklch(0.24 0.03 152 / 0.7) 100%
+  );
+  border-color: rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 8px 22px -12px rgb(0 0 0 / 0.5);
+}
+.dark {
+  color-scheme: dark;
+}
+
 
 
 
