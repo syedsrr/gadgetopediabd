@@ -103,6 +103,30 @@ export type Database = {
         }
         Relationships: []
       }
+      market_reports: {
+        Row: {
+          created_at: string
+          id: string
+          product_count: number
+          report: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_count?: number
+          report: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_count?: number
+          report?: string
+          source?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string

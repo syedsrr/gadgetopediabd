@@ -35,11 +35,13 @@ import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCustomersRouteImport } from './routes/_authenticated/admin/customers'
 import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenticated/admin/import'
 import { Route as AuthenticatedAdminInventoryRouteImport } from './routes/_authenticated/admin/inventory'
+import { Route as AuthenticatedAdminMarketRouteImport } from './routes/_authenticated/admin/market'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin/orders'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminProductsIndexRouteImport } from './routes/_authenticated/admin/products.index'
 import { Route as AuthenticatedAdminProductsIdRouteImport } from './routes/_authenticated/admin/products.$id'
 import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin/products.new'
+import { Route as ApiPublicHooksMarketAnalysisRouteImport } from './routes/api/public/hooks/market-analysis'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -174,6 +176,12 @@ const AuthenticatedAdminInventoryRoute =
     path: '/inventory',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminMarketRoute =
+  AuthenticatedAdminMarketRouteImport.update({
+    id: '/market',
+    path: '/market',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminOrdersRoute =
   AuthenticatedAdminOrdersRouteImport.update({
     id: '/orders',
@@ -203,6 +211,12 @@ const AuthenticatedAdminProductsNewRoute =
     path: '/products/new',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const ApiPublicHooksMarketAnalysisRoute =
+  ApiPublicHooksMarketAnalysisRouteImport.update({
+    id: '/api/public/hooks/market-analysis',
+    path: '/api/public/hooks/market-analysis',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,11 +243,13 @@ export interface FileRoutesByFullPath {
   '/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/inventory': typeof AuthenticatedAdminInventoryRoute
+  '/admin/market': typeof AuthenticatedAdminMarketRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
   '/admin/products/': typeof AuthenticatedAdminProductsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -260,11 +276,13 @@ export interface FileRoutesByTo {
   '/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/admin/import': typeof AuthenticatedAdminImportRoute
   '/admin/inventory': typeof AuthenticatedAdminInventoryRoute
+  '/admin/market': typeof AuthenticatedAdminMarketRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
   '/admin/products': typeof AuthenticatedAdminProductsIndexRoute
 }
 export interface FileRoutesById {
@@ -294,11 +312,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/_authenticated/admin/import': typeof AuthenticatedAdminImportRoute
   '/_authenticated/admin/inventory': typeof AuthenticatedAdminInventoryRoute
+  '/_authenticated/admin/market': typeof AuthenticatedAdminMarketRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
+  '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
   '/_authenticated/admin/products/': typeof AuthenticatedAdminProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -328,11 +348,13 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/import'
     | '/admin/inventory'
+    | '/admin/market'
     | '/admin/orders'
     | '/admin/users'
     | '/admin/'
     | '/admin/products/$id'
     | '/admin/products/new'
+    | '/api/public/hooks/market-analysis'
     | '/admin/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -359,11 +381,13 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/import'
     | '/admin/inventory'
+    | '/admin/market'
     | '/admin/orders'
     | '/admin/users'
     | '/admin'
     | '/admin/products/$id'
     | '/admin/products/new'
+    | '/api/public/hooks/market-analysis'
     | '/admin/products'
   id:
     | '__root__'
@@ -392,11 +416,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/customers'
     | '/_authenticated/admin/import'
     | '/_authenticated/admin/inventory'
+    | '/_authenticated/admin/market'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/products/$id'
     | '/_authenticated/admin/products/new'
+    | '/api/public/hooks/market-analysis'
     | '/_authenticated/admin/products/'
   fileRoutesById: FileRoutesById
 }
@@ -420,6 +446,7 @@ export interface RootRouteChildren {
   CategorySlugRoute: typeof CategorySlugRoute
   OrderSuccessIdRoute: typeof OrderSuccessIdRoute
   ProductSlugRoute: typeof ProductSlugRoute
+  ApiPublicHooksMarketAnalysisRoute: typeof ApiPublicHooksMarketAnalysisRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -606,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminInventoryRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/market': {
+      id: '/_authenticated/admin/market'
+      path: '/market'
+      fullPath: '/admin/market'
+      preLoaderRoute: typeof AuthenticatedAdminMarketRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/orders': {
       id: '/_authenticated/admin/orders'
       path: '/orders'
@@ -641,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductsNewRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/public/hooks/market-analysis': {
+      id: '/api/public/hooks/market-analysis'
+      path: '/api/public/hooks/market-analysis'
+      fullPath: '/api/public/hooks/market-analysis'
+      preLoaderRoute: typeof ApiPublicHooksMarketAnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -649,6 +690,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminCustomersRoute: typeof AuthenticatedAdminCustomersRoute
   AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
   AuthenticatedAdminInventoryRoute: typeof AuthenticatedAdminInventoryRoute
+  AuthenticatedAdminMarketRoute: typeof AuthenticatedAdminMarketRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -663,6 +705,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminCustomersRoute: AuthenticatedAdminCustomersRoute,
     AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
     AuthenticatedAdminInventoryRoute: AuthenticatedAdminInventoryRoute,
+    AuthenticatedAdminMarketRoute: AuthenticatedAdminMarketRoute,
     AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -709,6 +752,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategorySlugRoute: CategorySlugRoute,
   OrderSuccessIdRoute: OrderSuccessIdRoute,
   ProductSlugRoute: ProductSlugRoute,
+  ApiPublicHooksMarketAnalysisRoute: ApiPublicHooksMarketAnalysisRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
