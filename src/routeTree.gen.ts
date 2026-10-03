@@ -41,6 +41,7 @@ import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminMarketingIndexRouteImport } from './routes/_authenticated/admin/marketing.index'
 import { Route as AuthenticatedAdminMarketingSectionRouteImport } from './routes/_authenticated/admin/marketing.$section'
+import { Route as AuthenticatedAdminMarketingSalesRouteImport } from './routes/_authenticated/admin/marketing.sales'
 import { Route as AuthenticatedAdminProductsIndexRouteImport } from './routes/_authenticated/admin/products.index'
 import { Route as AuthenticatedAdminProductsIdRouteImport } from './routes/_authenticated/admin/products.$id'
 import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin/products.new'
@@ -214,6 +215,12 @@ const AuthenticatedAdminMarketingSectionRoute =
     path: '/$section',
     getParentRoute: () => AuthenticatedAdminMarketingRoute,
   } as any)
+const AuthenticatedAdminMarketingSalesRoute =
+  AuthenticatedAdminMarketingSalesRouteImport.update({
+    id: '/sales',
+    path: '/sales',
+    getParentRoute: () => AuthenticatedAdminMarketingRoute,
+  } as any)
 const AuthenticatedAdminProductsIndexRoute =
   AuthenticatedAdminProductsIndexRouteImport.update({
     id: '/products/',
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
@@ -305,6 +313,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
@@ -344,6 +353,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/_authenticated/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/_authenticated/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
   '/api/public/hooks/market-analysis': typeof ApiPublicHooksMarketAnalysisRoute
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/'
     | '/admin/marketing/$section'
+    | '/admin/marketing/sales'
     | '/admin/products/$id'
     | '/admin/products/new'
     | '/api/public/hooks/market-analysis'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin'
     | '/admin/marketing/$section'
+    | '/admin/marketing/sales'
     | '/admin/products/$id'
     | '/admin/products/new'
     | '/api/public/hooks/market-analysis'
@@ -456,6 +468,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/marketing/$section'
+    | '/_authenticated/admin/marketing/sales'
     | '/_authenticated/admin/products/$id'
     | '/_authenticated/admin/products/new'
     | '/api/public/hooks/market-analysis'
@@ -712,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMarketingSectionRouteImport
       parentRoute: typeof AuthenticatedAdminMarketingRoute
     }
+    '/_authenticated/admin/marketing/sales': {
+      id: '/_authenticated/admin/marketing/sales'
+      path: '/sales'
+      fullPath: '/admin/marketing/sales'
+      preLoaderRoute: typeof AuthenticatedAdminMarketingSalesRouteImport
+      parentRoute: typeof AuthenticatedAdminMarketingRoute
+    }
     '/_authenticated/admin/products/': {
       id: '/_authenticated/admin/products/'
       path: '/products'
@@ -745,6 +765,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminMarketingRouteChildren {
   AuthenticatedAdminMarketingSectionRoute: typeof AuthenticatedAdminMarketingSectionRoute
+  AuthenticatedAdminMarketingSalesRoute: typeof AuthenticatedAdminMarketingSalesRoute
   AuthenticatedAdminMarketingIndexRoute: typeof AuthenticatedAdminMarketingIndexRoute
 }
 
@@ -752,6 +773,8 @@ const AuthenticatedAdminMarketingRouteChildren: AuthenticatedAdminMarketingRoute
   {
     AuthenticatedAdminMarketingSectionRoute:
       AuthenticatedAdminMarketingSectionRoute,
+    AuthenticatedAdminMarketingSalesRoute:
+      AuthenticatedAdminMarketingSalesRoute,
     AuthenticatedAdminMarketingIndexRoute:
       AuthenticatedAdminMarketingIndexRoute,
   }
