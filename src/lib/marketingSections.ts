@@ -1,0 +1,15 @@
+export const MARKETING_SECTIONS = [
+  { slug: "ai-analyst", label: "AI Analyst", desc: "Ask questions about your store and get AI-backed answers." },
+  { slug: "sales", label: "Sales Analytics", desc: "Revenue trends, order value and period comparisons." },
+  { slug: "products", label: "Product Analytics", desc: "Product performance, margins and sell-through." },
+  { slug: "customers", label: "Customer Analytics", desc: "Repeat buyers, lifetime value and cohorts." },
+  { slug: "campaigns", label: "Campaigns", desc: "Plan and track marketing campaigns." },
+  { slug: "segments", label: "Segments", desc: "Group customers by behaviour for targeting." },
+  { slug: "funnel", label: "Funnel", desc: "From visit to delivered order." },
+  { slug: "profitability", label: "Profitability", desc: "Profit by product, category and order." },
+  { slug: "alerts", label: "Alerts", desc: "Notifications when key numbers change." },
+  { slug: "recommendations", label: "Recommendations", desc: "Suggested actions to review and approve." },
+  { slug: "reports", label: "Reports", desc: "Saved and scheduled marketing reports." },
+  { slug: "settings", label: "Settings", desc: "Configure marketing intelligence." },
+  { slug: "audit-log", label: "Audit Log", desc: "History of marketing actions and approvals." },
+] as const;
