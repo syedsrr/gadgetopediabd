@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { AuthModal } from "@/components/site/AuthModal";
 import { CartDrawer } from "@/components/site/CartDrawer";
 import { Logo } from "@/components/site/Logo";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -121,6 +122,8 @@ export function Header() {
           >
             {searchOpen ? <X className={iconSize} /> : <Search className={iconSize} />}
           </Button>
+
+          <ThemeToggle className={iconBtn} iconClassName={iconSize} />
 
           <CartDrawer compact={compact} />
 
