@@ -23,7 +23,11 @@ function Overview() {
           >
             <p className="font-medium">{s.label}</p>
             <p className="mt-1 text-xs text-muted-foreground">{s.desc}</p>
-            <span className="mt-2 inline-block rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">Coming soon</span>
+            {["sales", "products", "customers"].includes(s.slug) ? (
+              <span className="mt-2 inline-block rounded-full bg-primary px-2 py-0.5 text-[10px] text-primary-foreground">Live</span>
+            ) : (
+              <span className="mt-2 inline-block rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">Coming soon</span>
+            )}
           </Link>
         ))}
       </div>

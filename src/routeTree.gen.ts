@@ -41,6 +41,8 @@ import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminMarketingIndexRouteImport } from './routes/_authenticated/admin/marketing.index'
 import { Route as AuthenticatedAdminMarketingSectionRouteImport } from './routes/_authenticated/admin/marketing.$section'
+import { Route as AuthenticatedAdminMarketingCustomersRouteImport } from './routes/_authenticated/admin/marketing.customers'
+import { Route as AuthenticatedAdminMarketingProductsRouteImport } from './routes/_authenticated/admin/marketing.products'
 import { Route as AuthenticatedAdminMarketingSalesRouteImport } from './routes/_authenticated/admin/marketing.sales'
 import { Route as AuthenticatedAdminProductsIndexRouteImport } from './routes/_authenticated/admin/products.index'
 import { Route as AuthenticatedAdminProductsIdRouteImport } from './routes/_authenticated/admin/products.$id'
@@ -215,6 +217,18 @@ const AuthenticatedAdminMarketingSectionRoute =
     path: '/$section',
     getParentRoute: () => AuthenticatedAdminMarketingRoute,
   } as any)
+const AuthenticatedAdminMarketingCustomersRoute =
+  AuthenticatedAdminMarketingCustomersRouteImport.update({
+    id: '/customers',
+    path: '/customers',
+    getParentRoute: () => AuthenticatedAdminMarketingRoute,
+  } as any)
+const AuthenticatedAdminMarketingProductsRoute =
+  AuthenticatedAdminMarketingProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthenticatedAdminMarketingRoute,
+  } as any)
 const AuthenticatedAdminMarketingSalesRoute =
   AuthenticatedAdminMarketingSalesRouteImport.update({
     id: '/sales',
@@ -277,6 +291,8 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/admin/marketing/customers': typeof AuthenticatedAdminMarketingCustomersRoute
+  '/admin/marketing/products': typeof AuthenticatedAdminMarketingProductsRoute
   '/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
@@ -313,6 +329,8 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/admin/marketing/customers': typeof AuthenticatedAdminMarketingCustomersRoute
+  '/admin/marketing/products': typeof AuthenticatedAdminMarketingProductsRoute
   '/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
@@ -353,6 +371,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/marketing/$section': typeof AuthenticatedAdminMarketingSectionRoute
+  '/_authenticated/admin/marketing/customers': typeof AuthenticatedAdminMarketingCustomersRoute
+  '/_authenticated/admin/marketing/products': typeof AuthenticatedAdminMarketingProductsRoute
   '/_authenticated/admin/marketing/sales': typeof AuthenticatedAdminMarketingSalesRoute
   '/_authenticated/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
   '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
@@ -393,6 +413,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/'
     | '/admin/marketing/$section'
+    | '/admin/marketing/customers'
+    | '/admin/marketing/products'
     | '/admin/marketing/sales'
     | '/admin/products/$id'
     | '/admin/products/new'
@@ -429,6 +451,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin'
     | '/admin/marketing/$section'
+    | '/admin/marketing/customers'
+    | '/admin/marketing/products'
     | '/admin/marketing/sales'
     | '/admin/products/$id'
     | '/admin/products/new'
@@ -468,6 +492,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/marketing/$section'
+    | '/_authenticated/admin/marketing/customers'
+    | '/_authenticated/admin/marketing/products'
     | '/_authenticated/admin/marketing/sales'
     | '/_authenticated/admin/products/$id'
     | '/_authenticated/admin/products/new'
@@ -725,6 +751,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMarketingSectionRouteImport
       parentRoute: typeof AuthenticatedAdminMarketingRoute
     }
+    '/_authenticated/admin/marketing/customers': {
+      id: '/_authenticated/admin/marketing/customers'
+      path: '/customers'
+      fullPath: '/admin/marketing/customers'
+      preLoaderRoute: typeof AuthenticatedAdminMarketingCustomersRouteImport
+      parentRoute: typeof AuthenticatedAdminMarketingRoute
+    }
+    '/_authenticated/admin/marketing/products': {
+      id: '/_authenticated/admin/marketing/products'
+      path: '/products'
+      fullPath: '/admin/marketing/products'
+      preLoaderRoute: typeof AuthenticatedAdminMarketingProductsRouteImport
+      parentRoute: typeof AuthenticatedAdminMarketingRoute
+    }
     '/_authenticated/admin/marketing/sales': {
       id: '/_authenticated/admin/marketing/sales'
       path: '/sales'
@@ -765,6 +805,8 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminMarketingRouteChildren {
   AuthenticatedAdminMarketingSectionRoute: typeof AuthenticatedAdminMarketingSectionRoute
+  AuthenticatedAdminMarketingCustomersRoute: typeof AuthenticatedAdminMarketingCustomersRoute
+  AuthenticatedAdminMarketingProductsRoute: typeof AuthenticatedAdminMarketingProductsRoute
   AuthenticatedAdminMarketingSalesRoute: typeof AuthenticatedAdminMarketingSalesRoute
   AuthenticatedAdminMarketingIndexRoute: typeof AuthenticatedAdminMarketingIndexRoute
 }
@@ -773,6 +815,10 @@ const AuthenticatedAdminMarketingRouteChildren: AuthenticatedAdminMarketingRoute
   {
     AuthenticatedAdminMarketingSectionRoute:
       AuthenticatedAdminMarketingSectionRoute,
+    AuthenticatedAdminMarketingCustomersRoute:
+      AuthenticatedAdminMarketingCustomersRoute,
+    AuthenticatedAdminMarketingProductsRoute:
+      AuthenticatedAdminMarketingProductsRoute,
     AuthenticatedAdminMarketingSalesRoute:
       AuthenticatedAdminMarketingSalesRoute,
     AuthenticatedAdminMarketingIndexRoute:
