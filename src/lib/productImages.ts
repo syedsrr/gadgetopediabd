@@ -64,7 +64,7 @@ async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
       if (!canvas) break;
 
       for (const quality of [0.86, 0.8, 0.74, 0.68, MIN_QUALITY]) {
-        const blob = await encode(canvas, "image/webp", quality);
+        const blob = await encode(canvas, "image/jpeg", quality);
         if (!blob) break;
         if (!best || blob.size < best.size) best = blob;
         // Already in the sweet spot: don't degrade it further.
