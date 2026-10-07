@@ -40,12 +40,17 @@ function draw(bitmap: ImageBitmap, maxSide: number, alpha: boolean) {
   if (!ctx) return null;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
+  if (alpha) {
+    // JPEG output has no transparency — flatten onto white.
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
   ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return canvas;
 }
 
 /**
- * Resizes and re-encodes uploads to WebP in the browser so storefront photos
+ * Resizes and re-encodes uploads to JPG in the browser so storefront photos
  * land in the 80-100 KB range. Quality steps down gradually first, then the
  * pixel size is reduced, and it stops as soon as the target is met — so the
  * smallest acceptable change is applied and visible quality is preserved.
@@ -64,7 +69,7 @@ async function optimize(file: File, maxSide = MAX_SIDE): Promise<Blob> {
       if (!canvas) break;
 
       for (const quality of [0.86, 0.8, 0.74, 0.68, MIN_QUALITY]) {
-        const blob = await encode(canvas, "image/webp", quality);
+        const blob = await encode(canvas, "image/jpeg", quality);
         if (!blob) break;
         if (!best || blob.size < best.size) best = blob;
         // Already in the sweet spot: don't degrade it further.
@@ -89,7 +94,7 @@ export async function uploadProductImage(file: File): Promise<UploadedImage> {
   if (invalid) throw new Error(invalid);
 
   const blob = await optimize(file);
-  const ext = blob.type === "image/webp" ? "webp" : (file.name.split(".").pop() ?? "jpg");
+  const ext = blob.type === "image/jpeg" ? "jpg" : (file.name.split(".").pop() ?? "jpg");
   const path = `${new Date().getFullYear()}/${crypto.randomUUID()}.${ext}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, blob, {
