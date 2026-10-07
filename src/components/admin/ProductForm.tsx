@@ -292,6 +292,41 @@ export function ProductForm({
     });
   }
 
+  const baseName = (draft.slug.trim() || slugify(draft.name) || "product").toLowerCase();
+
+  async function downloadImage(url: string, index: number) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+      saveBlob(blob, `${baseName}-${index + 1}.${ext}`);
+    } catch {
+      window.open(url, "_blank", "noopener");
+    }
+  }
+
+  async function downloadAllImages() {
+    for (let i = 0; i < images.length; i++) {
+      await downloadImage(images[i]!.url, i);
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+
+  const cleanSpecs = specs.filter((s) => s.name.trim() || s.value.trim());
+
+  function downloadSpecsCsv() {
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = ["specification,value", ...cleanSpecs.map((s) => `${esc(s.name)},${esc(s.value)}`)].join("\n");
+    saveBlob(new Blob([csv], { type: "text/csv" }), `${baseName}-specifications.csv`);
+  }
+
+  const specsText = `${draft.name}\n\n${cleanSpecs.map((s) => `• ${s.name}: ${s.value}`).join("\n")}`;
+
+  function downloadSpecsText() {
+    saveBlob(new Blob([specsText], { type: "text/plain" }), `${baseName}-specifications.txt`);
+  }
+
   const submit = (publish: boolean) => {
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
@@ -751,6 +786,17 @@ function Field({
       {error && <p className="mt-1 text-xs font-medium text-sale">{error}</p>}
     </div>
   );
+}
+
+function saveBlob(blob: Blob, filename: string) {
+  const href = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = href;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(href), 1000);
 }
 
 function Toggle({
