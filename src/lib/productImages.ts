@@ -89,7 +89,7 @@ export async function uploadProductImage(file: File): Promise<UploadedImage> {
   if (invalid) throw new Error(invalid);
 
   const blob = await optimize(file);
-  const ext = blob.type === "image/webp" ? "webp" : (file.name.split(".").pop() ?? "jpg");
+  const ext = blob.type === "image/jpeg" ? "jpg" : (file.name.split(".").pop() ?? "jpg");
   const path = `${new Date().getFullYear()}/${crypto.randomUUID()}.${ext}`;
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, blob, {
