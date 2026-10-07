@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowDown, ArrowUp, ImagePlus, Loader2, Plus, Star, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, Download, ImagePlus, Loader2, Plus, Star, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -548,6 +548,11 @@ export function ProductForm({
               )}
               Upload images
             </Button>
+            {images.length > 0 && (
+              <Button type="button" variant="outline" className="ml-2" onClick={downloadAllImages}>
+                <Download className="mr-1.5 h-4 w-4" /> Download all ({images.length})
+              </Button>
+            )}
             <p className="text-xs text-muted-foreground">
               JPG, PNG, WebP or AVIF up to 8 MB. The first image is the main photo.
             </p>
@@ -584,6 +589,15 @@ export function ProductForm({
                           }
                         />
                         <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Download image"
+                            onClick={() => downloadImage(img.url, i)}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
                           <Button
                             type="button"
                             size="icon"
@@ -663,13 +677,36 @@ export function ProductForm({
                 </Button>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setSpecs((prev) => [...prev, { name: "", value: "" }])}
-            >
-              <Plus className="mr-1.5 h-4 w-4" /> Add specification
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setSpecs((prev) => [...prev, { name: "", value: "" }])}
+              >
+                <Plus className="mr-1.5 h-4 w-4" /> Add specification
+              </Button>
+              {cleanSpecs.length > 0 && (
+                <>
+                  <Button type="button" variant="outline" onClick={downloadSpecsCsv}>
+                    <Download className="mr-1.5 h-4 w-4" /> Download CSV
+                  </Button>
+                  <Button type="button" variant="outline" onClick={downloadSpecsText}>
+                    <Download className="mr-1.5 h-4 w-4" /> Download text
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(specsText)
+                        .then(() => toast.success("Specifications copied"))
+                    }
+                  >
+                    <Copy className="mr-1.5 h-4 w-4" /> Copy
+                  </Button>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
