@@ -50,7 +50,7 @@ function draw(bitmap: ImageBitmap, maxSide: number, alpha: boolean) {
 }
 
 /**
- * Resizes and re-encodes uploads to WebP in the browser so storefront photos
+ * Resizes and re-encodes uploads to JPG in the browser so storefront photos
  * land in the 80-100 KB range. Quality steps down gradually first, then the
  * pixel size is reduced, and it stops as soon as the target is met — so the
  * smallest acceptable change is applied and visible quality is preserved.
