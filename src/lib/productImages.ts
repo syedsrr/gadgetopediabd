@@ -40,6 +40,11 @@ function draw(bitmap: ImageBitmap, maxSide: number, alpha: boolean) {
   if (!ctx) return null;
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
+  if (alpha) {
+    // JPEG output has no transparency — flatten onto white.
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
   ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return canvas;
 }
