@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowDown, ArrowUp, ImagePlus, Loader2, Plus, Star, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, Download, ImagePlus, Loader2, Plus, Star, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -292,6 +292,41 @@ export function ProductForm({
     });
   }
 
+  const baseName = (draft.slug.trim() || slugify(draft.name) || "product").toLowerCase();
+
+  async function downloadImage(url: string, index: number) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error();
+      const blob = await res.blob();
+      const ext = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+      saveBlob(blob, `${baseName}-${index + 1}.${ext}`);
+    } catch {
+      window.open(url, "_blank", "noopener");
+    }
+  }
+
+  async function downloadAllImages() {
+    for (let i = 0; i < images.length; i++) {
+      await downloadImage(images[i]!.url, i);
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+
+  const cleanSpecs = specs.filter((s) => s.name.trim() || s.value.trim());
+
+  function downloadSpecsCsv() {
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = ["specification,value", ...cleanSpecs.map((s) => `${esc(s.name)},${esc(s.value)}`)].join("\n");
+    saveBlob(new Blob([csv], { type: "text/csv" }), `${baseName}-specifications.csv`);
+  }
+
+  const specsText = `${draft.name}\n\n${cleanSpecs.map((s) => `• ${s.name}: ${s.value}`).join("\n")}`;
+
+  function downloadSpecsText() {
+    saveBlob(new Blob([specsText], { type: "text/plain" }), `${baseName}-specifications.txt`);
+  }
+
   const submit = (publish: boolean) => {
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
@@ -513,6 +548,11 @@ export function ProductForm({
               )}
               Upload images
             </Button>
+            {images.length > 0 && (
+              <Button type="button" variant="outline" className="ml-2" onClick={downloadAllImages}>
+                <Download className="mr-1.5 h-4 w-4" /> Download all ({images.length})
+              </Button>
+            )}
             <p className="text-xs text-muted-foreground">
               JPG, PNG, WebP or AVIF up to 8 MB. The first image is the main photo.
             </p>
@@ -549,6 +589,15 @@ export function ProductForm({
                           }
                         />
                         <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Download image"
+                            onClick={() => downloadImage(img.url, i)}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
                           <Button
                             type="button"
                             size="icon"
@@ -628,13 +677,36 @@ export function ProductForm({
                 </Button>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setSpecs((prev) => [...prev, { name: "", value: "" }])}
-            >
-              <Plus className="mr-1.5 h-4 w-4" /> Add specification
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setSpecs((prev) => [...prev, { name: "", value: "" }])}
+              >
+                <Plus className="mr-1.5 h-4 w-4" /> Add specification
+              </Button>
+              {cleanSpecs.length > 0 && (
+                <>
+                  <Button type="button" variant="outline" onClick={downloadSpecsCsv}>
+                    <Download className="mr-1.5 h-4 w-4" /> Download CSV
+                  </Button>
+                  <Button type="button" variant="outline" onClick={downloadSpecsText}>
+                    <Download className="mr-1.5 h-4 w-4" /> Download text
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() =>
+                      navigator.clipboard
+                        .writeText(specsText)
+                        .then(() => toast.success("Specifications copied"))
+                    }
+                  >
+                    <Copy className="mr-1.5 h-4 w-4" /> Copy
+                  </Button>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -751,6 +823,17 @@ function Field({
       {error && <p className="mt-1 text-xs font-medium text-sale">{error}</p>}
     </div>
   );
+}
+
+function saveBlob(blob: Blob, filename: string) {
+  const href = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = href;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(href), 1000);
 }
 
 function Toggle({
