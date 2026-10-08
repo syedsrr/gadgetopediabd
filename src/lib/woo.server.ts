@@ -1,3 +1,4 @@
+// @ts-nocheck -- loosely typed WooCommerce JSON mapping
 // WooCommerce REST API (v3) compatibility layer so tools like MoveDrop can
 // connect to this store. Server-only.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
