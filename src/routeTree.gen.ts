@@ -30,6 +30,8 @@ import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authentic
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as OrderSuccessIdRouteImport } from './routes/order-success.$id'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as WpJsonIndexRouteImport } from './routes/wp-json/index'
+import { Route as WpJsonSplatRouteImport } from './routes/wp-json/$'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin/categories'
 import { Route as AuthenticatedAdminCustomersRouteImport } from './routes/_authenticated/admin/customers'
@@ -151,6 +153,16 @@ const OrderSuccessIdRoute = OrderSuccessIdRouteImport.update({
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WpJsonIndexRoute = WpJsonIndexRouteImport.update({
+  id: '/wp-json/',
+  path: '/wp-json/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WpJsonSplatRoute = WpJsonSplatRouteImport.update({
+  id: '/wp-json/$',
+  path: '/wp-json/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -281,6 +293,8 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/wp-json/$': typeof WpJsonSplatRoute
+  '/wp-json/': typeof WpJsonIndexRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/admin/import': typeof AuthenticatedAdminImportRoute
@@ -320,6 +334,8 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/wp-json/$': typeof WpJsonSplatRoute
+  '/wp-json': typeof WpJsonIndexRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/admin/import': typeof AuthenticatedAdminImportRoute
@@ -361,6 +377,8 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/order-success/$id': typeof OrderSuccessIdRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/wp-json/$': typeof WpJsonSplatRoute
+  '/wp-json/': typeof WpJsonIndexRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/customers': typeof AuthenticatedAdminCustomersRoute
   '/_authenticated/admin/import': typeof AuthenticatedAdminImportRoute
@@ -403,6 +421,8 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
+    | '/wp-json/$'
+    | '/wp-json/'
     | '/admin/categories'
     | '/admin/customers'
     | '/admin/import'
@@ -442,6 +462,8 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
+    | '/wp-json/$'
+    | '/wp-json'
     | '/admin/categories'
     | '/admin/customers'
     | '/admin/import'
@@ -482,6 +504,8 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/order-success/$id'
     | '/product/$slug'
+    | '/wp-json/$'
+    | '/wp-json/'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/customers'
     | '/_authenticated/admin/import'
@@ -522,6 +546,8 @@ export interface RootRouteChildren {
   CategorySlugRoute: typeof CategorySlugRoute
   OrderSuccessIdRoute: typeof OrderSuccessIdRoute
   ProductSlugRoute: typeof ProductSlugRoute
+  WpJsonSplatRoute: typeof WpJsonSplatRoute
+  WpJsonIndexRoute: typeof WpJsonIndexRoute
   ApiPublicHooksMarketAnalysisRoute: typeof ApiPublicHooksMarketAnalysisRoute
 }
 
@@ -672,6 +698,20 @@ declare module '@tanstack/react-router' {
       path: '/product/$slug'
       fullPath: '/product/$slug'
       preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wp-json/': {
+      id: '/wp-json/'
+      path: '/wp-json'
+      fullPath: '/wp-json/'
+      preLoaderRoute: typeof WpJsonIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wp-json/$': {
+      id: '/wp-json/$'
+      path: '/wp-json/$'
+      fullPath: '/wp-json/$'
+      preLoaderRoute: typeof WpJsonSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -900,6 +940,8 @@ const rootRouteChildren: RootRouteChildren = {
   CategorySlugRoute: CategorySlugRoute,
   OrderSuccessIdRoute: OrderSuccessIdRoute,
   ProductSlugRoute: ProductSlugRoute,
+  WpJsonSplatRoute: WpJsonSplatRoute,
+  WpJsonIndexRoute: WpJsonIndexRoute,
   ApiPublicHooksMarketAnalysisRoute: ApiPublicHooksMarketAnalysisRoute,
 }
 export const routeTree = rootRouteImport
