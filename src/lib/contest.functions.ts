@@ -30,7 +30,7 @@ const claimSchema = z.object({
   entryId: z.string().uuid(),
   claimToken: tokenSchema,
   fullName: z.string().trim().min(2).max(100),
-  kdBatchNumber: z.string().trim().min(1).max(50),
+  kdBatchNumber: z.string().trim().max(50).optional().default(""),
   phoneNumber: z.string().trim().min(7).max(25).regex(/^[0-9+()\-\s]+$/),
   review: z.string().trim().max(2000).optional().default(""),
 });
@@ -43,7 +43,7 @@ export const submitContestClaim = createServerFn({ method: "POST" })
       p_entry_id: data.entryId,
       p_token_hash: tokenHash(data.claimToken),
       p_full_name: data.fullName,
-      p_kd_batch_number: data.kdBatchNumber,
+      p_kd_batch_number: data.kdBatchNumber || null,
       p_phone_number: data.phoneNumber,
       p_review: data.review || null,
     });
