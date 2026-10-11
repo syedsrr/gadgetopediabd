@@ -22,7 +22,7 @@ type Entry = {
   completed_at: string | null;
   expired_at: string | null;
   contest_prizes: { prize_name: string } | null;
-  contest_claims: { full_name: string; kd_batch_number: string; phone_number: string; review: string | null; submitted_at: string } | null;
+  contest_claims: { full_name: string; kd_batch_number: string | null; phone_number: string; review: string | null; submitted_at: string } | null;
 };
 
 function ContestAdminPage() {
@@ -83,7 +83,7 @@ function ContestAdminPage() {
                     <td className="p-3 capitalize">{entry.status}</td>
                     <td className="p-3 whitespace-nowrap">{new Date(entry.assigned_at).toLocaleString()}</td>
                     <td className="p-3 whitespace-nowrap">{new Date(entry.claim_deadline).toLocaleString()}</td>
-                    <td className="p-3">{entry.contest_claims ? <div><p className="font-medium">{entry.contest_claims.full_name}</p><p>{entry.contest_claims.kd_batch_number}</p><p>{entry.contest_claims.phone_number}</p></div> : "Not submitted"}</td>
+                    <td className="p-3">{entry.contest_claims ? <div><p className="font-medium">{entry.contest_claims.full_name}</p><p>{entry.contest_claims.kd_batch_number || "KD batch not provided"}</p><p>{entry.contest_claims.phone_number}</p></div> : "Not submitted"}</td>
                     <td className="p-3 max-w-xs whitespace-pre-wrap">{entry.contest_claims?.review || "—"}</td>
                   </tr>
                 ))}
