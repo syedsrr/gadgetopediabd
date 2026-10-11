@@ -45,7 +45,12 @@ create table if not exists public.contest_admins (
 
 -- Store only an HMAC of the visitor IP; never store raw IP addresses.
 create table if not exists public.contest_assignment_rate_limits (
-  client_hash text primary key check (client_hash ~ '^[0-9a-f]{64}
+  client_hash text primary key check (char_length(client_hash) = 64 and client_hash !~ '[^0-9a-f]'),
+  window_started_at timestamptz not null default now(),
+  assignment_count integer not null default 0 check (assignment_count between 0 and 2),
+  last_assigned_at timestamptz
+);
+
 alter table public.contest_prizes enable row level security;
 alter table public.contest_entries enable row level security;
 alter table public.contest_claims enable row level security;
@@ -71,7 +76,35 @@ begin
   if p_token_hash is null or length(p_token_hash) <> 64 then
     raise exception 'Invalid claim token';
   end if;
-  if p_client_hash is null or p_client_hash !~ '^[0-9a-f]{64}
+  if p_client_hash is null or char_length(p_client_hash) <> 64 or p_client_hash ~ '[^0-9a-f]' then
+    raise exception 'Invalid client fingerprint';
+  end if;
+
+  -- Serialize allocation and per-client rate checks, including simultaneous requests.
+  perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtext('gadgetopedia_qr_contest'));
+  insert into public.contest_assignment_rate_limits (client_hash)
+  values (p_client_hash)
+  on conflict (client_hash) do nothing;
+
+  select r.* into v_rate
+    from public.contest_assignment_rate_limits r
+   where r.client_hash = p_client_hash
+   for update;
+
+  if v_rate.window_started_at <= v_now - interval '1 hour' then
+    update public.contest_assignment_rate_limits
+       set window_started_at = v_now, assignment_count = 0, last_assigned_at = null
+     where client_hash = p_client_hash;
+    v_rate.window_started_at := v_now;
+    v_rate.assignment_count := 0;
+    v_rate.last_assigned_at := null;
+  end if;
+
+  if v_rate.assignment_count >= 2
+     or (v_rate.last_assigned_at is not null and v_rate.last_assigned_at > v_now - interval '30 seconds') then
+    return pg_catalog.jsonb_build_object('available', false, 'reason', 'rate_limited');
+  end if;
+
   update public.contest_entries
      set status = 'expired', expired_at = pg_catalog.now()
    where status = 'pending' and claim_deadline <= pg_catalog.now();
@@ -276,9 +309,9 @@ exception when unique_violation then
 end;
 $$;
 
-revoke all on function public.contest_assign_prize(text) from public, anon, authenticated;
+revoke all on function public.contest_assign_prize(text, text) from public, anon, authenticated;
 revoke all on function public.contest_submit_claim(uuid, text, text, text, text, text) from public, anon, authenticated;
-grant execute on function public.contest_assign_prize(text) to service_role;
+grant execute on function public.contest_assign_prize(text, text) to service_role;
 grant execute on function public.contest_submit_claim(uuid, text, text, text, text, text) to service_role;
  then
     raise exception 'Invalid client fingerprint';
@@ -391,9 +424,9 @@ exception when unique_violation then
 end;
 $$;
 
-revoke all on function public.contest_assign_prize(text) from public, anon, authenticated;
+revoke all on function public.contest_assign_prize(text, text) from public, anon, authenticated;
 revoke all on function public.contest_submit_claim(uuid, text, text, text, text, text) from public, anon, authenticated;
-grant execute on function public.contest_assign_prize(text) to service_role;
+grant execute on function public.contest_assign_prize(text, text) to service_role;
 grant execute on function public.contest_submit_claim(uuid, text, text, text, text, text) to service_role;
 ),
   window_started_at timestamptz not null default now(),
@@ -509,7 +542,7 @@ exception when unique_violation then
 end;
 $$;
 
-revoke all on function public.contest_assign_prize(text) from public, anon, authenticated;
+revoke all on function public.contest_assign_prize(text, text) from public, anon, authenticated;
 revoke all on function public.contest_submit_claim(uuid, text, text, text, text, text) from public, anon, authenticated;
-grant execute on function public.contest_assign_prize(text) to service_role;
+grant execute on function public.contest_assign_prize(text, text) to service_role;
 grant execute on function public.contest_submit_claim(uuid, text, text, text, text, text) to service_role;
