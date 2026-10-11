@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, createHmac, randomBytes } from "node:crypto";
 
 const tokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
 const tokenSchema = z.string().min(40).max(200).regex(/^[A-Za-z0-9_-]+$/);
@@ -8,9 +8,27 @@ const tokenSchema = z.string().min(40).max(200).regex(/^[A-Za-z0-9_-]+$/);
 export const assignContestPrize = createServerFn({ method: "POST" })
   .handler(async () => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { getRequest } = await import("@tanstack/react-start/server");
+    const request = getRequest();
+    const forwarded = request?.headers.get("x-forwarded-for");
+    // Prefer platform-provided client IP headers. If only a forwarded chain is
+    // available, use its final hop rather than a caller-controlled first value.
+    const clientIp =
+      request?.headers.get("cf-connecting-ip")?.trim() ||
+      request?.headers.get("x-real-ip")?.trim() ||
+      forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1) ||
+      "";
+    if (!clientIp || clientIp.length > 100) {
+      throw new Error("The contest is temporarily unavailable. Please try again later.");
+    }
+    // HMAC keeps raw IP addresses out of the database. The secret stays server-side.
+    const clientHash = createHmac("sha256", process.env.SUPABASE_SERVICE_ROLE_KEY ?? "")
+      .update(clientIp)
+      .digest("hex");
     const token = randomBytes(32).toString("base64url");
     const { data, error } = await supabaseAdmin.rpc("contest_assign_prize", {
       p_token_hash: tokenHash(token),
+      p_client_hash: clientHash,
     });
     if (error) {
       console.error("[contest] prize assignment failed", error.message);
