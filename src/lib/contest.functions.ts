@@ -34,6 +34,9 @@ export const assignContestPrize = createServerFn({ method: "POST" })
       console.error("[contest] prize assignment failed", error.message);
       throw new Error("The contest is temporarily unavailable. Please try again later.");
     }
+    if (data?.reason === "rate_limited") {
+      throw new Error("Please wait 30 seconds before trying again. This network has reached its contest allocation limit.");
+    }
     if (!data?.available) return { available: false as const };
     return {
       available: true as const,
