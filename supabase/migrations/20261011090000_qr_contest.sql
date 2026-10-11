@@ -32,7 +32,7 @@ create table if not exists public.contest_claims (
   id uuid primary key default gen_random_uuid(),
   entry_id uuid not null unique references public.contest_entries(id),
   full_name text not null check (char_length(trim(full_name)) between 2 and 100),
-  kd_batch_number text not null check (char_length(trim(kd_batch_number)) between 1 and 50),
+  kd_batch_number text check (kd_batch_number is null or char_length(trim(kd_batch_number)) between 1 and 50),
   phone_number text not null check (char_length(trim(phone_number)) between 7 and 25),
   review text check (review is null or char_length(review) <= 2000),
   submitted_at timestamptz not null default now()
@@ -139,7 +139,7 @@ begin
   insert into public.contest_claims
     (entry_id, full_name, kd_batch_number, phone_number, review)
   values
-    (v_entry.id, trim(p_full_name), trim(p_kd_batch_number), trim(p_phone_number), nullif(trim(p_review), ''));
+    (v_entry.id, trim(p_full_name), nullif(trim(p_kd_batch_number), ''), trim(p_phone_number), nullif(trim(p_review), ''));
 
   update public.contest_entries
      set status = 'completed', completed_at = pg_catalog.now()
