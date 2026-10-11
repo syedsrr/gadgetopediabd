@@ -116,8 +116,8 @@ function ContestPage() {
                   <Input id="fullName" name="fullName" autoComplete="name" required minLength={2} maxLength={100} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="kdBatchNumber">KD batch number</Label>
-                  <Input id="kdBatchNumber" name="kdBatchNumber" required maxLength={50} />
+                  <Label htmlFor="kdBatchNumber">KD batch number (optional, if you have one)</Label>
+                  <Input id="kdBatchNumber" name="kdBatchNumber" maxLength={50} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumber">Phone number</Label>
