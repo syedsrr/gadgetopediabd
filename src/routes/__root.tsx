@@ -16,6 +16,7 @@ import { CartProvider } from "@/lib/cart";
 import { WhatsAppButton } from "@/components/site/WhatsAppButton";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function NotFoundComponent() {
   return (
@@ -162,6 +163,7 @@ function RootComponent() {
         <Outlet />
         <WhatsAppButton />
         <Toaster position="top-center" richColors />
+        <SpeedInsights />
       </CartProvider>
     </QueryClientProvider>
   );
