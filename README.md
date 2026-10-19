@@ -1,30 +1,49 @@
+# Gadgetopedia
 
+Gadgetopedia is the Gadgetopedia lifestyle website, built with Lovable and maintained in this GitHub repository.
 
-Named “gadgetOpedia (main title) n’ Lifestyle (sub title)” 
-
-Categories are hidden in 3 dot in top corner. 
-
-Now if you need any suggestions from me then ask me and start building the website using most professionalism user interface and secure admin panel.
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://gadgetopediabd.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/1fedc441-4bd8-4f82-b81d-60b8535241da).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- **Live app:** https://gadgetopediabd.lovable.app
+- **Production domain:** https://gadgetopedia.shop
+- **Default branch:** `main`
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Use Bun for dependency installation and builds because this repository tracks `bun.lock`.
+
+Requirements: [Bun](https://bun.sh/) and Git.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone https://github.com/syedsrr/gadgetopediabd.git
+cd gadgetopediabd
+bun install --frozen-lockfile
+bun run dev
 ```
+
+## Validation
+
+Run the same build used by GitHub Actions before merging or deploying:
+
+```sh
+bun install --frozen-lockfile
+bun run build
+```
+
+GitHub Actions runs the production build on pushes and pull requests targeting `main`. A green CI build confirms the build step passed; it does not by itself confirm the live website or external services are healthy.
+
+## Environment variables and secrets
+
+- Do not commit `.env` files, API keys, database passwords, or service-role keys.
+- Configure deployment secrets in the relevant hosting provider's environment settings.
+- Client-side variables prefixed with `VITE_` are exposed to browser code. Never put private keys in them.
+- Keep production credentials and database changes separate from staging/test work.
+
+## Changes and deployment safety
+
+- Treat `main` as the production source branch.
+- Review changes before merging and confirm CI is green.
+- Do not change DNS, production environment variables, or database schemas as part of an unrelated code fix.
+- After deployment, verify the live site separately from the build result.
+
+## Lovable
+
+This project was built with [Lovable](https://lovable.dev). Changes made in the Lovable editor may sync to this repository.
