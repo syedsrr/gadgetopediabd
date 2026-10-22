@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          # This project uses Bun's bun.lock, not an npm package-lock.json.
+          # Do not enable setup-node's npm cache for this workflow.
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
