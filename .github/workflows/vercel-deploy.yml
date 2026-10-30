@@ -6,6 +6,14 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+# Never cancel an in-progress production deployment because a newer run started.
+concurrency:
+  group: vercel-production
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -13,9 +21,12 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      # Support the current secret name during transition; prefer the canonical publishable-key name.
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+      # Vite needs VITE_* at build time; the SSR runtime also reads the unprefixed names.
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || secrets.SUPABASE_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -24,12 +35,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY; do
+          for name in VERCEL_ORG_ID VERCEL_PROJECT_ID VERCEL_TOKEN VITE_SUPABASE_URL SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY SUPABASE_PUBLISHABLE_KEY; do
             if [[ -z "${!name:-}" ]]; then
               echo "::error::Required configuration is missing: ${name}"
               exit 1
             fi
           done
+          case "$VITE_SUPABASE_URL" in
+            https://*.supabase.co) ;;
+            *) echo "::error::VITE_SUPABASE_URL must be a Supabase project URL"; exit 1 ;;
+          esac
+          if [[ "$VITE_SUPABASE_URL" != "$SUPABASE_URL" ]]; then
+            echo "::error::VITE_SUPABASE_URL and SUPABASE_URL do not match"
+            exit 1
+          fi
+          if [[ "$VITE_SUPABASE_PUBLISHABLE_KEY" != "$SUPABASE_PUBLISHABLE_KEY" ]]; then
+            echo "::error::Supabase publishable-key variables do not match"
+            exit 1
+          fi
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
